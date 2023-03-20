@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "78254693443",
+    "project_id": "tripuddy-c2090",
+    "storage_bucket": "tripuddy-c2090.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:78254693443:android:3a1cad5ce1a6c60eab48f6",
+        "android_client_info": {
+          "package_name": "com.example.fit_20clc_hcmus_android_final_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "78254693443-fcl702m9q1rsljh3l708rlt02s0n77ui.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.fit_20clc_hcmus_android_final_project",
+            "certificate_hash": "978360b3fc0c9261d9b6dac9e42aa36833feed13"
+          }
+        },
+        {
+          "client_id": "78254693443-tn3jisf3l7ihanuqilcto0bu6gt7ik92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYsyi2oMnaiFZawgRDkVaUUA_EhqULI5I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "78254693443-tn3jisf3l7ihanuqilcto0bu6gt7ik92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

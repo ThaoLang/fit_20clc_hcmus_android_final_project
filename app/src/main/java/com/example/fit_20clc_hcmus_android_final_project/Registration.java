@@ -1,0 +1,162 @@
+package com.example.fit_20clc_hcmus_android_final_project;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.fit_20clc_hcmus_android_final_project.databinding.RegistrationBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.AggregateQuery;
+import com.google.firebase.firestore.AggregateQuerySnapshot;
+import com.google.firebase.firestore.AggregateSource;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class Registration extends AppCompatActivity {
+    private FirebaseAuth mAuth;
+    private RegistrationBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        binding=RegistrationBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        mAuth=FirebaseAuth.getInstance();
+
+        binding.createAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String _username=binding.username.getText().toString();
+                String _email=binding.email.getText().toString();
+                String _phone_number=binding.phoneNumber.getText().toString();
+                String _password=binding.password.getText().toString();
+                String _confirm_password=binding.confirmPassword.getText().toString();
+                String _address=binding.address.getText().toString();
+
+                if (TextUtils.isEmpty(_username)){
+                    Toast.makeText(Registration.this,"Please enter username",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(_email)){
+                    Toast.makeText(Registration.this,"Please enter email",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!isValidEmail(_email)){
+                    Toast.makeText(Registration.this,"Email is invalid",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(_phone_number)){
+                    Toast.makeText(Registration.this,"Please enter phone number",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (_phone_number.length()!=10){
+                    Toast.makeText(Registration.this,"Phone number is invalid",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(_password)){
+                    Toast.makeText(Registration.this,"Please enter password",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(_confirm_password)){
+                    Toast.makeText(Registration.this,"Please enter password again to confirm",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!_confirm_password.equals(_password)){
+                    Toast.makeText(Registration.this,"Password and confirm password didn't match ",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (TextUtils.isEmpty(_address)){
+                    Toast.makeText(Registration.this,"Please enter address",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                createAccount(_username,_email,_phone_number,_password,_address);
+            }
+        });
+
+        binding.callLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
+
+    private void createAccount(String username, String email, String phone_number, String password,String address){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        List<String> favorite_locarions=new ArrayList<>();
+        List<String> plans=new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("username", username);
+        data.put("email", email);
+        data.put("phone_number", phone_number);
+        data.put("address", address);
+        data.put("password", password);
+        data.put("favorite_locations",favorite_locarions);
+        data.put("plans",plans);
+
+        Query queryByEmail=FirebaseFirestore.getInstance().collection("account")
+                .whereEqualTo("email", email);
+        AggregateQuery countQuery = queryByEmail.count();
+        countQuery.get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    AggregateQuerySnapshot snapshot = task.getResult();
+                    if (snapshot.getCount()>0){
+                        Toast.makeText(Registration.this,"Email is already used",Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        db.collection("account")
+                                .add(data)
+                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                    @Override
+                                    public void onSuccess(DocumentReference documentReference) {
+                                        Toast.makeText(Registration.this,"Create account successfully",Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(Registration.this,"Fail to create account",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean isValidEmail(String email){
+        String pattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+        Pattern regexPattern = Pattern.compile(pattern);
+        Matcher matcher = regexPattern.matcher(email);
+        if (matcher.matches()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
