@@ -17,7 +17,7 @@
             <ImageView
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:src="@drawable/signup_icon"></ImageView>
+                android:src="@drawable/signup_icon"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -112,23 +112,26 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:passwordToggleEnabled="true"
                 android:hint="Address"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/address"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:layout_height="wrap_content"
+                    android:inputType="text"/>
             </com.google.android.material.textfield.TextInputLayout>
+
             <Button
                 android:id="@+id/createAccount"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="CREATE ACCOUNT"
-                android:textColor="#fff"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
-                android:background="#2dd5b8"/>
+                android:background="#2dd5b8"
+                app:backgroundTint="#2dd5b8"
+                android:text="CREATE ACCOUNT"
+                android:textColor="#fff" />
             <Button
                 android:id="@+id/callLogin"
                 android:layout_width="match_parent"
