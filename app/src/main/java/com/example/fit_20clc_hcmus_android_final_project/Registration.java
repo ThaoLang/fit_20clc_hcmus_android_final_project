@@ -15,7 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.AggregateQuery;
 import com.google.firebase.firestore.AggregateQuerySnapshot;
 import com.google.firebase.firestore.AggregateSource;
@@ -35,7 +37,6 @@ import java.util.regex.Pattern;
 public class Registration extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private RegistrationBinding binding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,6 +80,10 @@ public class Registration extends AppCompatActivity {
                     Toast.makeText(Registration.this,"Please enter password",Toast.LENGTH_SHORT).show();
                     return;
                 }
+                else if (_password.length()<6){
+                    Toast.makeText(Registration.this,"Password must have at least 6 characters",Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 else if (TextUtils.isEmpty(_confirm_password)){
                     Toast.makeText(Registration.this,"Please enter password again to confirm",Toast.LENGTH_SHORT).show();
                     return;
@@ -106,47 +111,80 @@ public class Registration extends AppCompatActivity {
 
     private void createAccount(String username, String email, String phone_number, String password,String address){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        List<String> favorite_locarions=new ArrayList<>();
-        List<String> plans=new ArrayList<>();
-        Map<String, Object> data = new HashMap<>();
-        data.put("username", username);
-        data.put("email", email);
-        data.put("phone_number", phone_number);
-        data.put("address", address);
-        data.put("password", password);
-        data.put("favorite_locations",favorite_locarions);
-        data.put("plans",plans);
-
-        Query queryByEmail=FirebaseFirestore.getInstance().collection("account")
-                .whereEqualTo("email", email);
-        AggregateQuery countQuery = queryByEmail.count();
-        countQuery.get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
+        mAuth=FirebaseAuth.getInstance();
+        System.out.println("Authentication success");
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
-            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    AggregateQuerySnapshot snapshot = task.getResult();
-                    if (snapshot.getCount()>0){
-                        Toast.makeText(Registration.this,"Email is already used",Toast.LENGTH_SHORT).show();
-                    }
-                    else{
-                        db.collection("account")
-                                .add(data)
-                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                    @Override
-                                    public void onSuccess(DocumentReference documentReference) {
-                                        Toast.makeText(Registration.this,"Create account successfully",Toast.LENGTH_SHORT).show();
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Toast.makeText(Registration.this,"Fail to create account",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful())
+                {
+
+                    List<String> favorite_locarions=new ArrayList<>();
+                    List<String> plans=new ArrayList<>();
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("username", username);
+                    data.put("phone_number", phone_number);
+                    data.put("address", address);
+                    data.put("favorite_locations",favorite_locarions);
+                    data.put("plans",plans);
+
+                    FirebaseUser user= task.getResult().getUser();
+                    db.collection("account")
+                            .document(user.getUid())
+                            .set(data)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Toast.makeText(Registration.this,"Create account successfully",Toast.LENGTH_SHORT).show();
+
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(Registration.this,"Fail to create account",Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+                else {
+                    try {
+                        throw task.getException();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
                     }
                 }
             }
         });
+//        Query queryByEmail=FirebaseFirestore.getInstance().collection("account")
+//                .whereEqualTo("email", email);
+//        AggregateQuery countQuery = queryByEmail.count();
+//        countQuery.get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    AggregateQuerySnapshot snapshot = task.getResult();
+//                    if (snapshot.getCount()>0){
+//                        Toast.makeText(Registration.this,"Email is already used",Toast.LENGTH_SHORT).show();
+//                    }
+//                    else{
+//                        db.collection("account")
+//                                .add(data)
+//                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                                    @Override
+//                                    public void onSuccess(DocumentReference documentReference) {
+//                                        Toast.makeText(Registration.this,"Create account successfully",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                })
+//                                .addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception e) {
+//                                        Toast.makeText(Registration.this,"Fail to create account",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                    }
+//                }
+//            }
+//        });
     }
 
     private boolean isValidEmail(String email){
