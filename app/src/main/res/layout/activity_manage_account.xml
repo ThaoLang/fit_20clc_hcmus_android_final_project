@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/default_gradient_account_info">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="@string/bottom_nav_manage_account"
+            app:titleCentered="true"
+            android:background="@null"
+            app:navigationIcon="@drawable/arrow_back_black_24dp"
+            app:navigationContentDescription="back"
+            />
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/mac_text_input_edittext_username"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:fontFamily="sans-serif-black"
+            android:text="@string/unknown"
+            android:textSize="25sp"
+            android:textAlignment="center"
+            android:enabled="false"
+            android:background="@null"
+            android:layout_marginTop="30dp"
+            android:textColor="@color/material_dynamic_primary50"
+            />
+
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/mac_avatar"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_home_48px"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/circle"
+            />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/mac_text_input_edittext_userbio"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:layout_marginTop="5dp"
+        android:textSize="15sp"
+        android:text="@string/profile_bio"
+        android:enabled="false"
+        android:textAlignment="center"
+        android:background="@null"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="20dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/email"
+            android:layout_gravity="center_vertical"
+            android:textSize="18sp"
+            android:layout_marginRight="20dp"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/mac_text_input_layout_useremail"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/email"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="40dp"
+            app:boxCornerRadiusBottomStart="15dp"
+            app:boxCornerRadiusTopStart="15dp"
+            app:boxCornerRadiusBottomEnd="15dp"
+            app:boxCornerRadiusTopEnd="15dp"
+            app:boxStrokeColor="@color/md_theme_light_onPrimary"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/mac_text_input_edittext_useremail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_theme_light_onPrimary"
+                android:enabled="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="20dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/phone"
+            android:layout_gravity="center_vertical"
+            android:textSize="18sp"
+            android:layout_marginRight="35dp"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/mac_text_input_layout_userphone"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/phone"
+            android:paddingLeft="20dp"
+            android:layout_gravity="center_vertical"
+            app:boxCornerRadiusBottomStart="15dp"
+            app:boxCornerRadiusTopStart="15dp"
+            app:boxCornerRadiusBottomEnd="15dp"
+            app:boxCornerRadiusTopEnd="15dp"
+            app:boxStrokeColor="@color/md_theme_light_onPrimary"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/mac_text_input_edittext_userphone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_theme_light_onPrimary"
+                android:enabled="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="20dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/address"
+            android:layout_gravity="center_vertical"
+            android:textSize="18sp"
+            />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/mac_text_input_layout_useraddress"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/address"
+            android:paddingLeft="40dp"
+            android:layout_gravity="center_vertical"
+            app:boxCornerRadiusBottomStart="15dp"
+            app:boxCornerRadiusTopStart="15dp"
+            app:boxCornerRadiusBottomEnd="15dp"
+            app:boxCornerRadiusTopEnd="15dp"
+            app:boxStrokeColor="@color/md_theme_light_onPrimary"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/mac_text_input_edittext_useraddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_theme_light_onPrimary"
+                android:enabled="false"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="40dp"
+        >
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mac_edit_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Edit account button"
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            app:icon="@drawable/edit_48px"
+            app:iconGravity="start"
+            app:iconTint="@color/md_theme_dark_shadow"
+            android:text="Edit"
+            android:textColor="@color/md_theme_dark_shadow"
+            android:textSize="15sp"
+            android:width="200dp"
+            app:backgroundTint="#B6F4CF"
+            app:strokeColor="@color/md_theme_dark_shadow"
+            app:strokeWidth="1dp"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/mac_logout_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Logout account button"
+            style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+            app:icon="@drawable/logout_48px"
+            app:iconGravity="start"
+            app:iconTint="@color/md_theme_dark_shadow"
+            android:text="Logout"
+            android:textColor="@color/md_theme_dark_shadow"
+            android:textSize="15sp"
+            android:width="200dp"
+            app:backgroundTint="#B6F4CF"
+            app:strokeColor="@color/md_theme_dark_shadow"
+            app:strokeWidth="1dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            />
+
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

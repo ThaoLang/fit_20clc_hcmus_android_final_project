@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".HomePage">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/homepage_greeting"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:textAlignment="center"
+        android:textSize="28sp"
+        android:text="Hello"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:id="@+id/homepage_username"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Full name:"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/homepage_userphone"
+        android:text="Phone:"
+        android:textSize="18sp"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:id="@+id/homepage_useraddress"
+        android:text="Address:"
+        android:textSize="18dp"
+        />
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>
