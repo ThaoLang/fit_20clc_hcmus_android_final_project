@@ -64,6 +64,8 @@ public class MainActivity extends FragmentActivity {
     public static String NOTIFICATION_INIT_PARAM = "NOTIFICATION_INIT_PARAM";
     public static String ACCOUNT_INFO_INIT_PARAM = "ACCOUNT_INFO";
 
+    private User mainUserInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -180,4 +182,13 @@ public class MainActivity extends FragmentActivity {
         transaction.commit();
     }
 
+    public User getMainUserInfo()
+    {
+        return mainUserInfo;
+    }
+
+    public void setMainUserInfo(User newMainUserInfo)
+    {
+        mainUserInfo = newMainUserInfo;
+    }
 }
