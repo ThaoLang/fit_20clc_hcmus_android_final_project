@@ -129,7 +129,7 @@ public class AccountInfoPage extends Fragment {
                     mainUserInfo.setBio(inputuserbio);
 
                     FirebaseFirestore fb = FirebaseFirestore.getInstance();
-                    fb.collection("users").document(user.getUid()).set(mainUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).set(mainUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {

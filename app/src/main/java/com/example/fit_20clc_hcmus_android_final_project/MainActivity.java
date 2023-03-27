@@ -103,10 +103,28 @@ public class MainActivity extends FragmentActivity {
     protected void onStart()
     {
         super.onStart();
-        if(mAuth.getCurrentUser() == null)
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user == null)
         {
             startActivity(new Intent(MainActivity.this, SignIn.class));
             finish();
+        }
+        else
+        {
+            FirebaseFirestore fb = FirebaseFirestore.getInstance();
+            fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful())
+                    {
+                        mainUserInfo =  task.getResult().toObject(User.class);
+                    }
+                    else
+                    {
+                        mainUserInfo = null;
+                    }
+                }
+            });
         }
     }
 

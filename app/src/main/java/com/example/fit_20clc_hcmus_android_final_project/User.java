@@ -27,12 +27,14 @@ public class User {
         _userbio = "00000";
     }
 
-    public User(String name, String phone, String address, String bio)
+    public User(String name, String phone, String address, String bio, List<String> plans, List<String> favorite_locations)
     {
         this._username = name;
         this._userphone = phone;
         this._useraddress = address;
         this._userbio = bio;
+        this._favorite_locations = favorite_locations;
+        this._plans = plans;
     }
 
     public void setPlans(ArrayList<String> newPlans)

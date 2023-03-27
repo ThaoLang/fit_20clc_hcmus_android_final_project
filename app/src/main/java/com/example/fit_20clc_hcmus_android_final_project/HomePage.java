@@ -98,10 +98,10 @@ public class HomePage extends Fragment {
         //user has signed in
         if(currentUser != null)
         {
-            fb.collection("users").document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful())
+                    if(task.isSuccessful() && task.getResult() != null)
                     {
                         User user = task.getResult().toObject(User.class);
                         greeting.setText("Hello " + user.getName());

@@ -37,6 +37,8 @@ import java.util.regex.Pattern;
 public class Registration extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private RegistrationBinding binding;
+
+    private String DEFAULT_USER_BIO = "something about me";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,17 +121,19 @@ public class Registration extends AppCompatActivity {
                 if (task.isSuccessful())
                 {
 
-                    List<String> favorite_locarions=new ArrayList<>();
-                    List<String> plans=new ArrayList<>();
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("username", username);
-                    data.put("phone_number", phone_number);
-                    data.put("address", address);
-                    data.put("favorite_locations",favorite_locarions);
-                    data.put("plans",plans);
+                    List<String> favorite_locarions=new ArrayList<String>();
+                    List<String> plans=new ArrayList<String>();
+//                    Map<String, Object> data = new HashMap<>();
+//                    data.put("username", username);
+//                    data.put("phone_number", phone_number);
+//                    data.put("address", address);
+//                    data.put("favorite_locations",favorite_locarions);
+//                    data.put("plans",plans);
+
+                    User data = new User(username, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locarions);
 
                     FirebaseUser user= task.getResult().getUser();
-                    db.collection("account")
+                    db.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION)
                             .document(user.getUid())
                             .set(data)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
