@@ -12,4 +12,13 @@
     <string name="phone">Phone</string>
     <string name="email">Email</string>
     <string name="profile_bio">somethings about me...</string>
+
+    <string name="plan_toggle_1">Incoming</string>
+    <string name="plan_toggle_2">Ongoing</string>
+    <string name="plan_toggle_3">History</string>
+    <string name="search_plan_bar">Search plan</string>
+    <string name="sign_in">Sign in</string>
+    <string name="register">"Haven't signed up?"</string>
+    <string name="confirm">"LET'S GO!"</string>
+    <string name="forget">Forget your password?</string>
 </resources>
