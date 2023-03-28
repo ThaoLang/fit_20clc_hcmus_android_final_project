@@ -84,7 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/confirm"
-                    app:backgroundTint="#2dd5b8" />
+                    app:backgroundTint="@color/CustomColor1" />
 
                 <Button
                     android:id="@+id/buttonForget"
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="@string/register"
-                app:backgroundTint="#A8C0FF" />
+                app:backgroundTint="@color/CustomColor2" />
 
         </LinearLayout>
 

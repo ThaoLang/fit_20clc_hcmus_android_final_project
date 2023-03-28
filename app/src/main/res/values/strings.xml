@@ -21,4 +21,10 @@
     <string name="register">"Haven't signed up?"</string>
     <string name="confirm">"LET'S GO!"</string>
     <string name="forget">Forget your password?</string>
+    <string name="forget_title">Forget Password?</string>
+    <string name="forget_guide">Please enter the SmartOTP code we sent to your email:</string>
+
+    <string name="channel_name">Tripuddy!</string>
+    <string name="channel_description">Fast, smart and easy</string>
+
 </resources>
