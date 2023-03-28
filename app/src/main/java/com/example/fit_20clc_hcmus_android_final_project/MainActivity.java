@@ -61,7 +61,7 @@ public class MainActivity extends FragmentActivity {
 
     public static String HOME_PAGE_INIT_PARAM = "HOME_PAGE";
     public static String TRIPS_INIT_PARAM = "TRIPS";
-    public static String NOTIFICATION_INIT_PARAM = "NOTIFICATION_INIT_PARAM";
+    public static String NOTIFICATION_PAGE_INIT_PARAM = "NOTIFICATION_PAGE";
     public static String ACCOUNT_INFO_INIT_PARAM = "ACCOUNT_INFO";
 
     private User mainUserInfo;
@@ -170,7 +170,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     //execute to switch the screen (fragment)
-    private void switchScreenByScreenType(int inputScreenType)
+    public void switchScreenByScreenType(int inputScreenType)
     {
         switch (inputScreenType)
         {
@@ -186,7 +186,7 @@ public class MainActivity extends FragmentActivity {
             }
             case NOTIFICATION:
             {
-                //TODO: code
+                currentScreen = NotificationPage.newInstance(NOTIFICATION_PAGE_INIT_PARAM);
                 break;
             }
             case ACCOUNT_INFO:
