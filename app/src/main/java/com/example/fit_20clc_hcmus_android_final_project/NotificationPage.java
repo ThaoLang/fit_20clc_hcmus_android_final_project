@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ import com.google.firebase.auth.FirebaseUser;
  * create an instance of this fragment.
  */
 public class NotificationPage extends Fragment {
-    FragmentNotificationPageBinding binding;
+    private FragmentNotificationPageBinding binding;
 
     // TODO: Revise notificationId
     final private String CHANNEL_ID = "NOTIFICATION_CH_ID";
@@ -43,6 +44,10 @@ public class NotificationPage extends Fragment {
 
     private MainActivity main_activity;
     private Context context;
+    private CustomNotificationAdapter adapter;
+//    private int selected_position=0;
+
+    LinearLayoutManager mLinearLayoutManager;
 
     public NotificationPage() {
         // Required empty public constructor
@@ -76,6 +81,33 @@ public class NotificationPage extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         binding = FragmentNotificationPageBinding.inflate(inflater, container, false);
+//        return binding.getRoot();
+
+        mLinearLayoutManager = new LinearLayoutManager(getActivity());
+        mLinearLayoutManager.setStackFromEnd(true);
+
+        adapter = new CustomNotificationAdapter(context);
+
+        binding.listItem.setLayoutManager(mLinearLayoutManager);
+
+        binding.listItem.setAdapter(adapter);
+        binding.listItem.smoothScrollToPosition(0);
+
+        //TODO: receive cue from adapter, send notification and intent to go to TRIPS
+
+//        binding.listItem.setOnClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+//                View selectedView = binding.listItem.getChildAt(selected_position);
+//                selectedView.setBackgroundColor(Color.TRANSPARENT);
+//
+//                String message = "";
+//                selected_position=position;
+//
+////                main_activity.onMsgFromFragToMain("LIST", customDatabase.Records.get(position),message);
+//                binding.textView.setText("Item selected!");
+//                v.setBackgroundColor(Color.BLUE);
+//            }});
 
         return binding.getRoot();
     }
