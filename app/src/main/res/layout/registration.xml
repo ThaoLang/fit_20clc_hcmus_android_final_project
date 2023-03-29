@@ -141,7 +141,7 @@
                 android:background="#00000000"
                 android:elevation="0dp"
                 android:text="Already have account? Login"
-                android:textColor="#000"/>
+                android:textColor="@color/CustomColor1="/>
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

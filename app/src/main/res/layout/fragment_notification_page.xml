@@ -22,14 +22,6 @@
             android:textSize="40sp"
             android:textStyle="bold"/>
 
-<!--        Remove button soon-->
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/sendButton"
-            android:text="send notification"
-            android:backgroundTint="@color/CustomColor2"/>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_item"
             android:layout_width="match_parent"
