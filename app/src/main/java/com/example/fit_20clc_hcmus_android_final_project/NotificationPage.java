@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -18,17 +20,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPageBinding;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link NotificationPage#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class NotificationPage extends Fragment {
+public class NotificationPage extends Fragment implements CustomNotificationAdapter.Callbacks {
     private FragmentNotificationPageBinding binding;
 
     // TODO: Revise notificationId
@@ -87,27 +88,15 @@ public class NotificationPage extends Fragment {
         mLinearLayoutManager.setStackFromEnd(true);
 
         adapter = new CustomNotificationAdapter(context);
+        adapter.setListener(this);
 
         binding.listItem.setLayoutManager(mLinearLayoutManager);
 
         binding.listItem.setAdapter(adapter);
         binding.listItem.smoothScrollToPosition(0);
 
-        //TODO: receive cue from adapter, send notification and intent to go to TRIPS
-
-//        binding.listItem.setOnClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-//                View selectedView = binding.listItem.getChildAt(selected_position);
-//                selectedView.setBackgroundColor(Color.TRANSPARENT);
-//
-//                String message = "";
-//                selected_position=position;
-//
-////                main_activity.onMsgFromFragToMain("LIST", customDatabase.Records.get(position),message);
-//                binding.textView.setText("Item selected!");
-//                v.setBackgroundColor(Color.BLUE);
-//            }});
+        //TODO: create notification dataset and update with this function
+        getNotificationInfo();
 
         return binding.getRoot();
     }
@@ -120,13 +109,6 @@ public class NotificationPage extends Fragment {
         //user has signed in
         if(currentUser != null) {
             createNotificationChannel();
-
-            binding.sendButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sendNotification();
-                }
-            });
         }
     }
 
@@ -146,7 +128,7 @@ public class NotificationPage extends Fragment {
         }
     }
 
-    private void sendNotification() {
+    public void sendNotification() {
         // TODO: CONSIDER: When click on notification, swap to trips using public method and var
         // main_activity.switchScreenByScreenType(main_activity.TRIPS);
 
@@ -179,5 +161,54 @@ public class NotificationPage extends Fragment {
         }
         // TODO: Revise notificationId
         notificationManager.notify(notificationId, builder.build());
+    }
+
+    private void getNotificationInfo(){
+        FirebaseDatabase
+                .getInstance()
+                .getReference("Account")
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        FirebaseUser user = main_activity.getTheCurrentUser();
+                        User mainUserInfo = main_activity.getMainUserInfo();
+                        if(mainUserInfo != null)
+                        {
+                            Toast.makeText(context, "Hello World", Toast.LENGTH_SHORT).show();
+
+                            // TODO: get user notifications
+                            // TODO: create notification class array and import data
+
+                            // val notification = snapshot.getValue(Notification.class); ? https://youtu.be/DQLZxt1qFdk?t=1120
+//                            username.setText(mainUserInfo.getName());
+//                            userbio.setText(mainUserInfo.getBio());
+//                            useremail.setText(user.getEmail());
+//                            useraddress.setText(mainUserInfo.getAddress());
+//                            userphone.setText(mainUserInfo.getPhone());
+
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 }

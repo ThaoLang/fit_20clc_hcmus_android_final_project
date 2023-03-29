@@ -25,7 +25,6 @@ import java.util.Arrays;
 public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotificationAdapter.ViewHolder> {
 
     //    Notification dataset here vvv
-
     private String[] localDataSet ={
             "Click 1",
             "Click 2",
@@ -35,7 +34,16 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
 
     Context context;
-    MainActivity main_activity;
+
+    private Callbacks listener;
+    public void setListener(Callbacks listener) {
+        this.listener = listener;
+    }
+    // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
+    // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
+    public interface Callbacks {
+        void sendNotification();
+    }
 
     /**
      * Initialize the dataset of the Adapter.
@@ -73,7 +81,7 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
             view.setOnLongClickListener(this);
         }
 
-        // Constructors
+        // Constructor
 //        public TextView getTextView() {
 //            return textView;
 //        }
@@ -103,6 +111,9 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification, viewGroup, false);
 
+        //Send notification on create
+        listener.sendNotification();
+
         return new ViewHolder(view);
     }
 
@@ -113,6 +124,7 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
         viewHolder.textView.setText(dataSet.get(position));
+
 //        Toast.makeText(context, "Hello " + dataSet[position], Toast.LENGTH_SHORT).show();
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
@@ -122,7 +134,8 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
                 else
                     Toast.makeText(context, " "+ dataSet.get(position), Toast.LENGTH_SHORT).show();
 
-                // TODO: make notification here
+                //Send notification here for debug
+                listener.sendNotification();
             }
         });
     }
@@ -132,6 +145,4 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     public int getItemCount() {
         return dataSet.size();
     }
-
-    //TODO: send cue to noti fragment --> create notification and intent to go to TRIPS
 }
