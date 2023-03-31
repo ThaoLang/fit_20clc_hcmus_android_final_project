@@ -28,6 +28,9 @@
             android:name=".Registration"
             android:exported="false"></activity>
         <activity
+            android:name=".Search"
+            android:exported="false"></activity>
+        <activity
             android:name=".SignIn"
             android:exported="true">
             <intent-filter>

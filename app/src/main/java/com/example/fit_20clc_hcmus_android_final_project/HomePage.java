@@ -3,10 +3,13 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.util.Log;
@@ -15,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.fit_20clc_hcmus_android_final_project.databinding.ActivityHomepageBinding;
+import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPageBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,17 +38,16 @@ import com.google.firebase.firestore.QuerySnapshot;
 public class HomePage extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
 
     private String mParam1;
-    private String mParam2;
 
     private MainActivity main_activity;
     private Context context;
 
-    private TextView greeting, username, userphone, useraddress;
-
+    LinearLayoutManager recentPostManager;
+    LinearLayoutManager favoriteLocationManager;
+    LinearLayoutManager nearbyLocationManager;
+    ActivityHomepageBinding binding;
 
 
     public HomePage() {
@@ -73,45 +77,76 @@ public class HomePage extends Fragment {
         {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-//        return inflater.inflate(R.layout.activity_homepage, container, false);
-        View homepage = inflater.inflate(R.layout.activity_homepage, null);
-        //connect to the layout
-        greeting = (TextView) homepage.findViewById(R.id.homepage_greeting);
-        username = (TextView) homepage.findViewById(R.id.homepage_username);
-        userphone = (TextView) homepage.findViewById(R.id.homepage_userphone);
-        useraddress = (TextView) homepage.findViewById(R.id.homepage_useraddress);
+        binding = ActivityHomepageBinding.inflate(inflater, container, false);
 
-        return homepage;
+        //recent posts
+        recentPostManager = new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL,false);
+        recentPostManager.setStackFromEnd(true);
+
+        binding.listPost.setLayoutManager(recentPostManager);
+
+        binding.listPost.setAdapter(new PostAdapter(requireActivity()));
+        binding.listPost.smoothScrollToPosition(0);
+
+        //favorite locations
+        favoriteLocationManager = new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL,false);
+        favoriteLocationManager.setStackFromEnd(true);
+
+        binding.favoriteLocations.setLayoutManager(favoriteLocationManager);
+
+        binding.favoriteLocations.setAdapter(new FavoriteLocationAdapter(requireActivity()));
+        binding.favoriteLocations.smoothScrollToPosition(0);
+
+        //nearby locations
+        nearbyLocationManager = new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL,false);
+        nearbyLocationManager.setStackFromEnd(true);
+
+        binding.nearbyLocations.setLayoutManager(nearbyLocationManager);
+
+        binding.nearbyLocations.setAdapter(new FavoriteLocationAdapter(requireActivity()));
+        binding.nearbyLocations.smoothScrollToPosition(0);
+
+        //search btn
+        binding.searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(getActivity(),Search.class);
+                startActivity(intent);
+            }
+        });
+
+        return binding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        FirebaseFirestore fb = FirebaseFirestore.getInstance();
-        FirebaseUser currentUser = main_activity.getTheCurrentUser();
-        //user has signed in
-        if(currentUser != null)
-        {
-            fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful() && task.getResult() != null)
-                    {
-                        User user = task.getResult().toObject(User.class);
-                        greeting.setText("Hello " + user.getName());
-                        username.setText("Full name: " + user.getName());
-                        userphone.setText("Phone: " + user.getPhone());
-                        useraddress.setText("Address: " + user.getAddress());
-                    }
-                }
-            });
-        }
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        FirebaseFirestore fb = FirebaseFirestore.getInstance();
+//        FirebaseUser currentUser = main_activity.getTheCurrentUser();
+//        //user has signed in
+//        if(currentUser != null)
+//        {
+//            fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                    if(task.isSuccessful() && task.getResult() != null)
+//                    {
+//                        User user = task.getResult().toObject(User.class);
+//                        greeting.setText("Hello " + user.getName());
+//                        username.setText("Full name: " + user.getName());
+//                        userphone.setText("Phone: " + user.getPhone());
+//                        useraddress.setText("Address: " + user.getAddress());
+//                    }
+//                }
+//            });
+//        }
+  //  }
 
 }
