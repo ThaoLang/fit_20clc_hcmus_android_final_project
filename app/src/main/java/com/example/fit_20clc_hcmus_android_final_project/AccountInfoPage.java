@@ -89,7 +89,7 @@ public class AccountInfoPage extends Fragment {
                     useraddress.setEnabled(true);
                     //change edit_save_button to save_button
                     edit_save_button.setText("Save");
-                    edit_save_button.setIcon(Drawable.createFromPath("res/drawable/save_48px.xml"));
+                    edit_save_button.setIconResource(R.drawable.save_48px);
                     EDIT_OR_SAVE = true;
                 } else if (EDIT_OR_SAVE) {
                     String inputusername = username.getText().toString();
@@ -117,7 +117,7 @@ public class AccountInfoPage extends Fragment {
                     userphone.setEnabled(false);
                     useraddress.setEnabled(false);
                     edit_save_button.setText("Edit");
-                    edit_save_button.setIcon(Drawable.createFromPath("res/drawable/edit_48px.xml"));
+                    edit_save_button.setIconResource(R.drawable.edit_48px);
                     EDIT_OR_SAVE = false;
 
                     FirebaseUser user = main.getTheCurrentUser();

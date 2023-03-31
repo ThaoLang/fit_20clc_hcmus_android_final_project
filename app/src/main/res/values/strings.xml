@@ -36,4 +36,10 @@ Bali có rất nhiều cái tên như: Đảo thần, Nơi bình minh của th�
 Bali có khí hậu mát mẻ, trong lành và khung cảnh thiên nhiên đẹp như trong tranh. Bali còn sở hữu những khu đền đài với kiến trúc độc đáo như đền Tanah Lot, Uluwatu, Cánh cổng thiên đường tại đền Pura Lempuyang... Ngoài vẻ đẹp thiên nhiên, cùng những ngôi đền thiêng với kiến trúc ấn tượng, Bali còn thu hút du khách bởi những khách sạn sang trọng, khu nghỉ dưỡng cao cấp, những nét văn hóa độc đáo, cùng nền ẩm thực thật sự rất hấp dẫn, tất cả những món ăn đều được chế biến rất tuyệt vời.
 Ở đảo Bali cũng có rất nhiều hoạt động vui chơi, giải trí hấp dẫn, thú vị, pha chút phiêu lưu mạo hiểm. Điển hình như trò chơi Bali swing (xích đu) hay chèo thuyền đổ thác là hai loại hình trải nghiệm độc đáo, ấn tượng mà du khách nào cũng phải thử khi đến với hòn đảo “mật ngọt” này.</string>
 
+    <string name="default_plan_name">Plan`s name</string>
+    <string name="default_plan_departure_date"> departure date: 01/01/2020</string>
+
+    <string name="material_toolbar_trips_title">Trips</string>
+    <string name="material_toolbar_account_info_title">Account Info</string>
+
 </resources>

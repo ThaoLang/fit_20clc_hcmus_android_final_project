@@ -21,7 +21,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:title="@string/bottom_nav_manage_account"
+                app:title="@string/material_toolbar_account_info_title"
                 app:titleCentered="true"
                 android:background="@null"
                 app:navigationIcon="@drawable/arrow_back_black_24dp"

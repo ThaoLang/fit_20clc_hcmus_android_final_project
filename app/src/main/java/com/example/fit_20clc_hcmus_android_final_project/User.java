@@ -136,6 +136,17 @@ public class User {
         return this._userbio;
     }
 
+    public List<String> getPlans()
+    {
+        return this._plans;
+    }
+
+    public List<String> getFavorite_locations()
+    {
+        return this._favorite_locations;
+    }
+
+
     public String UserToString()
     {
         String str = new StringBuilder().append("|").append(_username).append("|").append(_userphone)

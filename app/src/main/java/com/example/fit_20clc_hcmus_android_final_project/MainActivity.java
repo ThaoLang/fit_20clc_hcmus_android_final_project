@@ -181,7 +181,7 @@ public class MainActivity extends FragmentActivity {
             }
             case TRIPS:
             {
-                //TODO: code
+                currentScreen = TripsPage.newInstance(TRIPS_INIT_PARAM);
                 break;
             }
             case NOTIFICATION:

@@ -5,4 +5,38 @@
         <item name="cornerRadius">50dp</item>
     </style>
 
+    <style name="pill_shape">
+        <item name="boxCornerRadiusBottomStart">25dp</item>
+        <item name="boxCornerRadiusBottomEnd">25dp</item>
+        <item name="boxCornerRadiusTopStart">25dp</item>
+        <item name="boxCornerRadiusTopEnd">25dp</item>
+    </style>
+
+    <style name="half_left_pill_shape">
+        <item name= "cornerSizeTopLeft">50%</item>
+        <item name= "cornerSizeBottomLeft">50%</item>
+    </style>
+
+    <style name="half_right_pill_shape">
+        <item name= "cornerSizeTopRight">50%</item>
+        <item name= "cornerSizeBottomRight">50%</item>
+    </style>
+    
+    <style name="a_quarter_top_left_pill_shape">
+        <item name="cornerSizeTopLeft">75%</item>
+    </style>
+
+    <style name="a_quarter_bottom_left_pill_shape">
+        <item name="cornerSizeBottomLeft">75%</item>
+    </style>
+
+    <style name="a_quarter_top_right_pill_shape">
+        <item name="cornerSizeTopRight">75%</item>
+    </style>
+
+    <style name="a_quarter_bottom_right_pill_shape">
+        <item name="cornerSizeBottomRight">75%</item>
+    </style>
+
+
 </resources>
