@@ -13,6 +13,15 @@
         android:icon="@drawable/ic_luggage_48px"
         android:title="@string/bottom_nav_trips"/>
     <item
+        android:id="@+id/bottom_nav_create_trip"
+        android:enabled="true"
+        android:icon="@drawable/add_icon"
+        android:iconTint="@color/md_theme_light_onPrimary"
+        android:backgroundTint="@drawable/custom_icon_navbar"
+
+        style="@style/circle"
+        android:title="Create plan"/>
+    <item
         android:id="@+id/bottom_nav_notification"
         android:enabled="true"
         android:icon="@drawable/ic_notifications_48px"
