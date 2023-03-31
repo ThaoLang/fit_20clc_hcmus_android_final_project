@@ -24,16 +24,14 @@
                 android:src="@drawable/signup_icon" />
 
             <TextView
-                android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="50dp"
-                android:text="@string/sign_in"
-                android:textColor="@color/CustomColor1"
-                android:textSize="40sp"
+                android:text="@string/channel_name"
                 android:textStyle="bold"
-                tools:layout_editor_absoluteX="150dp"
-                tools:layout_editor_absoluteY="78dp" />
+                android:textSize="40sp"
+                android:textColor="@color/CustomColor1"
+                android:padding="30dp"
+                android:layout_gravity="center_vertical"/>
         </LinearLayout>
 
         <LinearLayout
@@ -41,10 +39,22 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="50dp"
+                android:text="@string/sign_in"
+                android:textColor="@color/CustomColor2"
+                android:textSize="35sp"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="150dp"
+                tools:layout_editor_absoluteY="78dp" />
 
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

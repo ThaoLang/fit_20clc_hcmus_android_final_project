@@ -2,35 +2,14 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 import com.example.fit_20clc_hcmus_android_final_project.databinding.ActivitySigninBinding;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.AggregateQuery;
-import com.google.firebase.firestore.AggregateQuerySnapshot;
-import com.google.firebase.firestore.AggregateSource;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-
-import java.util.concurrent.ForkJoinTask;
 
 public class SignIn extends AppCompatActivity{
     ActivitySigninBinding binding;
@@ -42,14 +21,20 @@ public class SignIn extends AppCompatActivity{
     final private String NO_EMAIL_INPUT = "Please enter your email.\n";
     final private String NO_PASSWORD_INPUT = "Please enter your password.\n";
 
-//    private final int START_FORGETPASSWORD_CODE = 123;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         binding = ActivitySigninBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        SharedPreferences sp1=this.getSharedPreferences("Login", MODE_PRIVATE);
+
+        String email=sp1.getString("email", null);
+        String password = sp1.getString("password", null);
+
+        binding.editTextEmailAddress.setText(email);
+        binding.editTextPassword.setText(password);
 
         binding.buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,13 +59,20 @@ public class SignIn extends AppCompatActivity{
                 mAuth.signInWithEmailAndPassword(InputEmail, InputPassword)
                         .addOnCompleteListener(SignIn.this, task -> {
                             if (task.isSuccessful()) {
-                                // Sign in success, update UI with the signed-in user's information
-                                FirebaseUser user = mAuth.getCurrentUser();
+                                // Sign in success
                                 Toast.makeText(SignIn.this, SUCCESSFUL, Toast.LENGTH_SHORT).show();
 
-                                Intent intent = new Intent(SignIn.this, MainActivity.class);
-                                mainActivityResultLauncher.launch(intent);
+                                // Store sign in data
+                                SharedPreferences sp=getSharedPreferences("Login", MODE_PRIVATE);
+                                SharedPreferences.Editor Ed=sp.edit();
+                                Ed.putString("email",InputEmail);
+                                Ed.putString("password",InputPassword);
+                                Ed.commit();
 
+                                // Continue
+                                Intent intent = new Intent(SignIn.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Toast.makeText(SignIn.this, WRONG_INPUT, Toast.LENGTH_SHORT).show();
@@ -105,8 +97,7 @@ public class SignIn extends AppCompatActivity{
 
                 intent.putExtra("SignIn", bundle);
 
-//                startActivityForResult(intent, START_FORGETPASSWORD_CODE);
-                forgetPasswordActivityResultLauncher.launch(intent);
+                startActivity(intent);
             }
         });
 
@@ -115,47 +106,9 @@ public class SignIn extends AppCompatActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(SignIn.this, Registration.class);
 
-                registerActivityResultLauncher.launch(intent);
+                startActivity(intent);
             }
         });
     }
 
-    ActivityResultLauncher<Intent> forgetPasswordActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // Here, no request code
-                        // Intent data = result.getData();
-                        //
-                   }
-                }
-            });
-
-    ActivityResultLauncher<Intent> mainActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // Here, no request code
-                        // Intent data = result.getData();
-                        //
-                    }
-                }
-            });
-
-    ActivityResultLauncher<Intent> registerActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        // Here, no request code
-                        // Intent data = result.getData();
-                        //
-                    }
-                }
-            });
 }

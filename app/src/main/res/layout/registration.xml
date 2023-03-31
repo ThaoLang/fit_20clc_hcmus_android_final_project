@@ -25,20 +25,20 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Tripuddy"
+                    android:text="@string/channel_name"
                     android:textStyle="bold"
                     android:textSize="40sp"
                     android:textColor="@color/CustomColor1"
                     android:padding="30dp"
-                    android:layout_gravity="center_vertical"></TextView>
+                    android:layout_gravity="center_vertical"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Sign up to start your new Journey"
+                    android:text="@string/register_motto"
                     android:textSize="15sp"
                     android:textColor="@color/CustomColor2"
                     android:layout_gravity="center_horizontal"
-                    android:textStyle="italic"></TextView>
+                    android:textStyle="italic"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -53,7 +53,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Username"
+                android:hint="@string/username"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/username"
@@ -64,7 +64,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
+                android:hint="@string/email"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email"
@@ -75,7 +75,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Phone number"
+                android:hint="@string/phone"
                 app:counterEnabled="true"
                 app:counterMaxLength="10"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
@@ -88,7 +88,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
+                android:hint="@string/password"
                 app:passwordToggleEnabled="true"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
@@ -101,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:passwordToggleEnabled="true"
-                android:hint="Confirm password"
+                android:hint="@string/confirm_password"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/confirmPassword"
@@ -112,7 +112,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Address"
+                android:hint="@string/address"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/address"
@@ -130,7 +130,7 @@
                 android:layout_marginBottom="5dp"
                 android:background="#2dd5b8"
                 app:backgroundTint="#2dd5b8"
-                android:text="CREATE ACCOUNT"
+                android:text="@string/create_account"
                 android:textColor="#fff" />
             <Button
                 android:id="@+id/callLogin"
@@ -140,7 +140,7 @@
                 android:layout_margin="5dp"
                 android:background="#00000000"
                 android:elevation="0dp"
-                android:text="Already have account? Login"
+                android:text="@string/account_sign_in"
                 android:textColor="@color/CustomColor1"/>
         </LinearLayout>
     </LinearLayout>
