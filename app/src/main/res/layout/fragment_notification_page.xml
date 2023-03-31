@@ -18,7 +18,6 @@
             android:layout_height="wrap_content"
             android:padding="50dp"
             android:text="@string/bottom_nav_notification"
-            android:textColor="@color/CustomColor1"
             android:textSize="40sp"
             android:textStyle="bold"/>
 

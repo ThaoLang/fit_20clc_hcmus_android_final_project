@@ -10,7 +10,7 @@
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="address">Address</string>
-    <string name="phone">Phone number</string>
+    <string name="phone">Phone no.</string>
     <string name="email">Email</string>
     <string name="profile_bio">somethings about me...</string>
 
