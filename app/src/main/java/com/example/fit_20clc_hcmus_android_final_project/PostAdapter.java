@@ -30,7 +30,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-//        void sendNotification();
+        void swapToPost();
     }
 
     /**
@@ -77,15 +77,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             avatar = (ImageView) view.findViewById(R.id.profile_image);
             main_image = (ImageView) view.findViewById(R.id.trip_image);
 
-
             view.setOnClickListener(this);
-//            view.setOnLongClickListener(this);
         }
-
-        // Constructor
-//        public TextView getTextView() {
-//            return textView;
-//        }
 
         public void setItemClickListener(ItemClickListener itemClickListener)
         {
@@ -97,11 +90,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
             itemClickListener.onClick(v,getAdapterPosition(),false);
         }
 
-//        @Override
-//        public boolean onLongClick(View v) {
-//            itemClickListener.onClick(v,getAdapterPosition(),true);
-//            return true;
-//        }
     }
 
 
@@ -129,20 +117,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         viewHolder.avatar.setImageResource(posts[position].getAvatar_url());
         viewHolder.main_image.setImageResource(posts[position].getMain_image());
 
-
-//        Toast.makeText(context, "Hello " + posts[position], Toast.LENGTH_SHORT).show();
-//        viewHolder.setItemClickListener(new ItemClickListener() {
-//            @Override
-//            public void onClick(View view, int position, boolean isLongClick) {
-//                if(isLongClick)
-//                    Toast.makeText(context, "Long Click: "+ posts.get(position), Toast.LENGTH_SHORT).show();
-//                else
-//                    Toast.makeText(context, " "+ posts.get(position), Toast.LENGTH_SHORT).show();
-//
-//                //Send notification here for debug
-//                listener.sendNotification();
-//            }
-//        });
+        viewHolder.setItemClickListener(new ItemClickListener() {
+            @Override
+            public void onClick(View view, int position, boolean isLongClick) {
+                //can swap to another activity using this method
+                listener.swapToPost();
+            }
+        });
     }
 
     // Return the size of your posts (invoked by the layout manager)

@@ -20,16 +20,20 @@
 
         <activity
             android:name=".ForgetPassword"
-            android:exported="false"></activity>
+            android:exported="false"/>
         <activity
             android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:exported="false"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".Registration"
-            android:exported="false"></activity>
+            android:exported="false"/>
         <activity
             android:name=".Search"
-            android:exported="false"></activity>
+            android:exported="false"/>
+        <activity
+            android:name=".LocationInfo"
+            android:exported="false"/>
         <activity
             android:name=".SignIn"
             android:exported="true">

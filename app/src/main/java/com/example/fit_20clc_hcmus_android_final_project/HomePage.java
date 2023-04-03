@@ -35,7 +35,7 @@ import com.google.firebase.firestore.QuerySnapshot;
  * Use the {@link HomePage#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomePage extends Fragment {
+public class HomePage extends Fragment implements FavoriteLocationAdapter.Callbacks, PostAdapter.Callbacks { //TODO: implement other adapter callbacks as well
 
     private static final String ARG_PARAM1 = "param1";
 
@@ -49,6 +49,9 @@ public class HomePage extends Fragment {
     LinearLayoutManager nearbyLocationManager;
     ActivityHomepageBinding binding;
 
+    private PostAdapter postAdapter;
+    private FavoriteLocationAdapter favoriteLocationAdapter;
+    private FavoriteLocationAdapter nearbyLocationAdapter;
 
     public HomePage() {
         // Required empty public constructor
@@ -78,7 +81,6 @@ public class HomePage extends Fragment {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
 
-
     }
 
     @Override
@@ -87,30 +89,36 @@ public class HomePage extends Fragment {
         binding = ActivityHomepageBinding.inflate(inflater, container, false);
 
         //recent posts
-        recentPostManager = new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL,false);
+        recentPostManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL,false);
         recentPostManager.setStackFromEnd(true);
 
         binding.listPost.setLayoutManager(recentPostManager);
 
-        binding.listPost.setAdapter(new PostAdapter(requireActivity()));
+        postAdapter = new PostAdapter(context);
+        postAdapter.setListener(this);
+        binding.listPost.setAdapter(postAdapter);
         binding.listPost.smoothScrollToPosition(0);
 
         //favorite locations
-        favoriteLocationManager = new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL,false);
+        favoriteLocationManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL,false);
         favoriteLocationManager.setStackFromEnd(true);
 
         binding.favoriteLocations.setLayoutManager(favoriteLocationManager);
 
-        binding.favoriteLocations.setAdapter(new FavoriteLocationAdapter(requireActivity()));
+        favoriteLocationAdapter = new FavoriteLocationAdapter(context);
+        favoriteLocationAdapter.setListener(this);
+        binding.favoriteLocations.setAdapter(favoriteLocationAdapter);
         binding.favoriteLocations.smoothScrollToPosition(0);
 
         //nearby locations
-        nearbyLocationManager = new LinearLayoutManager(requireActivity(), RecyclerView.HORIZONTAL,false);
+        nearbyLocationManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL,false);
         nearbyLocationManager.setStackFromEnd(true);
 
         binding.nearbyLocations.setLayoutManager(nearbyLocationManager);
 
-        binding.nearbyLocations.setAdapter(new FavoriteLocationAdapter(requireActivity()));
+        nearbyLocationAdapter = new FavoriteLocationAdapter(context);
+        nearbyLocationAdapter.setListener(this);
+        binding.nearbyLocations.setAdapter(nearbyLocationAdapter);
         binding.nearbyLocations.smoothScrollToPosition(0);
 
         //search btn
@@ -148,5 +156,13 @@ public class HomePage extends Fragment {
 //            });
 //        }
   //  }
+
+    public void swapToLocationInfo(){
+        startActivity(new Intent(context, LocationInfo.class));
+    }
+
+    public void swapToPost(){ //swap locationinfo into postdetail
+        startActivity(new Intent(context, LocationInfo.class));
+    }
 
 }

@@ -1,5 +1,7 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
+//import static com.example.fit_20clc_hcmus_android_final_project.MainActivity.INTENT_EXTRA_NOTIFICATION;
+
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -130,14 +132,15 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
 
     public void sendNotification() {
         // TODO: CONSIDER: When click on notification, swap to trips using public method and var
-        // main_activity.switchScreenByScreenType(main_activity.TRIPS);
+//         main_activity.switchScreenByScreenType(main_activity.TRIPS);
 
         // TODO: Revise intent to send to the right activity / plan when click on notification
-        Intent intent = new Intent(requireActivity(), SignIn.class); //supposedly from notification to main activity?
+        Intent intent = new Intent(context, LocationInfo.class); //supposedly from notification to plan detail?
+//        intent.putExtra(INTENT_EXTRA_NOTIFICATION, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(requireActivity(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireActivity(), CHANNEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications_48px)
                 .setContentTitle(getString(R.string.channel_name))
                 .setContentText(getString(R.string.channel_description))
@@ -146,10 +149,12 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireActivity());
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(requireActivity());
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
         // notificationId is a unique int for each notification that you must define
-        if (ActivityCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+//        if (ActivityCompat.checkSelfPermission(requireActivity(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -187,6 +192,10 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
 //                            userphone.setText(mainUserInfo.getPhone());
 
                             adapter.notifyDataSetChanged();
+
+                            //TODO: use service to send notification even when app isn't open
+                            //Send notification on create
+                            sendNotification();
                         }
                     }
 
@@ -210,5 +219,9 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
 
                     }
                 });
+    }
+
+    public void swapToTrips(){
+        main_activity.switchScreenByScreenType(main_activity.TRIPS);
     }
 }

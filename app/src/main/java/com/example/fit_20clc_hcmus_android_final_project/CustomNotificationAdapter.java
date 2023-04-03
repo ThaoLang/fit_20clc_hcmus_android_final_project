@@ -30,6 +30,14 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
             "Click 2",
             "Click 3",
             "Click 4",
+            "Click 1",
+            "Click 2",
+            "Click 3",
+            "Click 4",
+            "Click 1",
+            "Click 2",
+            "Click 3",
+            "Click 4",
     };
     private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
 
@@ -43,6 +51,8 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
         void sendNotification();
+
+        void swapToTrips();
     }
 
     /**
@@ -111,7 +121,7 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification, viewGroup, false);
 
-        //Send notification on create
+        //DEBUG: Send notification on create
         listener.sendNotification();
 
         return new ViewHolder(view);
@@ -134,8 +144,10 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
                 else
                     Toast.makeText(context, " "+ dataSet.get(position), Toast.LENGTH_SHORT).show();
 
-                //Send notification here for debug
+                //DEBUG: Send notification here
                 listener.sendNotification();
+
+                listener.swapToTrips();
             }
         });
     }
