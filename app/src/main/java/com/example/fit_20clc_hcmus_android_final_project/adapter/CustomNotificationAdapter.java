@@ -1,24 +1,17 @@
-package com.example.fit_20clc_hcmus_android_final_project;
+package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.sql.Array;
+import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
+import com.example.fit_20clc_hcmus_android_final_project.R;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 

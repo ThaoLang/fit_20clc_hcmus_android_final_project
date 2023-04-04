@@ -3,15 +3,8 @@ package com.example.fit_20clc_hcmus_android_final_project;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextPaint;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.LocationInfoBinding;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,11 +23,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.checkerframework.common.returnsreceiver.qual.This;
-
 import java.util.ArrayList;
-
-import javax.annotation.Nonnull;
 
 public class LocationInfo extends AppCompatActivity implements OnMapReadyCallback{
     private LocationInfoBinding binding;
