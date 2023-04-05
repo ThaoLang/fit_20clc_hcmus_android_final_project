@@ -1,7 +1,5 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -23,29 +21,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-import android.os.Bundle;
 import android.view.MenuItem;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import org.w3c.dom.Text;
 
 public class MainActivity extends FragmentActivity {
-
-    private static FirebaseAuth mAuth = null;
     private Fragment currentScreen;
     private NavigationBarView bottomNavigation;
 
@@ -64,8 +48,6 @@ public class MainActivity extends FragmentActivity {
     public static String NOTIFICATION_PAGE_INIT_PARAM = "NOTIFICATION_PAGE";
     public static String ACCOUNT_INFO_INIT_PARAM = "ACCOUNT_INFO";
 
-    private User mainUserInfo;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -73,7 +55,6 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        mAuth = FirebaseAuth.getInstance();
 
         //handle bottom navigation bar/////////////////////////////////////////////////
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -88,6 +69,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
+        DatabaseAccess.load_data();
 
         //Default: currentScreen is homepage-screen at the beginning
         if(screenType == 0)
@@ -103,7 +85,7 @@ public class MainActivity extends FragmentActivity {
     protected void onStart()
     {
         super.onStart();
-        FirebaseUser user = mAuth.getCurrentUser();
+        FirebaseUser user = DatabaseAccess.getCurrentUser();
         if(user == null)
         {
             startActivity(new Intent(MainActivity.this, SignIn.class));
@@ -111,8 +93,8 @@ public class MainActivity extends FragmentActivity {
         }
         else
         {
-            FirebaseFirestore fb = FirebaseFirestore.getInstance();
-            fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            /*FirebaseFirestore fb = FirebaseFirestore.getInstance();
+            fb.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                     if(task.isSuccessful())
@@ -124,13 +106,9 @@ public class MainActivity extends FragmentActivity {
                         mainUserInfo = null;
                     }
                 }
-            });
-        }
-    }
+            });*/
 
-    public FirebaseUser getTheCurrentUser()
-    {
-        return mAuth.getCurrentUser();
+        }
     }
 
 
@@ -200,13 +178,4 @@ public class MainActivity extends FragmentActivity {
         transaction.commit();
     }
 
-    public User getMainUserInfo()
-    {
-        return mainUserInfo;
-    }
-
-    public void setMainUserInfo(User newMainUserInfo)
-    {
-        mainUserInfo = newMainUserInfo;
-    }
 }

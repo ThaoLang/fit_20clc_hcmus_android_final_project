@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPageBinding;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -108,7 +109,7 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
     public void onStart() {
         super.onStart();
 
-        FirebaseUser currentUser = main_activity.getTheCurrentUser();
+        FirebaseUser currentUser = DatabaseAccess.getCurrentUser();
         //user has signed in
         if(currentUser != null) {
             createNotificationChannel();
@@ -176,8 +177,8 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        FirebaseUser user = main_activity.getTheCurrentUser();
-                        User mainUserInfo = main_activity.getMainUserInfo();
+                        FirebaseUser user = DatabaseAccess.getCurrentUser();
+                        User mainUserInfo = DatabaseAccess.getMainUserInfo();
                         if(mainUserInfo != null)
                         {
                             Toast.makeText(context, "Hello World", Toast.LENGTH_SHORT).show();

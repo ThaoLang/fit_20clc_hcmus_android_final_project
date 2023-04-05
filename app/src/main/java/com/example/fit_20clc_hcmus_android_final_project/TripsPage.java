@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.Trips_Incoming_Adapter;
+import com.example.fit_20clc_hcmus_android_final_project.adapter.Trips_Ongoing_Adapter;
 import com.example.fit_20clc_hcmus_android_final_project.custom_view_holder.Incoming_view_holder;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.google.android.material.button.MaterialButton;
@@ -30,7 +31,7 @@ import java.util.Locale;
 
 public class TripsPage extends Fragment {
 
-    private List<Plan> demoData = new ArrayList<Plan>();
+    private List<Plan> demoData;
     private MainActivity main;
     private Context context;
     private String InitParam;
@@ -40,8 +41,6 @@ public class TripsPage extends Fragment {
     private FloatingActionButton fab;
 
     private RecyclerView recyclerViewPosition;
-
-    private Trips_Incoming_Adapter trips_incoming_adapter;
 
     private int currentMode;
 
@@ -94,34 +93,43 @@ public class TripsPage extends Fragment {
         fab = (FloatingActionButton) view.findViewById(R.id.trips_fab);
         recyclerViewPosition = (RecyclerView) view.findViewById(R.id.trips_recyclerview_holder);
 
-        //Demo data - should be removed after using to database
-        LocalDate date = LocalDate.now();
-        LocalDate endDate = LocalDate.of(2023,4,20);
 
-        demoData.add(new Plan("Hoi An Tour", "None", date.toString(), endDate.toString(),4, false, 1F));
-        endDate = LocalDate.of(2023, 4, 30);
-
-        demoData.add(new Plan("Hoi An Tour", "None", date.toString(), endDate.toString(),4, false, 1F));
-
+        demoData = DatabaseAccess.getDemoData();
         Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(getContext(), demoData);
         recyclerViewPosition.setAdapter(adapter);
-        //Demo data
 
         currentMode = 0;
-
         IncomingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentMode= 0;
                 System.out.println("Incoming trips");
+                if(currentMode == 0)
+                {
+                    return;
+                }
+                currentMode= 0;
+                demoData = DatabaseAccess.getDemoData();
+                Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(getContext(), demoData);
+                recyclerViewPosition.setAdapter(adapter);
+                IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor7, Resources.getSystem().newTheme()));
+                OngoingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor3, Resources.getSystem().newTheme()));
             }
         });
 
         OngoingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentMode = 1;
                 System.out.println("Ongoing trips");
+                if(currentMode == 1)
+                {
+                    return;
+                }
+                currentMode = 1;
+                demoData = DatabaseAccess.getDemoData();
+                Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), demoData);
+                recyclerViewPosition.setAdapter(adapter);
+                OngoingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor7, Resources.getSystem().newTheme()));
+                IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor3, Resources.getSystem().newTheme()));
             }
         });
 
@@ -142,7 +150,6 @@ public class TripsPage extends Fragment {
     public void onStart()
     {
         super.onStart();
-
     }
 
 }

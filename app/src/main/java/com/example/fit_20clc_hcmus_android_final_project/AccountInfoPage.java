@@ -1,7 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -23,13 +23,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class AccountInfoPage extends Fragment {
 
     private MainActivity main;
-    private Context context;
+    private static Context context;
     private static final String INIT_PARAM = "initParam";
 
     private TextInputEditText username, userbio, useremail, userphone, useraddress;
     private MaterialButton edit_save_button, logout_button;
 
     private String initParam;
+
+    private static String UpdateSucessfully = "Update successfully...";
+    private static String UpdateFailed = "Update failed...";
 
     private boolean EDIT_OR_SAVE; //true: the current mode is save-mode -> if the button is clicked, it will save changed info
     // , false: the current mode is edit-mode -> if the button is clicked, it will allow to edit the info
@@ -120,26 +123,25 @@ public class AccountInfoPage extends Fragment {
                     edit_save_button.setIconResource(R.drawable.edit_48px);
                     EDIT_OR_SAVE = false;
 
-                    FirebaseUser user = main.getTheCurrentUser();
-                    User mainUserInfo = main.getMainUserInfo();
+                    User mainUserInfo = DatabaseAccess.getMainUserInfo();
 
                     mainUserInfo.setName(inputusername);
                     mainUserInfo.setPhone(inputuserphone);
                     mainUserInfo.setAddress(inputuseraddress);
                     mainUserInfo.setBio(inputuserbio);
 
-                    FirebaseFirestore fb = FirebaseFirestore.getInstance();
-                    fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).set(mainUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                main.setMainUserInfo(mainUserInfo);
-                                Toast.makeText(context, "Update successfully...", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(context, "Update failed...", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                    DatabaseAccess.updateUserInfo_In_Database(mainUserInfo, toast(UpdateSucessfully), toast(UpdateFailed));
+//                    fb.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).set(mainUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<Void> task) {
+//                            if (task.isSuccessful()) {
+//                                DatabaseAccess.up
+//                                Toast.makeText(context, "Update successfully...", Toast.LENGTH_LONG).show();
+//                            } else {
+//                                Toast.makeText(context, "Update failed...", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
+//                    });
                 }
             }
         });
@@ -161,8 +163,8 @@ public class AccountInfoPage extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser user = main.getTheCurrentUser();
-        User mainUserInfo = main.getMainUserInfo();
+        FirebaseUser user = DatabaseAccess.getCurrentUser();
+        User mainUserInfo = DatabaseAccess.getMainUserInfo();
         if(mainUserInfo != null)
         {
             username.setText(mainUserInfo.getName());
@@ -171,6 +173,17 @@ public class AccountInfoPage extends Fragment {
             useraddress.setText(mainUserInfo.getAddress());
             userphone.setText(mainUserInfo.getPhone());
         }
+    }
+
+    public static Runnable toast(String message)
+    {
+        Runnable foregroundToastAction = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+            }
+        };
+        return  foregroundToastAction;
     }
 
 }

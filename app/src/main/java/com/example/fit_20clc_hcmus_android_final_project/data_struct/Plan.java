@@ -11,9 +11,12 @@ public class Plan {
     private String end_date;
     private int init_number_of_people;
     private boolean isPublic;
+    private String status;
     private List<Location> listOfLocations = null;
     private Float rating;
     private List<String> listOfComments = null;
+
+    private List<String> set_of_editors = null;
 
     public Plan()
     {
@@ -23,9 +26,11 @@ public class Plan {
         end_date= "None";
         init_number_of_people= 0;
         isPublic= false;
+        status = "None";
         listOfLocations = new ArrayList<Location>();
         rating = 0F;
         listOfComments= new ArrayList<String>();
+        set_of_editors = new ArrayList<String>();
     }
 
     public Plan(String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate,
@@ -40,6 +45,7 @@ public class Plan {
         rating= inputRating;
         listOfLocations = new ArrayList<Location>();
         listOfComments= new ArrayList<String>();
+        set_of_editors = new ArrayList<String>();
     }
 
     public String getName()
@@ -85,6 +91,11 @@ public class Plan {
     public List<String> getListOfComments()
     {
         return listOfComments;
+    }
+
+    public List<String> getSet_of_editors()
+    {
+        return set_of_editors;
     }
 
     //setter
@@ -133,6 +144,7 @@ public class Plan {
     {
         listOfComments = newListOfComments;
     }
+
 
     public boolean addNewLocation(Location newLocation)
     {

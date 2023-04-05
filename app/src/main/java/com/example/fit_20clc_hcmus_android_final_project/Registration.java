@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.RegistrationBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -133,7 +134,7 @@ public class Registration extends AppCompatActivity {
                     User data = new User(username, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locations);
 
                     FirebaseUser user= task.getResult().getUser();
-                    db.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION)
+                    db.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION)
                             .document(user.getUid())
                             .set(data)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
