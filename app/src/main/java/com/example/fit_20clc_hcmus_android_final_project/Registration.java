@@ -2,7 +2,6 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -19,19 +18,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.AggregateQuery;
-import com.google.firebase.firestore.AggregateQuerySnapshot;
-import com.google.firebase.firestore.AggregateSource;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,12 +114,6 @@ public class Registration extends AppCompatActivity {
 
                     List<String> favorite_locations=new ArrayList<String>();
                     List<String> plans=new ArrayList<String>();
-//                    Map<String, Object> data = new HashMap<>();
-//                    data.put("username", username);
-//                    data.put("phone_number", phone_number);
-//                    data.put("address", address);
-//                    data.put("favorite_locations",favorite_locations);
-//                    data.put("plans",plans);
 
                     User data = new User(username, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locations);
 
@@ -160,46 +144,12 @@ public class Registration extends AppCompatActivity {
                 }
             }
         });
-//        Query queryByEmail=FirebaseFirestore.getInstance().collection("account")
-//                .whereEqualTo("email", email);
-//        AggregateQuery countQuery = queryByEmail.count();
-//        countQuery.get(AggregateSource.SERVER).addOnCompleteListener(new OnCompleteListener<AggregateQuerySnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AggregateQuerySnapshot> task) {
-//                if (task.isSuccessful()) {
-//                    AggregateQuerySnapshot snapshot = task.getResult();
-//                    if (snapshot.getCount()>0){
-//                        Toast.makeText(Registration.this,"Email is already used",Toast.LENGTH_SHORT).show();
-//                    }
-//                    else{
-//                        db.collection("account")
-//                                .add(data)
-//                                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//                                    @Override
-//                                    public void onSuccess(DocumentReference documentReference) {
-//                                        Toast.makeText(Registration.this,"Create account successfully",Toast.LENGTH_SHORT).show();
-//                                    }
-//                                })
-//                                .addOnFailureListener(new OnFailureListener() {
-//                                    @Override
-//                                    public void onFailure(@NonNull Exception e) {
-//                                        Toast.makeText(Registration.this,"Fail to create account",Toast.LENGTH_SHORT).show();
-//                                    }
-//                                });
-//                    }
-//                }
-//            }
-//        });
     }
 
     private boolean isValidEmail(String email){
         String pattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
         Pattern regexPattern = Pattern.compile(pattern);
         Matcher matcher = regexPattern.matcher(email);
-        if (matcher.matches()) {
-            return true;
-        } else {
-            return false;
-        }
+        return matcher.matches();
     }
 }
