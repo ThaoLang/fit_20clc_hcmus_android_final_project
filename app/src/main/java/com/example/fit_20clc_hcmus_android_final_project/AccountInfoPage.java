@@ -12,13 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AccountInfoPage extends Fragment {
 
@@ -27,7 +24,7 @@ public class AccountInfoPage extends Fragment {
     private static final String INIT_PARAM = "initParam";
 
     private TextInputEditText username, userbio, useremail, userphone, useraddress;
-    private MaterialButton edit_save_button, logout_button;
+    private MaterialButton edit_save_button, logout_button, chat_button;
 
     private String initParam;
 
@@ -79,6 +76,7 @@ public class AccountInfoPage extends Fragment {
         useraddress = accountScreen.findViewById(R.id.mac_text_input_edittext_useraddress);
         edit_save_button = accountScreen.findViewById(R.id.mac_edit_save_button);
         logout_button = accountScreen.findViewById(R.id.mac_logout_button);
+        chat_button = accountScreen.findViewById(R.id.mac_chat_button);
 
         edit_save_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,6 +152,13 @@ public class AccountInfoPage extends Fragment {
 
                 startActivity(new Intent(getContext(), SignIn.class));
                 main.finish();
+            }
+        });
+
+        chat_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), ChatActivity.class));
             }
         });
 
