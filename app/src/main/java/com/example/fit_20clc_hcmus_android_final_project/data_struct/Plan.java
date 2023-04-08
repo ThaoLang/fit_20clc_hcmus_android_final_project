@@ -1,52 +1,63 @@
 package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
+import android.os.Parcelable;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Plan {
+public class Plan implements Serializable {
 
     private String name;
     private String owner_email;
     private String departure_date;
-    private String end_date;
-    private int init_number_of_people;
+    private String return_date;
+    private List<String> passengers;
     private boolean isPublic;
     private String status;
-    private List<Location> listOfLocations = null;
+    private List<Destination> listOfLocations = null;
     private Float rating;
     private List<String> listOfComments = null;
 
-    private List<String> set_of_editors = null;
+    private List<String> listOfEditors = null;
 
     public Plan()
     {
         name= "None";
         owner_email= "None";
         departure_date= "None";
-        end_date= "None";
-        init_number_of_people= 0;
+        return_date= "None";
+        passengers = new ArrayList<String>();
         isPublic= false;
         status = "None";
-        listOfLocations = new ArrayList<Location>();
+        listOfLocations = new ArrayList<Destination>();
         rating = 0F;
         listOfComments= new ArrayList<String>();
-        set_of_editors = new ArrayList<String>();
+        listOfEditors = new ArrayList<String>();
     }
 
-    public Plan(String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate,
-                int initPeople, boolean inputIsPublic, Float inputRating)
+    public Plan(String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating)
     {
         name = inputName;
         owner_email= inputOwnerEmail;
         departure_date= inputDepartureDate;
-        end_date= inputEndDate;
-        init_number_of_people = initPeople;
+        return_date= inputEndDate;
         isPublic= inputIsPublic;
         rating= inputRating;
-        listOfLocations = new ArrayList<Location>();
+        listOfLocations = new ArrayList<Destination>();
         listOfComments= new ArrayList<String>();
-        set_of_editors = new ArrayList<String>();
+        listOfEditors = new ArrayList<String>();
     }
+
+//    public Plan(String hoi_an_tour, String none, String inputDepartureDate, String inputEndDate, int i, boolean inputIsPublic, float inputRating) {
+//    }
 
     public String getName()
     {
@@ -63,14 +74,14 @@ public class Plan {
         return departure_date;
     }
 
-    public String getEnd_date()
+    public String getReturn_date()
     {
-        return  end_date;
+        return  return_date;
     }
 
-    public int getInit_number_of_people()
+    public List<String> getPassengers()
     {
-        return init_number_of_people;
+        return passengers;
     }
 
     public Float getRating()
@@ -83,7 +94,7 @@ public class Plan {
         return isPublic;
     }
 
-    public List<Location> getListOfLocations()
+    public List<Destination> getListOfLocations()
     {
         return listOfLocations;
     }
@@ -95,7 +106,7 @@ public class Plan {
 
     public List<String> getSet_of_editors()
     {
-        return set_of_editors;
+        return listOfEditors;
     }
 
     //setter
@@ -115,9 +126,9 @@ public class Plan {
         departure_date = inputDepartureDate;
     }
 
-    public void setEnd_date(String inputEndDate)
+    public void setReturn_date(String inputEndDate)
     {
-        end_date = inputEndDate;
+        return_date = inputEndDate;
     }
 
     public void setPublicAttribute(boolean inputPublic)
@@ -130,14 +141,14 @@ public class Plan {
         rating =  inputRating;
     }
 
-    public void setListOfLocations(List<Location> newListOfLocations)
+    public void setListOfLocations(List<Destination> newListOfLocations)
     {
         listOfLocations = newListOfLocations;
     }
 
-    public void setInit_number_of_people(int newInitPeople)
+    public void setPassengers(List<String> inputPassengers)
     {
-        init_number_of_people = newInitPeople;
+        passengers = inputPassengers;
     }
 
     public void setListOfComments(List<String> newListOfComments)
@@ -145,8 +156,13 @@ public class Plan {
         listOfComments = newListOfComments;
     }
 
+    public void setListOfEditors(List<String> newListOfEditors)
+    {
+        listOfEditors = newListOfEditors;
+    }
 
-    public boolean addNewLocation(Location newLocation)
+
+    public boolean addNewLocation(Destination newLocation)
     {
         if(newLocation != null && listOfLocations != null)
         {
@@ -159,7 +175,7 @@ public class Plan {
         }
     }
 
-    public boolean updateLocation(int index, Location newLocation)
+    public boolean updateLocation(int index, Destination newLocation)
     {
         if(listOfLocations == null)
         {
@@ -171,6 +187,40 @@ public class Plan {
         }
         listOfLocations.set(index, newLocation);
         return true;
+    }
+
+    public static byte[] planToByteArray(@NotNull Plan inputPlan)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try
+        {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(inputPlan);
+            oos.close();
+            return baos.toByteArray();
+        }
+        catch(IOException e)
+        {
+            System.out.println(e);
+            return null;
+        }
+
+    }
+
+    public static Plan byteArrayToObject(@NotNull byte[] inputByteArray)
+    {
+        ByteArrayInputStream bais = new ByteArrayInputStream(inputByteArray);
+        try
+        {
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            Plan plan = (Plan) ois.readObject();
+            return plan;
+        }
+        catch(IOException|ClassNotFoundException e)
+        {
+            System.out.println(e);
+            return null;
+        }
     }
 
 }

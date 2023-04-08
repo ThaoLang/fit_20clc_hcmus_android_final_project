@@ -2,16 +2,26 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.Trips_Incoming_Adapter;
@@ -143,6 +153,16 @@ public class TripsPage extends Fragment {
 
         IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor7, Resources.getSystem().newTheme()));
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //start CreatePlan activity
+                //new way to start a activity and receive results from that activity.
+                Intent createPlanLaunchIntent = new Intent(context, CreatePlan.class);
+                activityLauncher.launch(createPlanLaunchIntent);
+            }
+        });
+
         return view;
     }
 
@@ -151,5 +171,26 @@ public class TripsPage extends Fragment {
     {
         super.onStart();
     }
+
+    //receive results returned from the specific activity launched by activityLauncher.launch(...);
+    private ActivityResultLauncher<Intent> activityLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result)
+        {
+            if(result.getResultCode() == Activity.RESULT_OK)
+            {
+                Intent intentReturned = result.getData();
+                Plan newPlan;
+                if(intentReturned != null)
+                {
+                    Bundle bundle = intentReturned.getBundleExtra(CreatePlan.IDENTIFIED_CODE);
+                    byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_NEW_PLAN_CODE);
+                    Plan plan = Plan.byteArrayToObject(byteArray);
+                    System.out.println("<<<System out>>> " + plan.getName());
+                }
+            }
+        }
+        });
+
 
 }

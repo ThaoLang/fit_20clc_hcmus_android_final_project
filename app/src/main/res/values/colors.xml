@@ -71,5 +71,7 @@
     <color name="CustomColor5">#B6F4CF</color>
     <color name="CustomColor8">#FFFF00</color>
     <color name="CustomColor9">#0F7764</color>
-
+    <color name="CustomColor10">#5EAC8B</color>
+    <color name="CustomColor11">#F9F5F5</color>
+    <color name="CustomColor12">#8C8C8C</color>
 </resources>

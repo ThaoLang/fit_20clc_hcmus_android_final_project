@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:background="@drawable/detailed_planner_pill_shape_row">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/detailed_plan_custom_row_destination_name"
+        android:layout_width="180dp"
+        android:layout_height="90dp"
+        android:textAlignment="center"
+        android:text="@string/default_destination_name"
+        android:gravity="center"
+        android:textColor="@color/CustomColor12"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        />
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp"
+        android:foreground="@color/md_theme_dark_secondary"
+        />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="20dp"
+            android:gravity="center_vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailed_plan_custom_row_startdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="05/04/2023:"
+                android:textColor="@color/CustomColor12"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginRight="50dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailed_plan_custom_row_starttime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5:30 am"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:textColor="@color/CustomColor12"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="20dp"
+            android:gravity="center_vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailed_plan_custom_row_enddate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12/04/2023:"
+                android:textColor="@color/CustomColor12"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:layout_marginRight="50dp"
+                />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/detailed_plan_custom_row_endtime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="6:30 pm"
+                android:textStyle="normal"
+                android:textSize="12sp"
+                android:textColor="@color/CustomColor12"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.appcompat.widget.LinearLayoutCompat>

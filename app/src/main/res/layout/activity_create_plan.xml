@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/CustomColor10">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:background="@color/CustomColor10">
+
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="680dp"
+            android:layout_marginHorizontal="5dp"
+            android:paddingVertical="15dp"
+            android:paddingHorizontal="5dp"
+            android:background="@drawable/detailed_planner_pill_shape_row"
+            android:orientation="vertical"
+            >
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/create_plan_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="@string/default_plan_name"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10sp"
+                android:layout_marginVertical="30dp"
+                android:background="@drawable/detailed_planner_pill_shape_row"
+                />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginVertical="30dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/create_plan_depature_date"
+                    android:layout_width="320dp"
+                    android:layout_height="50dp"
+                    android:hint="Departure date"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="10sp"
+                    android:background="@drawable/detailed_planner_pill_shape_row"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_plan_depature_date_picker"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/calendar_month_48px"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:contentDescription="date picker"
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginVertical="30dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/create_plan_return_date"
+                    android:layout_width="320dp"
+                    android:layout_height="50dp"
+                    android:hint="Return date"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="10sp"
+                    android:background="@drawable/detailed_planner_pill_shape_row"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_plan_return_date_picker"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/calendar_month_48px"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="10dp"
+                    android:contentDescription="date picker"
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/create_plan_passengers"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:hint="Passengers"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="10sp"
+                android:layout_marginVertical="30dp"
+                />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10sp"
+                android:layout_marginVertical="30dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public"
+                    android:textSize="18sp"
+                    android:layout_gravity="center_vertical"
+                    android:textColor="@color/CustomColor12"
+                    android:layout_marginRight="20dp"/>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/create_plan_public_switch"
+                    android:layout_width="80dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    app:switchMinWidth="80dp"
+                    app:thumbTint="@color/CustomColor3"
+                    app:trackTint="@color/CustomColor10"
+                    app:track="@drawable/detailed_planner_pill_shape_row"
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/create_plan_continue_button"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:text="CONTINUE"
+                android:textColor="@color/md_theme_dark_shadow"
+                app:backgroundTint="@color/CustomColor5"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+</androidx.core.widget.NestedScrollView>

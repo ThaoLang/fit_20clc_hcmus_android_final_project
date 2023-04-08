@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Location {
-    private String name;
-    private String formalName; //the name presented on Google Map
-    private String longitude; //kinh do
-    private String latitude; //vido
-    private String imageLink;
-    private Float rating;
-    private List<CommentInfo> commentInfoList; //includes IDs of comment lists
+    protected String name;
+    protected String formalName; //the name presented on Google Map
+    protected String longitude; //kinh do
+    protected String latitude; //vido
 
     public Location()
     {
@@ -18,20 +15,14 @@ public class Location {
         formalName= "None";
         longitude= "None";
         latitude= "None";
-        imageLink= "None";
-        rating= 0F;
-        commentInfoList = new ArrayList<CommentInfo>();
     }
 
-    public Location(String inputName, String inputFormalName, String inputLongitude, String inputLatitude, String inputImageLink, Float inputRating)
+    public Location(String inputName, String inputFormalName, String inputLongitude, String inputLatitude)
     {
         name= inputName;
         formalName= inputFormalName;
         longitude= inputLongitude;
         latitude= inputLatitude;
-        imageLink= inputImageLink;
-        rating= inputRating;
-        commentInfoList = new ArrayList<CommentInfo>();
     }
 
     public String getName()
@@ -54,20 +45,6 @@ public class Location {
         return latitude;
     }
 
-    public String getImageLink()
-    {
-        return imageLink;
-    }
-
-    public Float getRating()
-    {
-        return rating;
-    }
-
-    public List<CommentInfo> getCommentInfoList()
-    {
-        return commentInfoList;
-    }
 
     public void setName(String inputName)
     {
@@ -89,19 +66,5 @@ public class Location {
         latitude = inputLatitude;
     }
 
-    public void setImageLink(String inputImageLink)
-    {
-        imageLink = inputImageLink;
-    }
-
-    public void setRating(Float inputRating)
-    {
-        rating = inputRating;
-    }
-
-    public void setCommentInfoList(ArrayList<CommentInfo> inputCommentInfoList)
-    {
-        commentInfoList = inputCommentInfoList;
-    }
 }
 

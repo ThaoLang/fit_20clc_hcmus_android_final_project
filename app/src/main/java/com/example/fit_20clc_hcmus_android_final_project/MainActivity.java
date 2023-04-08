@@ -17,11 +17,13 @@ import android.os.Bundle;
 //}
 
 import androidx.annotation.NonNull;
+import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -29,9 +31,14 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import org.jetbrains.annotations.NotNull;
+
 public class MainActivity extends FragmentActivity {
     private Fragment currentScreen;
     private NavigationBarView bottomNavigation;
+
+    private static ContentLoadingProgressBar progressBar;
+    private static int progressStep;
 
     private int CURRENT_SELECTED_ID = 0;
 
@@ -69,8 +76,9 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-        DatabaseAccess.load_data();
+        progressBar = (ContentLoadingProgressBar) findViewById(R.id.loading_progressbar);
 
+        DatabaseAccess.initDatabaseAccess();
         //Default: currentScreen is homepage-screen at the beginning
         if(screenType == 0)
         {
@@ -107,7 +115,8 @@ public class MainActivity extends FragmentActivity {
                     }
                 }
             });*/
-
+            DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
+            DatabaseAccess.load_data();
         }
     }
 
@@ -176,6 +185,49 @@ public class MainActivity extends FragmentActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_frame, currentScreen);
         transaction.commit();
+    }
+
+    public static Runnable setLoadingProgressBarVisible(@NotNull int Max,@NotNull int StartWith,@NotNull int ProgressStep)
+    {
+        progressBar.setMax(100);
+        progressBar.setMin(0);
+        progressStep = 1;
+        Runnable loadingProgress = new Runnable() {
+            @Override
+            public void run() {
+                progressBar.setMax(Max);
+                progressBar.setMin(StartWith);
+                progressStep = ProgressStep;
+                progressBar.show();
+            }
+        };
+        return loadingProgress;
+    }
+
+    public static Runnable increaseProgress()
+    {
+        Runnable increase = new Runnable() {
+            @Override
+            public void run() {
+                progressBar.incrementProgressBy(progressStep);
+                if(progressBar.getProgress() >= progressBar.getMax())
+                {
+                    progressBar.hide();
+                }
+            }
+        };
+        return increase;
+    }
+
+    public static Runnable hideProgressBar()
+    {
+        Runnable hide = new Runnable() {
+            @Override
+            public void run() {
+                progressBar.hide();
+            }
+        };
+        return hide;
     }
 
 }

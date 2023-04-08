@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
-import com.example.fit_20clc_hcmus_android_final_project.Post;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Post;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{

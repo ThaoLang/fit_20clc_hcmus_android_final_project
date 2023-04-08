@@ -8,6 +8,12 @@
     tools:context=".MainActivity">
 
 
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/loading_progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        android:progressTint="@color/CustomColor5"
+        />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/main_frame"

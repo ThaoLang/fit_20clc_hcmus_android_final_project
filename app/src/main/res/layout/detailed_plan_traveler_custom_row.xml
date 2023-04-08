@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingHorizontal="15dp"
+    android:paddingVertical="10dp">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/detailed_plan_traveler_custom_row_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:shapeAppearanceOverlay="@style/circle"
+        app:strokeWidth="2dp"
+        />
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/detailed_plan_traveler_custom_row_travelername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Traveler's name"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="15dp"
+        app:fontFamily="sans-serif-condensed-medium"
+        />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
