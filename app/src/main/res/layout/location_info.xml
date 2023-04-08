@@ -107,8 +107,9 @@
                 android:id="@+id/intro_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="About Bali"
-                android:textStyle="bold"/>
+                android:text="@string/intro_location_detail"
+                android:textStyle="bold"
+                android:textSize="20dp"/>
 
 
             <TextView
@@ -116,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:maxLines="4"
-                android:text="@string/lorem"/>
+                android:text="@string/description_location_detail"/>
 <!--            <Button-->
 <!--                android:id="@+id/read_more_btn"-->
 <!--                android:layout_width="wrap_content"-->
@@ -155,7 +156,8 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:text="Recent trips"
-                android:textSize="20dp"/>
+                android:textSize="20dp"
+                android:layout_margin="10dp"/>
 
 <!--            <HorizontalScrollView-->
 <!--                android:layout_width="match_parent"-->
