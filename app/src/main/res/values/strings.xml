@@ -10,7 +10,7 @@
     <string name="password">Password</string>
     <string name="confirm_password">Confirm password</string>
     <string name="address">Address</string>
-    <string name="phone">Phone no.</string>
+    <string name="phone">Phone</string>
     <string name="email">Email</string>
     <string name="profile_bio">somethings about me...</string>
 
@@ -38,10 +38,13 @@ Bali có khí hậu mát mẻ, trong lành và khung cảnh thiên nhiên đẹp
 
     <string name="default_plan_name">Plan`s name</string>
     <string name="default_plan_departure_date"> departure date: 01/01/2020</string>
-    <string name="default_destination_name">Destination`s name</string>
 
     <string name="material_toolbar_trips_title">Trips</string>
     <string name="material_toolbar_account_info_title">Account Info</string>
-    <string name="detailed_plan_travelers">Travelers:</string>
+    <string name="intro_location_detail">The location on your mind ?</string>
+    <string name="description_location_detail">Build, organize, and map out your best trip yet.</string>
 
+    <string name="friend_tab">Friend</string>
+    <string name="chat_tab">Chat</string>
+    <string name="return_tab">Return</string>
 </resources>

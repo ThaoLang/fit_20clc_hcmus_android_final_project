@@ -1,9 +1,13 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -11,9 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Location;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.LocationInfoBinding;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,24 +28,37 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class LocationInfo extends AppCompatActivity implements OnMapReadyCallback{
     private LocationInfoBinding binding;
     private GoogleMap googleMap;
 
-    LinearLayoutManager mLinearLayoutManager;
+    private double latitude=0;
+    private double longitude=0;
+    String locationName="";
 
-//    private Post[] posts={
-//        new Post(R.drawable.bali,"Lang Thao","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//        new Post(R.drawable.bali,"Khanh Nguyen","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//        new Post(R.drawable.bali,"Hoai Phuong","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//        new Post(R.drawable.bali,"Minh Quang","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//        new Post(R.drawable.bali,"Toan Hao","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//        new Post(R.drawable.bali,"Minh Tri","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//        new Post(R.drawable.bali,"Minh Thong","22/2/2022",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000);
-//    }
+    LinearLayoutManager mLinearLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,32 +67,58 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
         binding= LocationInfoBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.backBtn.setBackgroundColor(Color.TRANSPARENT);
-
-        //Image Slider
+        Bundle bundle= getIntent().getBundleExtra("location search");
+        locationName=bundle.get("location address").toString();
         ArrayList<SlideModel> slideModels=new ArrayList<>();
 
-        slideModels.add(new SlideModel("https://c4.wallpaperflare.com/wallpaper/179/915/685/photography-water-reflection-bali-wallpaper-preview.jpg", ScaleTypes.FIT));
-        slideModels.add(new SlideModel("https://media.istockphoto.com/id/675172642/photo/pura-ulun-danu-bratan-temple-in-bali.jpg?b=1&s=170667a&w=0&k=20&c=i6eVZIrC53B4jl-I4p3YIn9ZRViyVoMbRdp-NznLDUE=", ScaleTypes.FIT));
-        slideModels.add(new SlideModel("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1hb-8L0Oq5cv-Vitl1Ik-gNDNgFvft3kVDA&usqp=CAU", ScaleTypes.FIT));
-        slideModels.add(new SlideModel("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyV19E5ub10XLIFUzqB5HI3Slvhe7p5_tkb4sKoZybnlUyW6wW6Uu2wdhYkP0DDpACzow&usqp=CAU", ScaleTypes.FIT));
-        slideModels.add(new SlideModel("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT1hb-8L0Oq5cv-Vitl1Ik-gNDNgFvft3kVDA&usqp=CAU", ScaleTypes.FIT));
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("location")
+                .whereEqualTo("formalName", locationName)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    // Xử lí khi có kết quả trả về
+                                    locationName = document.get("formalName").toString();
+                                    binding.introLabel.setText("About " + document.get("name").toString());
+                                    binding.locationDescription.setText(document.get("description").toString());
 
-        binding.imageSlider.setImageList(slideModels,ScaleTypes.FIT);
+                                    List<String> imagesList = (List<String>) document.get("images");
+                                    for (String imageUrl : imagesList) {
+                                        Log.e("Image URL", imageUrl);
+                                        slideModels.add(new SlideModel(imageUrl, ScaleTypes.FIT));
+                                    }
+                                    binding.imageSlider.setImageList(slideModels, ScaleTypes.FIT);
+                                }
+                            } else {
+                                // Xử lí khi không có kết quả trả về
+                                slideModels.add(new SlideModel("https://img.freepik.com/free-vector/happy-family-travelling-by-car-with-camping-equipment-top_74855-10751.jpg", ScaleTypes.FIT));
+                                binding.imageSlider.setImageList(slideModels, ScaleTypes.FIT);
+                                ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.locationDescription.getLayoutParams();
+                                params.setMargins(30, 0, 0, 0);
+                                binding.locationDescription.setLayoutParams(params);
+                                binding.textShort.setVisibility(View.GONE);
+                            }
 
-        //Introduction text
-//        binding.readMoreBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (binding.locationDescription.getMaxLines() == 4) {
-//                    binding.locationDescription.setMaxLines(Integer.MAX_VALUE);
-//                    binding.readMoreBtn.setText(R.string.read_less);
-//                } else {
-//                    binding.locationDescription.setMaxLines(4);
-//                    binding.readMoreBtn.setText(R.string.read_more);
-//                }
-//            }
-//        });
+                        } else {
+                            // Xử lí khi có lỗi xảy ra
+                            slideModels.add(new SlideModel("https://img.freepik.com/free-vector/happy-family-travelling-by-car-with-camping-equipment-top_74855-10751.jpg", ScaleTypes.FIT));
+                            binding.imageSlider.setImageList(slideModels, ScaleTypes.FIT);
+                        }
+
+                    }
+                });
+
+        binding.backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         binding.textShort.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +145,6 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
 
         binding.listPost.setAdapter(new PostAdapter(this));
         binding.listPost.smoothScrollToPosition(0);
-
     }
 
     @Override
@@ -145,20 +189,32 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
         binding.mapView.onSaveInstanceState(outState);
     }
 
-
     @Override
     public void onMapReady(@NonNull GoogleMap Map) {
+        Geocoder geocoder = new Geocoder(getApplicationContext());
+
+        try {
+            List<Address> addresses = geocoder.getFromLocationName(locationName, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address addressResult = addresses.get(0);
+                latitude = addressResult.getLatitude();
+                longitude = addressResult.getLongitude();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         googleMap = Map;
 
         // Set the map type to be normal
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // Set the initial position of the map
-        LatLng myPosition = new LatLng(-8.4095, 115.1889);
+        LatLng myPosition = new LatLng(latitude, longitude);
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myPosition, 12.0f));
 
         // Add a marker to the map
-        googleMap.addMarker(new MarkerOptions().position(myPosition).title("Bali"));
+        googleMap.addMarker(new MarkerOptions().position(myPosition).title(locationName));
 
         // Enable zoom controls
         googleMap.getUiSettings().setZoomControlsEnabled(true);

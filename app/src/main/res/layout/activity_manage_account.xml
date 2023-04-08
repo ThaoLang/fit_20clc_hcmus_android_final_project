@@ -224,6 +224,25 @@
                 />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/mac_chat_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="Chat button"
+                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                app:icon="@drawable/ic_notifications_48px"
+                app:iconGravity="start"
+                app:iconTint="@color/md_theme_dark_shadow"
+                android:text="Chat"
+                android:textColor="@color/md_theme_dark_shadow"
+                android:textSize="15sp"
+                android:width="200dp"
+                app:backgroundTint="#B6F4CF"
+                app:strokeColor="@color/md_theme_dark_shadow"
+                app:strokeWidth="1dp"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/mac_logout_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -1,5 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -82,6 +83,12 @@ public class Search extends AppCompatActivity {
 //                {
 //                    suggest_search.setVisibility(View.GONE);
 //                }
+                Intent intent= new Intent(Search.this, LocationInfo.class);
+                Bundle bundle=new Bundle();
+                bundle.putString("location address",binding.searchView.getQuery().toString());
+
+                intent.putExtra("location search",bundle);
+                startActivity(intent);
                 return false;
             }
 
