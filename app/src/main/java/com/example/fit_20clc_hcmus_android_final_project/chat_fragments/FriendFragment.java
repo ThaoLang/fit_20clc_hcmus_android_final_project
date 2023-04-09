@@ -11,25 +11,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.FriendAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentFriendBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -83,7 +74,9 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setStackFromEnd(true);
 
+        users = new ArrayList<>();
         readFriends(this);
+//        users = chat_activity.readFriends();
 
         adapter = new FriendAdapter(context, users);
         adapter.setListener(this);
@@ -92,57 +85,49 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
         binding.listItem.setLayoutManager(mLinearLayoutManager);
         binding.listItem.smoothScrollToPosition(0);
 
-        users = new ArrayList<>();
-
         return binding.getRoot();
     }
 
     private void readFriends(FriendFragment friendFragment) {
         User user = chat_activity.getMainUserInfo();
 
-        FirebaseFirestore fb = FirebaseFirestore.getInstance();
+        FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
-        fb.collection("account").document().get()
-                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        Log.e("userphoneff",user.getPhone());
+
+        fb.collection("account")
+                .whereNotEqualTo("phone", user.getPhone())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(DocumentSnapshot documentSnapshot) {
-                        User friend = documentSnapshot.toObject(User.class);
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()){
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()){
+                                    User friend;
+
+                                    Log.e("name",document.get("name").toString());
+
+                                    String name = document.get("name").toString();
+                                    String phone = document.get("phone").toString();
+                                    String address = document.get("address").toString();
+
+                                    friend = new User(name,phone,address,null,null,null);
+                                    users.add(friend);
+                                }
+                                adapter = new FriendAdapter(context, users);
+                                adapter.setListener(friendFragment);
+                                binding.listItem.setAdapter(adapter);
+                            }
+                        } else{
+                            // show "Plan has no friends"
+                        }
                     }
                 });
-
-//        reference.addValueEventListener(new ValueEventList
-//        ener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                users.clear();
-//                for(DataSnapshot dataSnapshot : snapshot.getChildren()){
-//                    User friend = snapshot.getValue(User.class);
-//                    Log.d("hehe",friend.getName());
-//
-////                    assert user!=null;
-////                    assert friend!=null;
-////
-////                    if(!friend.getPhone().equals(user.getPhone())){
-////                        users.add(friend);
-////                    }
-////
-//                    users.add(friend);
-//                }
-//
-//                adapter = new FriendAdapter(context, users);
-//                adapter.setListener(friendFragment);
-//                binding.listItem.setAdapter(adapter);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-
     }
 
-    public void swapToChat(){ //TODO: pass over friend user
-        chat_activity.switchScreenByScreenType(0);
+    public void swapToChat(String phone){
+        chat_activity.switchScreenByScreenType(0, phone);
     }
 }

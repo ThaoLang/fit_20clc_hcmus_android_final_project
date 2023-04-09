@@ -40,12 +40,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void swapToChat();
+        void swapToChat(String phone);
     }
-
-//    public FriendAdapter(Context _context) {
-//        this.context = _context;
-//    }
 
     public FriendAdapter(Context _context, ArrayList<User> _dataset) {
         this.context = _context;
@@ -99,13 +95,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         // Get element from your posts at this position and replace the
         // contents of the view with that element
         viewHolder.name.setText(dataSet.get(position).getName());
-//
 //        viewHolder.main_image.setImageResource(favoriteLocations[position].getImage());
 
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                listener.swapToChat();
+                String phone = dataSet.get(position).getPhone();
+                listener.swapToChat(phone);
             }
         });
     }

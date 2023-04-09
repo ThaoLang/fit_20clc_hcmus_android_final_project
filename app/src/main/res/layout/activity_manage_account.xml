@@ -240,6 +240,7 @@
                 app:strokeColor="@color/md_theme_dark_shadow"
                 app:strokeWidth="1dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
                 />
 
             <com.google.android.material.button.MaterialButton

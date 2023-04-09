@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
     private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
 
+//    private ArrayList<User> dataSet;
+    //user ; chat
+
     Context context;
 
     private ChatAdapter.Callbacks listener;
@@ -36,6 +40,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
         void swapToFriend();
+        void tagFriend(String friend);
     }
 
     public ChatAdapter(Context _context) {
@@ -100,7 +105,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                listener.swapToFriend();
+//                listener.swapToFriend();
+
+                listener.tagFriend("MyFriend");
             }
         });
     }
@@ -108,6 +115,12 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     // Return the size of your posts (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return dataSet.size();
+        if (dataSet!=null)
+            return dataSet.size();
+        else return 0;
+    }
+
+    public void addMessage(String input){
+        dataSet.add(input);
     }
 }

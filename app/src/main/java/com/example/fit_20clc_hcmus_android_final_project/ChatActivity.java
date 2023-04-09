@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.example.fit_20clc_hcmus_android_final_project.chat_fragments.ChatFragment;
@@ -40,6 +41,16 @@ public class ChatActivity extends FragmentActivity {
 
     private User mainUserInfo;
 
+    private ChatActivity.ChatCallbacks listener;
+
+    public void setListener(ChatActivity.ChatCallbacks listener) {
+        this.listener = listener;
+    }
+
+    public interface ChatCallbacks {
+        void setFriendPhone(String phone);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +80,6 @@ public class ChatActivity extends FragmentActivity {
         transaction.commit();
 
     }
-
 
     @Override
     protected void onStart()
@@ -105,6 +115,41 @@ public class ChatActivity extends FragmentActivity {
         return mAuth.getCurrentUser();
     }
 
+//    public ArrayList<User> readFriends() {
+//        ArrayList<User> users = new ArrayList<>();
+//        User user = mainUserInfo;
+//        FirebaseFirestore fb = FirebaseFirestore.getInstance();
+//
+//        fb.collection("account")
+//                .whereNotEqualTo("phone", user.getPhone())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()){
+//                            QuerySnapshot querySnapshot = task.getResult();
+//                            if (!querySnapshot.isEmpty()){
+//                                for (DocumentSnapshot document : querySnapshot.getDocuments()){
+//                                    User friend;
+//
+//                                    Log.e("name",document.get("name").toString());
+//
+//                                    String name = document.get("name").toString();
+//                                    String phone = document.get("phone").toString();
+//                                    String address = document.get("address").toString();
+//
+//                                    friend = new User(name,phone,address,null,null,null);
+//                                    users.add(friend);
+//                                }
+//                            }
+//                        } else{
+//                            // "Plan has no friends"
+//                        }
+//                    }
+//                });
+//        return users;
+//    }
+
 
     //change Fragment (screen)
     private void switchScreenBySelectMenuItem(int idItemSelected)
@@ -129,20 +174,25 @@ public class ChatActivity extends FragmentActivity {
             System.out.println("RETURN");
         }
         else{
-            System.out.println("NOTHING BE CHOSEN");
+            System.out.println("NOTHING WAS CHOSEN");
         }
         CURRENT_SELECTED_ID = idItemSelected;
-        switchScreenByScreenType(screenType);
+        switchScreenByScreenType(screenType, null);
     }
 
     //execute to switch the screen (fragment)
-    public void switchScreenByScreenType(int inputScreenType)
+    public void switchScreenByScreenType(int inputScreenType, String phone)
     {
         switch (inputScreenType)
         {
             case CHAT:
             {
                 currentScreen = ChatFragment.newInstance(CHAT_INIT_PARAM);
+                if (phone!=null){
+                    Log.e("phone", phone);
+                    listener.setFriendPhone(phone);
+                }
+
                 bottomNavigation.setSelectedItemId(R.id.bottom_nav_chat);
                 break;
             }
@@ -170,10 +220,9 @@ public class ChatActivity extends FragmentActivity {
     {
         return mainUserInfo;
     }
-
-    public void setMainUserInfo(User newMainUserInfo)
+    public FirebaseFirestore getFirebaseFirestore()
     {
-        mainUserInfo = newMainUserInfo;
+        return FirebaseFirestore.getInstance();
     }
 
 }
