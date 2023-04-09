@@ -47,4 +47,6 @@ Bali có khí hậu mát mẻ, trong lành và khung cảnh thiên nhiên đẹp
     <string name="friend_tab">Friend</string>
     <string name="chat_tab">Chat</string>
     <string name="return_tab">Return</string>
+    <string name="default_destination_name">Destination</string>
+    <string name="detailed_plan_travelers">Travelers</string>
 </resources>
