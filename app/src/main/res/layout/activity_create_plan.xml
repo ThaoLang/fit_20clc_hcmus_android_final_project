@@ -13,17 +13,14 @@
         android:layout_gravity="center_vertical"
         android:background="@color/CustomColor10">
 
-
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="680dp"
+            android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
-            android:paddingVertical="15dp"
             android:paddingHorizontal="5dp"
             android:background="@drawable/detailed_planner_pill_shape_row"
             android:orientation="vertical"
             >
-
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/create_plan_name"
                 android:layout_width="match_parent"
@@ -31,7 +28,7 @@
                 android:hint="@string/default_plan_name"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="10sp"
-                android:layout_marginVertical="30dp"
+                android:layout_marginVertical="20dp"
                 android:background="@drawable/detailed_planner_pill_shape_row"
                 />
 
@@ -39,11 +36,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginVertical="30dp">
+                android:layout_marginVertical="20dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/create_plan_depature_date"
-                    android:layout_width="320dp"
+                    android:layout_width="310dp"
                     android:layout_height="50dp"
                     android:hint="Departure date"
                     android:gravity="center_vertical"
@@ -67,11 +64,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginVertical="30dp">
+                android:layout_marginVertical="20dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/create_plan_return_date"
-                    android:layout_width="320dp"
+                    android:layout_width="310dp"
                     android:layout_height="50dp"
                     android:hint="Return date"
                     android:gravity="center_vertical"
@@ -90,25 +87,15 @@
                     />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/create_plan_passengers"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:hint="Passengers"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="10sp"
-                android:layout_marginVertical="30dp"
-                />
-
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="10sp"
-                android:layout_marginVertical="30dp">
+                android:layout_marginVertical="20dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="wrap_content"
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="250dp"
                     android:layout_height="wrap_content"
                     android:text="Public"
                     android:textSize="18sp"
@@ -118,26 +105,82 @@
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/create_plan_public_switch"
-                    android:layout_width="80dp"
+                    android:layout_width="90dp"
                     android:layout_height="50dp"
-                    android:layout_gravity="center_vertical"
                     app:switchMinWidth="80dp"
                     app:thumbTint="@color/CustomColor3"
                     app:trackTint="@color/CustomColor10"
                     app:track="@drawable/detailed_planner_pill_shape_row"
+                    app:showText="true"
                     />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/create_plan_continue_button"
-                android:layout_width="170dp"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:text="CONTINUE"
-                android:textColor="@color/md_theme_dark_shadow"
-                app:backgroundTint="@color/CustomColor5"
-                />
+                android:paddingHorizontal="10sp"
+                android:layout_marginVertical="20dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/create_plan_invited_passengers"
+                    android:layout_width="250dp"
+                    android:layout_height="50dp"
+                    android:hint="Passengers"
+                    android:text="Invited:"
+                    android:gravity="center_vertical"
+                    android:textSize="18sp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_plan_invite_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Invite"
+                    android:textColor="@color/md_theme_dark_shadow"
+                    app:backgroundTint="@color/CustomColor5"/>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:layout_marginVertical="20dp"
+                >
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/create_plan_image"
+                    android:layout_width="150dp"
+                    android:layout_height="120dp"
+                    android:background="@drawable/image_48px"
+                    android:layout_marginRight="-50dp"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_plan_edit_image_button"
+                    android:layout_width="50dp"
+                    android:layout_height="55dp"
+                    android:contentDescription="pick an image"
+                    android:layout_gravity="bottom"
+                    app:strokeWidth="2dp"
+                    app:icon="@drawable/edit_48px"
+                    app:iconGravity="textStart"
+                    app:iconSize="40dp"
+                    app:iconPadding="-1dp"
+                    android:foregroundTint="@color/cardview_light_background"
+                    android:backgroundTint="@color/CustomColor9"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/create_plan_continue_button"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="CREATE"
+                    android:layout_marginLeft="50dp"
+                    android:textColor="@color/md_theme_dark_shadow"
+                    app:backgroundTint="@color/CustomColor1"
+
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.appcompat.widget.LinearLayoutCompat>

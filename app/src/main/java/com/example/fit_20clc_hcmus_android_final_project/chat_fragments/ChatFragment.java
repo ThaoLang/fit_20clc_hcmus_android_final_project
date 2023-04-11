@@ -138,8 +138,9 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                                     String name = document.get("name").toString();
                                     String phone = document.get("phone").toString();
                                     String address = document.get("address").toString();
+                                    String email = document.get("email").toString();
 
-                                    friend = new User(name, phone, address, null, null, null);
+                                    friend = new User(name, email, phone, address, null, null, null);
                                     users.add(friend);
                                 }
 //                                adapter = new ChatAdapter(context, users);

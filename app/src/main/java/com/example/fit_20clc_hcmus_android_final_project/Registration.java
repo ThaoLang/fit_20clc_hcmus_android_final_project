@@ -115,7 +115,7 @@ public class Registration extends AppCompatActivity {
                     List<String> favorite_locations=new ArrayList<String>();
                     List<String> plans=new ArrayList<String>();
 
-                    User data = new User(username, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locations);
+                    User data = new User(username, email, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locations);
 
                     FirebaseUser user= task.getResult().getUser();
                     db.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION)

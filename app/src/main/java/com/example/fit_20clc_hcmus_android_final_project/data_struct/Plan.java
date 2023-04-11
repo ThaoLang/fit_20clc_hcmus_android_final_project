@@ -15,6 +15,8 @@ import java.util.List;
 
 public class Plan implements Serializable {
 
+    private String planId;
+    private String imageLink;
     private String name;
     private String owner_email;
     private String departure_date;
@@ -30,6 +32,7 @@ public class Plan implements Serializable {
 
     public Plan()
     {
+        imageLink = "None";
         name= "None";
         owner_email= "None";
         departure_date= "None";
@@ -43,8 +46,10 @@ public class Plan implements Serializable {
         listOfEditors = new ArrayList<String>();
     }
 
-    public Plan(String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating)
+    public Plan(String inputPlanId, String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating, String inputImageLink)
     {
+        planId = inputPlanId;
+        imageLink = inputImageLink;
         name = inputName;
         owner_email= inputOwnerEmail;
         departure_date= inputDepartureDate;
@@ -59,6 +64,12 @@ public class Plan implements Serializable {
 //    public Plan(String hoi_an_tour, String none, String inputDepartureDate, String inputEndDate, int i, boolean inputIsPublic, float inputRating) {
 //    }
 
+
+    public String getPlanId() {
+        return planId;
+    }
+
+    public String getImageLink() {return imageLink;}
     public String getName()
     {
         return name;
@@ -110,7 +121,17 @@ public class Plan implements Serializable {
     }
 
     //setter
+    public String getStatus() {return status;}
 
+    public void setPlanId(String inputPlanId)
+    {
+        planId = inputPlanId;
+    }
+
+    public void setImageLink(String inputImageLink)
+    {
+        imageLink = inputImageLink;
+    }
     public void setName(String inputName)
     {
         name = inputName;
@@ -161,6 +182,15 @@ public class Plan implements Serializable {
         listOfEditors = newListOfEditors;
     }
 
+    public void setPublic(boolean inputPublic)
+    {
+        isPublic = inputPublic;
+    }
+
+    public void setStatus(String inputStatus)
+    {
+        status =  inputStatus;
+    }
 
     public boolean addNewLocation(Destination newLocation)
     {

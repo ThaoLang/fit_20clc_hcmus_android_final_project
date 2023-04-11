@@ -31,6 +31,7 @@ import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.search.SearchBar;
+import com.google.firebase.database.DataSnapshot;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ public class TripsPage extends Fragment {
     private RecyclerView recyclerViewPosition;
 
     private int currentMode;
+
+    public static String CREATE_PLAN_MODE = "CREATE_PLAN_MODE";
+    public static String EDIT_PLAN_MODE = "EDIT_PLAN_MODE";
 
     private static final String INIT_PARAM = "INIT_PARAM";
 
@@ -159,6 +163,7 @@ public class TripsPage extends Fragment {
                 //start CreatePlan activity
                 //new way to start a activity and receive results from that activity.
                 Intent createPlanLaunchIntent = new Intent(context, CreatePlan.class);
+                createPlanLaunchIntent.putExtra("MODE", CREATE_PLAN_MODE);
                 activityLauncher.launch(createPlanLaunchIntent);
             }
         });
@@ -183,10 +188,13 @@ public class TripsPage extends Fragment {
                 Plan newPlan;
                 if(intentReturned != null)
                 {
+                    //get the new plan created by CreatePlan activity
                     Bundle bundle = intentReturned.getBundleExtra(CreatePlan.IDENTIFIED_CODE);
                     byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_NEW_PLAN_CODE);
-                    Plan plan = Plan.byteArrayToObject(byteArray);
-                    System.out.println("<<<System out>>> " + plan.getName());
+                    newPlan = Plan.byteArrayToObject(byteArray);
+//                    System.out.println("<<<System out>>> " + plan.getName());
+                    //run insertion task
+                    DatabaseAccess.addNewPlan(newPlan, null, null);
                 }
             }
         }

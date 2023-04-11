@@ -2,6 +2,8 @@ package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import java.util.List;
 @IgnoreExtraProperties
 public class User {
     private String _username;
+    private String _useremail;
     private String _userphone;
     private String _useraddress;
 
@@ -20,6 +23,7 @@ public class User {
     public User()
     {
         _username = "00";
+        _useremail = "None";
         _userphone = "000";
         _plans = new ArrayList<String>();
         _favorite_locations = new ArrayList<String>();
@@ -27,8 +31,9 @@ public class User {
         _userbio = "00000";
     }
 
-    public User(String name, String phone, String address, String bio, List<String> plans, List<String> favorite_locations)
+    public User(String name, String email, String phone, String address, String bio, List<String> plans, List<String> favorite_locations)
     {
+        this._useremail = email;
         this._username = name;
         this._userphone = phone;
         this._useraddress = address;
@@ -37,14 +42,14 @@ public class User {
         this._plans = plans;
     }
 
-    public void setPlans(ArrayList<String> newPlans)
+    public void setEmail(String inputEmail)
     {
-        this._plans = newPlans;
+        _useremail= inputEmail;
     }
 
-    public void setFavoriteLocations(ArrayList<String> new_favorite_locations)
+    public void setPlans(List<String> newPlans)
     {
-        this._favorite_locations = new_favorite_locations;
+        this._plans = newPlans;
     }
 
     public void addNewPlan(String planId)
@@ -116,6 +121,16 @@ public class User {
         this._userbio = newBio;
     }
 
+    public void setFavorite_locations(List<String> favorite_locations)
+    {
+        this._favorite_locations = favorite_locations;
+    }
+
+    public String getUserEmail()
+    {
+        return _useremail;
+    }
+
     public String getName()
     {
         return this._username;
@@ -155,4 +170,29 @@ public class User {
         return str;
     }
 
+    public void addNewPlanId(@NotNull String newPlanId)
+    {
+        _plans.add(newPlanId);
+    }
+
+    public void removePlanByPlanId(@NotNull String planId)
+    {
+        for(int i=0; i< _plans.size(); i++)
+        {
+            if(_plans.get(i).equals(planId))
+            {
+                _plans.remove(i);
+                break;
+            }
+        }
+    }
+
+    public void removePlanByIndex(@NotNull int index)
+    {
+        if(index < 0 || index > _plans.size() - 1)
+        {
+            return;
+        }
+        _plans.remove(index);
+    }
 }

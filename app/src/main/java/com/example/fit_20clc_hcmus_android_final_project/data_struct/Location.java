@@ -1,9 +1,10 @@
 package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Location {
+public class Location implements Serializable {
     protected String name;
     protected String formalName; //the name presented on Google Map
     protected String longitude; //kinh do

@@ -112,8 +112,8 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                                     String name = document.get("name").toString();
                                     String phone = document.get("phone").toString();
                                     String address = document.get("address").toString();
-
-                                    friend = new User(name,phone,address,null,null,null);
+                                    String email = document.get("email").toString();
+                                    friend = new User(name, email, phone,address,null,null,null);
                                     users.add(friend);
                                 }
                                 adapter = new FriendAdapter(context, users);
