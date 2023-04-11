@@ -115,42 +115,6 @@ public class ChatActivity extends FragmentActivity {
         return mAuth.getCurrentUser();
     }
 
-//    public ArrayList<User> readFriends() {
-//        ArrayList<User> users = new ArrayList<>();
-//        User user = mainUserInfo;
-//        FirebaseFirestore fb = FirebaseFirestore.getInstance();
-//
-//        fb.collection("account")
-//                .whereNotEqualTo("phone", user.getPhone())
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()){
-//                            QuerySnapshot querySnapshot = task.getResult();
-//                            if (!querySnapshot.isEmpty()){
-//                                for (DocumentSnapshot document : querySnapshot.getDocuments()){
-//                                    User friend;
-//
-//                                    Log.e("name",document.get("name").toString());
-//
-//                                    String name = document.get("name").toString();
-//                                    String phone = document.get("phone").toString();
-//                                    String address = document.get("address").toString();
-//
-//                                    friend = new User(name,phone,address,null,null,null);
-//                                    users.add(friend);
-//                                }
-//                            }
-//                        } else{
-//                            // "Plan has no friends"
-//                        }
-//                    }
-//                });
-//        return users;
-//    }
-
-
     //change Fragment (screen)
     private void switchScreenBySelectMenuItem(int idItemSelected)
     {
@@ -205,7 +169,7 @@ public class ChatActivity extends FragmentActivity {
             case RETURN:
             {
 //                MainActivity.switchScreenByScreenType(3);
-//                startActivity(new Intent(ChatActivity.this, MainActivity.class));
+//                startActivity(new Intent(Intent.EXTRA_RETURN_RESULT));
 //                this.finish();
                 break;
             }

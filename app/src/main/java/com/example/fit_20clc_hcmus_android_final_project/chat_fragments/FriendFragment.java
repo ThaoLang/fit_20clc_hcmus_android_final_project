@@ -76,7 +76,6 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
 
         users = new ArrayList<>();
         readFriends(this);
-//        users = chat_activity.readFriends();
 
         adapter = new FriendAdapter(context, users);
         adapter.setListener(this);
@@ -90,7 +89,6 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
 
     private void readFriends(FriendFragment friendFragment) {
         User user = chat_activity.getMainUserInfo();
-
         FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
         Log.e("userphoneff",user.getPhone());

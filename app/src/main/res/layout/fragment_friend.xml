@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:orientation="vertical"
-        android:background="@drawable/default_gradient_account_info">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textView"
@@ -18,6 +17,7 @@
             android:layout_height="wrap_content"
             android:padding="50dp"
             android:text="@string/friend_tab"
+            android:textColor="@color/CustomColor1"
             android:textSize="40sp"
             android:textStyle="bold"/>
 

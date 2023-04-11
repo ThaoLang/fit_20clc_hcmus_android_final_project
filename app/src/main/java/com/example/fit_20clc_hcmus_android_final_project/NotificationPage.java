@@ -173,7 +173,7 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
     private void getNotificationInfo(){
         FirebaseDatabase
                 .getInstance()
-                .getReference("Account")
+                .getReference("account")
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {

@@ -17,16 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
-
-//    private String[] localDataSet = {
-//            "User 1",
-//            "User 2",
-//            "User 3",
-//            "User 4",
-//    };
-//
-//    private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
-
     private ArrayList<User> dataSet;
 
     Context context;
@@ -47,7 +37,6 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         this.context = _context;
         this.dataSet = _dataset;
     }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 

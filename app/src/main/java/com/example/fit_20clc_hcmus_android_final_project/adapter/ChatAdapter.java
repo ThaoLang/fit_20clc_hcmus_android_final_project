@@ -1,6 +1,7 @@
 package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,22 +11,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
-    private String[] localDataSet = {
-            "Message 1",
-            "Message 2",
-            "Message 3",
-            "Message 4",
-    };
+//    private String[] localDataSet = {
+//            "Message 1",
+//            "Message 2",
+//            "Message 3",
+//            "Message 4",
+//    };
+//
+//    private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
 
-    private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
-
-//    private ArrayList<User> dataSet;
+    private ArrayList<Chat> dataSet;
     //user ; chat
 
     Context context;
@@ -43,20 +43,22 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         void tagFriend(String friend);
     }
 
-    public ChatAdapter(Context _context) {
+    public ChatAdapter(Context _context, ArrayList<Chat> _dataset) {
         this.context = _context;
+        this.dataSet = _dataset;
     }
 
-//    public ChatAdapter(Context _context, ArrayList<String> _dataset) {
+//    public ChatAdapter(Context _context) {
 //        this.context = _context;
-//        this.dataset = _dataset;
 //    }
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         //        private final ImageView main_image;
-        private  final TextView name;
+        private  final TextView message;
+//        private  final TextView sendTime;
+        private  final TextView senderName;
 
         private ItemClickListener itemClickListener;
 
@@ -64,7 +66,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
             super(view);
             // Define click listener for the ViewHolder's View
 
-            name = (TextView) view.findViewById(R.id.message);
+            message = (TextView) view.findViewById(R.id.message);
+//            sendTime = (TextView) view.findViewById(R.id.time);
+            senderName = (TextView) view.findViewById(R.id.chat_username);
 //            main_image = (ImageView) view.findViewById(R.id.location_image);
 
             view.setOnClickListener(this);
@@ -98,16 +102,20 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
 
         // Get element from your posts at this position and replace the
         // contents of the view with that element
-        viewHolder.name.setText(dataSet.get(position));
-//
-//        viewHolder.main_image.setImageResource(favoriteLocations[position].getImage());
+        viewHolder.message.setText(dataSet.get(position).getMessage());
+//        viewHolder.sendTime.setText(String.valueOf(dataSet.get(position).getSendTime()));
+        viewHolder.senderName.setText(dataSet.get(position).getSenderName());
+
+//        viewHolder.main_image.setImageResource(dataSet.get(position).getImage());
 
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
 //                listener.swapToFriend();
 
-                listener.tagFriend("MyFriend");
+                listener.tagFriend(dataSet.get(position).getSenderName());
+
+                // TODO: Notify friend
             }
         });
     }
@@ -120,7 +128,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         else return 0;
     }
 
-    public void addMessage(String input){
-        dataSet.add(input);
-    }
+//    public void addMessage(Chat input){
+//        dataSet.add(input);
+//    }
 }
