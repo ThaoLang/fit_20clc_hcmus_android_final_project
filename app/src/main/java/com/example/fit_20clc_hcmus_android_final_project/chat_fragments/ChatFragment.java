@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
-import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.ChatAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
@@ -23,21 +21,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, ChatActivity.ChatCallbacks {
     private FragmentChatBinding binding;
@@ -47,10 +35,11 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
     private ChatActivity chat_activity;
     private Context context;
 
-    LinearLayoutManager mLinearLayoutManager;
-    ChatAdapter adapter;
-    ArrayList<Chat> chatHistory;
-    private static String friendPhone;
+    private LinearLayoutManager mLinearLayoutManager;
+    private ChatAdapter adapter;
+    private ArrayList<Chat> chatHistory;
+    private String friendEmail;
+    private int currentTripId = 1;
 
     public ChatFragment() {
         // Required empty public constructor
@@ -74,7 +63,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
         try {
             context = getActivity();
             chat_activity = (ChatActivity) getActivity();
-//            chat_activity.setListener(this);
+            chat_activity.setListener(this);
 
         } catch (IllegalStateException e) {
             throw new IllegalStateException("ChatActivity must implement callbacks");
@@ -92,13 +81,21 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
         chatHistory = new ArrayList<>();
         readChat(this);
 
+        if (friendEmail!=null){
+            for (Chat c : chatHistory){
+                if (c.getSenderEmail().equals(friendEmail)){
+                    tagFriend(c.getSenderName());
+                    break;
+                }
+            }
+        }
+
         adapter = new ChatAdapter(context, chatHistory);
         adapter.setListener(this);
         binding.listItem.setAdapter(adapter);
         binding.listItem.setLayoutManager(mLinearLayoutManager);
         binding.listItem.smoothScrollToPosition(0);
 
-        // TODO: Add new message to database
         binding.chatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,13 +108,13 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                     User user = chat_activity.getMainUserInfo();
                     FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
-                    int id = 0;
+                    int id = currentTripId;
                     String message = input;
-                    int sendTime = chatHistory.size(); // TODO: fix pls
+                    int sendTime = chatHistory.size();
                     String senderName = user.getName();
-                    String senderPhone = user.getPhone();
+                    String senderEmail = user.getUserEmail();
 
-                    Chat chat = new Chat(id, message, sendTime, senderName, senderPhone);
+                    Chat chat = new Chat(id, message, sendTime, senderName, senderEmail);
                     chatHistory.add(chat);
                     adapter.notifyDataSetChanged();
                     binding.listItem.smoothScrollToPosition(chatHistory.size()-1);
@@ -152,11 +149,44 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
     }
 
     private void readChat(ChatFragment chatFragment) {
-        // TODO: read chat from database
         FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
         fb.collection("chatHistory")
-                .whereEqualTo("tripId", 1)
+                .whereEqualTo("tripId", 0)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Chat chat;
+
+                                    int id = Integer.parseInt(String.valueOf(document.get("tripId")));
+                                    String message = String.valueOf(document.get("message"));
+                                    int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
+                                    String senderName = String.valueOf(document.get("senderName"));
+                                    String senderEmail = String.valueOf(document.get("senderEmail"));
+
+                                    chat = new Chat(id, message, sendTime, senderName, senderEmail);
+                                    chatHistory.add(chat);
+
+                                    Log.e("tripId", String.valueOf(id));
+                                    Log.e("message", message);
+                                }
+                                adapter = new ChatAdapter(context, chatHistory);
+                                adapter.setListener(chatFragment);
+                                binding.listItem.setAdapter(adapter);
+                            }
+                        } else {
+                            // show no intro
+                        }
+                    }
+                });
+
+        fb.collection("chatHistory")
+                .whereEqualTo("tripId", currentTripId)
                 .orderBy("sendTime", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -168,15 +198,15 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                     Chat chat;
 
-                                    Log.e("tripId", document.get("tripId").toString());
+                                    Log.e("tripId", String.valueOf(document.get("tripId")));
 
-                                    int id = Integer.parseInt(document.get("tripId").toString());
-                                    String message = document.get("message").toString();
-                                    int sendTime = Integer.parseInt(document.get("sendTime").toString());
-                                    String senderName = document.get("senderName").toString();
-                                    String senderPhone = document.get("senderPhone").toString();
+                                    int id = Integer.parseInt(String.valueOf(document.get("tripId")));
+                                    String message = String.valueOf(document.get("message"));
+                                    int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
+                                    String senderName = String.valueOf(document.get("senderName"));
+                                    String senderEmail = String.valueOf(document.get("senderEmail"));
 
-                                    chat = new Chat(id, message, sendTime, senderName, senderPhone);
+                                    chat = new Chat(id, message, sendTime, senderName, senderEmail);
                                     chatHistory.add(chat);
 
                                     Log.e("message", message);
@@ -237,12 +267,13 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
         chat_activity.switchScreenByScreenType(1, null);
     }
 
-    public void setFriendPhone(String phone) {
-        Log.e("friendphone1", phone);
-        friendPhone = phone;
+    public void setFriendEmail(String email) {
+        Log.e("friendEmail", email);
+        friendEmail = email;
     }
 
     public void tagFriend(String friend) {
-        binding.chatTextField.setText(binding.chatTextField.getText() + "@" + friend);
+        String tag = binding.chatTextField.getText() + "@" + friend;
+        binding.chatTextField.setText(tag);
     }
 }

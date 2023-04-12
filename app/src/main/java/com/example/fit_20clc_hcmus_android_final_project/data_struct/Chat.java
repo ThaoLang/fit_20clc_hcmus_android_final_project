@@ -5,14 +5,14 @@ public class Chat {
     private String message;
     private int sendTime;
     private String senderName;
-    private String senderPhone;
+    private String senderEmail;
 
-    public Chat(int tripId, String message, int sendTime, String senderName, String senderPhone) {
+    public Chat(int tripId, String message, int sendTime, String senderName, String senderEmail) {
         this.tripId = tripId;
         this.message = message;
         this.sendTime = sendTime;
         this.senderName = senderName;
-        this.senderPhone = senderPhone;
+        this.senderEmail = senderEmail;
     }
 
     public int getTripId() {
@@ -47,11 +47,11 @@ public class Chat {
         this.senderName = senderName;
     }
 
-    public String getSenderPhone() {
-        return senderPhone;
+    public String getSenderEmail() {
+        return senderEmail;
     }
 
-    public void setSenderPhone(String senderPhone) {
-        this.senderPhone = senderPhone;
+    public void setSenderEmail(String senderEmail) {
+        this.senderEmail = senderEmail;
     }
 }

@@ -25,8 +25,8 @@ public class User {
         _username = "00";
         _useremail = "None";
         _userphone = "000";
-        _plans = new ArrayList<String>();
-        _favorite_locations = new ArrayList<String>();
+        _plans = new ArrayList<>();
+        _favorite_locations = new ArrayList<>();
         _useraddress = "0000";
         _userbio = "00000";
     }
@@ -124,6 +124,11 @@ public class User {
     public void setFavorite_locations(List<String> favorite_locations)
     {
         this._favorite_locations = favorite_locations;
+    }
+
+    public void setUserEmail(String newEmail)
+    {
+        this._useremail = newEmail;
     }
 
     public String getUserEmail()

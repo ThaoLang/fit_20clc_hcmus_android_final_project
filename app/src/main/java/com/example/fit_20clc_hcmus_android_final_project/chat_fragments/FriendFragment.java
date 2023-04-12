@@ -34,13 +34,13 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
     private ChatActivity chat_activity;
     private Context context;
 
-    LinearLayoutManager mLinearLayoutManager;
+    private LinearLayoutManager mLinearLayoutManager;
 
-    FriendAdapter adapter;
-    ArrayList<User> users;
+    private FriendAdapter adapter;
+    private ArrayList<User> users;
 
-    User user;
-    FirebaseFirestore fb;
+    private User user;
+    private FirebaseFirestore fb;
 
     public FriendFragment() {
         // Required empty public constructor
@@ -97,7 +97,7 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
         Log.e("userphoneff",user.getPhone());
 
         fb.collection("account")
-                .whereNotEqualTo("phone", user.getPhone())
+                .whereNotEqualTo("userEmail", user.getUserEmail())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -110,10 +110,10 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
 
                                     Log.e("name",document.get("name").toString());
 
-                                    String name = document.get("name").toString();
-                                    String phone = document.get("phone").toString();
-                                    String address = document.get("address").toString();
-                                    String email = document.get("email").toString();
+                                    String name = String.valueOf(document.get("name"));
+                                    String phone = String.valueOf(document.get("phone"));
+                                    String address = String.valueOf(document.get("address"));
+                                    String email = String.valueOf(document.get("userEmail"));
                                     friend = new User(name, email, phone, address,null,null,null);
                                     users.add(friend);
                                 }
@@ -123,13 +123,13 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                                     binding.listItem.setAdapter(adapter);
                             }
                         } else{
-                            // show "Plan has no friends"
+                            binding.textView.setText("No one else here...,");
                         }
                     }
                 });
     }
 
-    public void swapToChat(String phone){
-        chat_activity.switchScreenByScreenType(0, phone);
+    public void swapToChat(String email){
+        chat_activity.switchScreenByScreenType(0, email);
     }
 }

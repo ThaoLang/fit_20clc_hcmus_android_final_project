@@ -1,7 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,17 +15,7 @@ import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 import java.util.ArrayList;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
-//    private String[] localDataSet = {
-//            "Message 1",
-//            "Message 2",
-//            "Message 3",
-//            "Message 4",
-//    };
-//
-//    private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
-
     private ArrayList<Chat> dataSet;
-    //user ; chat
 
     Context context;
 
@@ -47,11 +36,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         this.context = _context;
         this.dataSet = _dataset;
     }
-
-//    public ChatAdapter(Context _context) {
-//        this.context = _context;
-//    }
-
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -103,7 +87,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         // Get element from your posts at this position and replace the
         // contents of the view with that element
         viewHolder.message.setText(dataSet.get(position).getMessage());
-//        viewHolder.sendTime.setText(String.valueOf(dataSet.get(position).getSendTime()));
+//        viewHolder.sendTime.setText(dataSet.get(position).getSendTime());
         viewHolder.senderName.setText(dataSet.get(position).getSenderName());
 
 //        viewHolder.main_image.setImageResource(dataSet.get(position).getImage());

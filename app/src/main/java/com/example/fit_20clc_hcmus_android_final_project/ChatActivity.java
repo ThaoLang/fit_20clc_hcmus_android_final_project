@@ -48,7 +48,7 @@ public class ChatActivity extends FragmentActivity {
     }
 
     public interface ChatCallbacks {
-        void setFriendPhone(String phone);
+        void setFriendEmail(String email);
     }
 
     @Override
@@ -145,16 +145,16 @@ public class ChatActivity extends FragmentActivity {
     }
 
     //execute to switch the screen (fragment)
-    public void switchScreenByScreenType(int inputScreenType, String phone)
+    public void switchScreenByScreenType(int inputScreenType, String email)
     {
         switch (inputScreenType)
         {
             case CHAT:
             {
                 currentScreen = ChatFragment.newInstance(CHAT_INIT_PARAM);
-                if (phone!=null){
-                    Log.e("phone", phone);
-                    listener.setFriendPhone(phone);
+                if (email!=null){
+                    Log.e("email", email);
+                    listener.setFriendEmail(email);
                 }
 
                 bottomNavigation.setSelectedItemId(R.id.bottom_nav_chat);
