@@ -156,6 +156,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
         FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
         fb.collection("chatHistory")
+                .whereEqualTo("tripId", 1)
                 .orderBy("sendTime", Query.Direction.ASCENDING)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -181,11 +182,10 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                                     Log.e("message", message);
                                 }
 
-                                for (int i=0;i<chatHistory.size();i++){
-                                    Log.e("MESSAGE", chatHistory.get(i).getMessage());
+//                                for (int i=0;i<chatHistory.size();i++){
+//                                    Log.e("MESSAGE", chatHistory.get(i).getMessage());
 //                                    adapter.addMessage(chatHistory.get(i));
-                                }
-//                                adapter = new ChatAdapter(context);
+//                                }
                                 adapter = new ChatAdapter(context, chatHistory);
                                 adapter.setListener(chatFragment);
                                 binding.listItem.setAdapter(adapter);
@@ -214,7 +214,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
 //
 //                        int id = Integer.parseInt(document.get("tripId").toString());
 //                        String message = document.get("message").toString();
-//                        String sendTime = document.get("sendTime").toString();
+//                        int sendTime = Integer.parseInt(document.get("sendTime").toString());
 //                        String senderName = document.get("senderName").toString();
 //                        String senderPhone = document.get("senderPhone").toString();
 //

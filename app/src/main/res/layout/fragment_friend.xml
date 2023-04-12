@@ -18,7 +18,7 @@
             android:padding="50dp"
             android:text="@string/friend_tab"
             android:textColor="@color/CustomColor1"
-            android:textSize="40sp"
+            android:textSize="35sp"
             android:textStyle="bold"/>
 
         <androidx.recyclerview.widget.RecyclerView

@@ -15,8 +15,7 @@
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/default_gradient_account_info">
+            android:orientation="vertical">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
@@ -32,7 +31,7 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/mac_text_input_edittext_username"
                 android:layout_width="match_parent"
-                android:layout_height="50sp"
+                android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-black"
                 android:text="@string/unknown"
                 android:textSize="25sp"
@@ -40,7 +39,7 @@
                 android:enabled="false"
                 android:background="@null"
                 android:layout_marginTop="30dp"
-                android:textColor="@color/material_dynamic_primary50"
+                android:textColor="@color/CustomColor1"
                 />
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -90,7 +89,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/mac_text_input_layout_useremail"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/email"
                 android:layout_gravity="center_vertical"
                 android:paddingLeft="40dp"
@@ -104,7 +103,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/mac_text_input_edittext_useremail"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:backgroundTint="@color/md_theme_light_onPrimary"
                     android:enabled="false"/>
 
@@ -133,7 +132,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/mac_text_input_layout_userphone"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/phone"
                 android:paddingLeft="20dp"
                 android:layout_gravity="center_vertical"
@@ -147,7 +146,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/mac_text_input_edittext_userphone"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:backgroundTint="@color/md_theme_light_onPrimary"
                     android:enabled="false"/>
 
@@ -175,7 +174,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/mac_text_input_layout_useraddress"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="wrap_content"
                 android:hint="@string/address"
                 android:paddingLeft="40dp"
                 android:layout_gravity="center_vertical"
@@ -189,7 +188,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/mac_text_input_edittext_useraddress"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="wrap_content"
                     android:backgroundTint="@color/md_theme_light_onPrimary"
                     android:enabled="false"/>
 
@@ -217,7 +216,7 @@
                 android:textColor="@color/md_theme_dark_shadow"
                 android:textSize="15sp"
                 android:width="200dp"
-                app:backgroundTint="#B6F4CF"
+                app:backgroundTint="@color/CustomColor2"
                 app:strokeColor="@color/md_theme_dark_shadow"
                 app:strokeWidth="1dp"
                 android:layout_gravity="center_horizontal"
@@ -236,7 +235,7 @@
                 android:textColor="@color/md_theme_dark_shadow"
                 android:textSize="15sp"
                 android:width="200dp"
-                app:backgroundTint="#B6F4CF"
+                app:backgroundTint="@color/CustomColor2"
                 app:strokeColor="@color/md_theme_dark_shadow"
                 app:strokeWidth="1dp"
                 android:layout_gravity="center_horizontal"
@@ -256,7 +255,7 @@
                 android:textColor="@color/md_theme_dark_shadow"
                 android:textSize="15sp"
                 android:width="200dp"
-                app:backgroundTint="#B6F4CF"
+                app:backgroundTint="@color/CustomColor2"
                 app:strokeColor="@color/md_theme_dark_shadow"
                 app:strokeWidth="1dp"
                 android:layout_gravity="center_horizontal"

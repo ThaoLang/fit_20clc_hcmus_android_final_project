@@ -1,6 +1,7 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +25,8 @@ public class AccountInfoPage extends Fragment {
     private static final String INIT_PARAM = "initParam";
 
     private TextInputEditText username, userbio, useremail, userphone, useraddress;
-    private MaterialButton edit_save_button, logout_button, chat_button;
+    private MaterialButton edit_save_button, logout_button;
+    private MaterialButton chat_button;
 
     private String initParam;
 
@@ -84,6 +86,8 @@ public class AccountInfoPage extends Fragment {
                 if (EDIT_OR_SAVE == false)//the current mode is edit-mode
                 {
                     username.setEnabled(true);
+                    username.setTextColor(Color.parseColor("#A8C0FF"));
+
                     userbio.setEnabled(true);
 //                    useremail.setEnabled(true);
                     userphone.setEnabled(true);
@@ -113,6 +117,8 @@ public class AccountInfoPage extends Fragment {
                     }
 
                     username.setEnabled(false);
+                    username.setTextColor(Color.parseColor("#2DD5B7"));
+
                     userbio.setEnabled(false);
 //                    useremail.setEnabled(false);
                     userphone.setEnabled(false);

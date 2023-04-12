@@ -39,6 +39,9 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
     FriendAdapter adapter;
     ArrayList<User> users;
 
+    User user;
+    FirebaseFirestore fb;
+
     public FriendFragment() {
         // Required empty public constructor
     }
@@ -88,8 +91,8 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
     }
 
     private void readFriends(FriendFragment friendFragment) {
-        User user = chat_activity.getMainUserInfo();
-        FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
+        user = chat_activity.getMainUserInfo();
+        fb = chat_activity.getFirebaseFirestore();
 
         Log.e("userphoneff",user.getPhone());
 
@@ -111,12 +114,13 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                                     String phone = document.get("phone").toString();
                                     String address = document.get("address").toString();
                                     String email = document.get("email").toString();
-                                    friend = new User(name, email, phone,address,null,null,null);
+                                    friend = new User(name, email, phone, address,null,null,null);
                                     users.add(friend);
                                 }
-                                adapter = new FriendAdapter(context, users);
-                                adapter.setListener(friendFragment);
-                                binding.listItem.setAdapter(adapter);
+                                    binding.textView.setText("Friend");
+                                    adapter = new FriendAdapter(context, users);
+                                    adapter.setListener(friendFragment);
+                                    binding.listItem.setAdapter(adapter);
                             }
                         } else{
                             // show "Plan has no friends"
