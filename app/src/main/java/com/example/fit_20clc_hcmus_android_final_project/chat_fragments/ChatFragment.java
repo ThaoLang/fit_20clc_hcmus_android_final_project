@@ -186,8 +186,8 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                 });
 
         fb.collection("chatHistory")
-                .whereEqualTo("tripId", currentTripId)
                 .orderBy("sendTime", Query.Direction.ASCENDING)
+//                .whereEqualTo("tripId", currentTripId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -197,19 +197,21 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                             if (!querySnapshot.isEmpty()) {
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                     Chat chat;
-
-                                    Log.e("tripId", String.valueOf(document.get("tripId")));
-
                                     int id = Integer.parseInt(String.valueOf(document.get("tripId")));
-                                    String message = String.valueOf(document.get("message"));
-                                    int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
-                                    String senderName = String.valueOf(document.get("senderName"));
-                                    String senderEmail = String.valueOf(document.get("senderEmail"));
 
-                                    chat = new Chat(id, message, sendTime, senderName, senderEmail);
-                                    chatHistory.add(chat);
+                                    Log.e("tripId", String.valueOf(id));
 
-                                    Log.e("message", message);
+                                    if (id == currentTripId){
+                                        String message = String.valueOf(document.get("message"));
+                                        int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
+                                        String senderName = String.valueOf(document.get("senderName"));
+                                        String senderEmail = String.valueOf(document.get("senderEmail"));
+
+                                        chat = new Chat(id, message, sendTime, senderName, senderEmail);
+                                        chatHistory.add(chat);
+
+                                        Log.e("message", message);
+                                    }
                                 }
 
 //                                for (int i=0;i<chatHistory.size();i++){

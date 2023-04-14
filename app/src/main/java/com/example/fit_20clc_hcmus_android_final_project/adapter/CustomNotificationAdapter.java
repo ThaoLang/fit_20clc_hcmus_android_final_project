@@ -13,27 +13,11 @@ import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotificationAdapter.ViewHolder> {
 
-    //    Notification dataset here vvv
-    private String[] localDataSet ={
-            "Click 1",
-            "Click 2",
-            "Click 3",
-            "Click 4",
-            "Click 1",
-            "Click 2",
-            "Click 3",
-            "Click 4",
-            "Click 1",
-            "Click 2",
-            "Click 3",
-            "Click 4",
-    };
-    private ArrayList<String> dataSet = new ArrayList<>(Arrays.asList(localDataSet));
-
+    private ArrayList<String> dataSet;
     Context context;
 
     private Callbacks listener;
@@ -48,21 +32,10 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
         void swapToTrips();
     }
 
-    /**
-     * Initialize the dataset of the Adapter.
-     * <p>
-     * param dataSet String[] containing the data to populate views to be used
-     * by RecyclerView.
-     */
-
-    public CustomNotificationAdapter(Context _context) {
+    public CustomNotificationAdapter(Context _context, ArrayList<String> dataSet) {
         this.context = _context;
+        this.dataSet = dataSet;
     }
-
-//    public CustomNotificationAdapter(Context _context, ArrayList<String> dataSet) {
-//        this.context = _context;
-//        this.dataSet = dataSet;
-//    }
 
     /**
      * Provide a reference to the type of views that you are using
@@ -83,11 +56,6 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
             view.setOnClickListener(this);
             view.setOnLongClickListener(this);
         }
-
-        // Constructor
-//        public TextView getTextView() {
-//            return textView;
-//        }
 
         public void setItemClickListener(ItemClickListener itemClickListener)
         {

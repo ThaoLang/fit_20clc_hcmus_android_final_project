@@ -12,26 +12,29 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPageBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
 
 public class NotificationPage extends Fragment implements CustomNotificationAdapter.Callbacks {
     private FragmentNotificationPageBinding binding;
@@ -50,7 +53,7 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
     private MainActivity main_activity;
     private Context context;
     private CustomNotificationAdapter adapter;
-//    private int selected_position=0;
+    private ArrayList<String> notificationList;
 
     LinearLayoutManager mLinearLayoutManager;
 
@@ -91,16 +94,17 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setStackFromEnd(true);
 
-        adapter = new CustomNotificationAdapter(context);
+        notificationList = new ArrayList<>();
+        //TODO: create notification dataset and update with this function
+        getNotificationInfo(this);
+
+        adapter = new CustomNotificationAdapter(context, notificationList);
         adapter.setListener(this);
 
         binding.listItem.setLayoutManager(mLinearLayoutManager);
 
         binding.listItem.setAdapter(adapter);
         binding.listItem.smoothScrollToPosition(0);
-
-        //TODO: create notification dataset and update with this function
-        getNotificationInfo();
 
         return binding.getRoot();
     }
@@ -137,7 +141,7 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
 //         main_activity.switchScreenByScreenType(main_activity.TRIPS);
 
         // TODO: Revise intent to send to the right activity / plan when click on notification
-        Intent intent = new Intent(context, LocationInfo.class); //supposedly from notification to plan detail?
+        Intent intent = new Intent(context, ChatActivity.class); //supposedly from notification to plan detail?
 //        intent.putExtra(INTENT_EXTRA_NOTIFICATION, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
@@ -170,55 +174,44 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
         notificationManager.notify(notificationId, builder.build());
     }
 
-    private void getNotificationInfo(){
-        FirebaseDatabase
-                .getInstance()
-                .getReference("account")
-                .addChildEventListener(new ChildEventListener() {
+    private void getNotificationInfo(NotificationPage notificationPage){
+        //TODO: firebasefirestore
+        FirebaseFirestore fb = main_activity.getFirebaseFirestore();
+//        FirebaseFirestore fb = DatabaseAccess.getFirestore();
+
+        fb.collection("chatHistory")
+                .orderBy("sendTime", Query.Direction.ASCENDING)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        FirebaseUser user = DatabaseAccess.getCurrentUser();
-                        User mainUserInfo = DatabaseAccess.getMainUserInfo();
-                        if(mainUserInfo != null)
-                        {
-                            Toast.makeText(context, "Hello World", Toast.LENGTH_SHORT).show();
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Chat chat;
 
-                            // TODO: get user notifications
-                            // TODO: create notification class array and import data
+                                    Log.e("tripId", document.get("tripId").toString());
 
-                            // val notification = snapshot.getValue(Notification.class); ? https://youtu.be/DQLZxt1qFdk?t=1120
-//                            username.setText(mainUserInfo.getName());
-//                            userbio.setText(mainUserInfo.getBio());
-//                            useremail.setText(user.getEmail());
-//                            useraddress.setText(mainUserInfo.getAddress());
-//                            userphone.setText(mainUserInfo.getPhone());
+//                                    int id = Integer.parseInt(document.get("tripId").toString());
+                                    String message = document.get("message").toString();
+//                                    int sendTime = Integer.parseInt(document.get("sendTime").toString());
+//                                    String senderName = document.get("senderName").toString();
+//                                    String senderPhone = document.get("senderPhone").toString();
 
-                            adapter.notifyDataSetChanged();
+//                                    chat = new Chat(id, message, sendTime, senderName, senderPhone);
+                                    notificationList.add(message);
 
-                            //TODO: use service to send notification even when app isn't open
-                            //Send notification on create
-                            sendNotification();
+                                    Log.e("message", message);
+                                }
+
+                                adapter = new CustomNotificationAdapter(context, notificationList);
+                                adapter.setListener(notificationPage);
+                                binding.listItem.setAdapter(adapter);
+                            }
+                        } else {
+                            // no notification
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
     }

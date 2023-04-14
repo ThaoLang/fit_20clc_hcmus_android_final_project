@@ -30,6 +30,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -228,6 +229,10 @@ public class MainActivity extends FragmentActivity {
             }
         };
         return hide;
+    }
+
+    public FirebaseFirestore getFirebaseFirestore(){
+        return FirebaseFirestore.getInstance();
     }
 
 }
