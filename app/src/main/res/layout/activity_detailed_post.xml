@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsing_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+            android:fitsSystemWindows="true"
+
+            app:title="Bali"
+            android:background="@drawable/bali">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                >
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <com.denzcoskun.imageslider.ImageSlider
+                        android:id="@+id/imageSlider"
+                        android:layout_width="match_parent"
+
+                        android:layout_height="200dp"
+                        app:iss_period="1000"
+                        app:iss_auto_cycle="true"
+                        app:iss_delay="1000"
+                        app:iss_corner_radius="10"
+                        app:iss_title_background="@drawable/collapse_tool_bar_bg"/>
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAlignBottom="false"
+                android:clickable="true"
+                android:src="@drawable/back_icon"
+                app:fabSize="normal"
+                android:layout_marginRight="30dp"
+
+                app:layout_collapseMode="pin"/>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/popup_menu_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:baselineAlignBottom="false"
+                android:clickable="true"
+                android:src="@drawable/popup_menu_icon"
+                app:fabSize="normal"
+                android:layout_gravity="end|top"
+                android:layout_marginRight="10dp"
+
+                app:layout_collapseMode="pin"/>
+
+
+
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/short_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="8dp"
+            app:cardUseCompatPadding="true"
+            app:contentPadding="16dp"
+            android:baselineAlignBottom="false"
+            android:layout_gravity="center_horizontal"
+            app:fabSize="normal"
+            android:backgroundTint="@color/md_theme_light_onPrimary"
+            app:layout_collapseMode="pin">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/trip_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:text="Trip to Hawaii from Ho Chi Minh"
+                    android:textSize="20dp"/>
+
+                <TextView
+                    android:id="@+id/trip_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_theme_light_outline"
+                    android:drawableLeft="@drawable/calendar_icon"
+                    android:drawablePadding="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_margin="10dp"
+                    android:text="05/05 -08/05" />
+
+                <TextView
+                    android:id="@+id/number_people"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textColor="@color/md_theme_light_outline"
+                    android:drawableLeft="@drawable/number_people_icon"
+                    android:drawablePadding="10dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="2 people"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_light_outline"
+                        android:layout_marginRight="10dp"
+                        android:text="Created by:"/>
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/bali"
+                        android:layout_gravity="center_vertical"
+                        />
+
+                    <TextView
+                        android:id="@+id/profile_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/md_theme_light_outline"
+
+                        android:text="Lang Thao" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+    </com.google.android.material.appbar.AppBarLayout>
+    <LinearLayout
+        android:id="@+id/bottom_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme"
+        android:layout_gravity="bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical">
+
+        <View
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/CustomColor12" />
+        <RelativeLayout
+            android:id="@+id/bottom_menu_post"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            >
+
+
+            <ImageView
+                android:id="@+id/like_btn"
+                android:layout_marginLeft="10dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/like_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/number_like"
+                android:text="Like"
+                android:layout_toEndOf="@+id/like_btn"
+                android:textSize="20dp"
+                android:layout_marginStart="10dp"/>
+
+            <ImageView
+                android:id="@+id/comment_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/comment_bubble_icon"
+                android:layout_toEndOf="@+id/number_like"
+                android:layout_marginStart="100dp"/>
+
+            <ImageView
+                android:id="@+id/share_btn"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/share_icon"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+    <!-- Nội dung của trang -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/bottom_appbar"
+        android:layout_marginBottom="60dp"
+
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_margin="10dp"
+                android:text="Places to visit"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/list_trip_day"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:text="Members"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_margin="10dp"
+                android:text="Places to visit"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_margin="10dp"
+                android:text="Places to visit"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:layout_margin="10dp"
+                android:text="Places to visit"/>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/view_map_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:baselineAlignBottom="true"
+        android:clickable="true"
+        android:src="@drawable/back_icon"
+        app:fabSize="normal"
+        android:layout_marginBottom="50dp"
+        android:layout_marginRight="30dp"
+        android:layout_gravity="bottom|end"
+        />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

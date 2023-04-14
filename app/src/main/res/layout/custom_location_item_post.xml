@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:cardCornerRadius="5dp"
+    android:layout_margin="5dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/top_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@id/arrow_expand"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/arrow_down_icon"
+                    android:layout_alignParentLeft="true"/>
+
+                <RelativeLayout
+                    android:id="@+id/icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_toRightOf="@+id/arrow_expand">
+
+                    <ImageView
+                        android:id="@+id/location_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/location_icon"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"
+
+                        app:tint="@color/CustomColor6" />
+
+<!--                    <TextView-->
+<!--                        android:id="@+id/location_count"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_centerInParent="true"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:text="3"-->
+
+<!--                        android:textColor="@color/md_theme_light_onPrimary"-->
+<!--                        android:textSize="10sp" />-->
+
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/location_name"
+                    android:layout_width="185dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:textAlignment="textStart"
+                    android:text="Dam Sen Park"
+                    android:textStyle="bold"
+                    android:textSize="16dp"
+                    android:textColor="@color/md_theme_light_shadow"
+                    android:backgroundTint="@color/md_theme_light_onPrimary"
+                    android:layout_toRightOf="@+id/icon"
+                    />
+
+                <Button
+                    android:id="@+id/add_Favorite"
+                    android:layout_width="132dp"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/heart_icon"
+                    android:drawableTint="@color/md_theme_light_error"
+                    android:textAlignment="center"
+                    android:text="Favorite"
+                    android:backgroundTint="@color/CustomColor1"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/content_location_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            <TextView
+                android:id="@+id/location_trip_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:drawableLeft="@drawable/calendar_icon"
+                android:drawablePadding="10dp"
+                android:text="10am 03/04/2023 - 11pm 05/04/2023"
+                android:layout_gravity="center_vertical"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:text="Departure location:"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/departure_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Destination:"
+                    android:textStyle="bold"/>
+                <TextView
+                    android:id="@+id/destination"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City"
+                    android:layout_gravity="center_vertical"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/md_theme_light_outline"
+                android:text="Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games "
+                android:layout_gravity="center_vertical"/>
+
+            <Button
+                android:id="@+id/view_on_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="View on map"
+                android:backgroundTint="@color/md_theme_light_shadow"/>
+
+            <!--    <FrameLayout-->
+            <!--        android:id="@+id/bottom_bar"-->
+            <!--        android:layout_width="match_parent"-->
+            <!--        android:layout_height="wrap_content">-->
+
+            <!--    </FrameLayout>-->
+                <View
+                    android:layout_margin="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/CustomColor12" />
+
+                <RelativeLayout
+                    android:id="@+id/bottom_menu_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="10dp">
+
+                    <Button
+                        android:id="@+id/comment"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/comment_bubble_icon"
+                        android:layout_alignParentLeft="true"
+                        android:drawableTint="@color/CustomColor1"
+                        android:layout_marginStart="150dp"
+                        android:backgroundTint="@color/CustomColor1"/>
+
+                    <TextView
+                        android:id="@+id/number_comment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10 Comments"
+                        android:layout_alignParentRight="true"
+                        android:textSize="16dp"
+                        android:layout_marginStart="10dp"/>
+
+                </RelativeLayout>
+        </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

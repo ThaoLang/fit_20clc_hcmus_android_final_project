@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.FavoriteLocationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.DetailedPost;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.ActivityHomepageBinding;
 
 /**
@@ -145,11 +146,11 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
   //  }
 
     public void swapToLocationInfo(){
-        startActivity(new Intent(context, LocationInfo.class));
+        startActivity(new Intent(context, DetailedPost.class));
     }
 
     public void swapToPost(){ //swap locationinfo into postdetail
-        startActivity(new Intent(context, LocationInfo.class));
+        startActivity(new Intent(context, DetailedPost.class));
     }
 
 }

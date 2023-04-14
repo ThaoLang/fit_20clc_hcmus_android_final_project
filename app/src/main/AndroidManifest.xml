@@ -25,9 +25,15 @@
             android:name=".ChatActivity"
             android:exported="false"/>
         <activity
+            android:name=".CommentActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".SignIn"
+            android:exported="false"/>
+        <activity
             android:name=".MainActivity"
-            android:exported="true"
             android:launchMode="singleTop"
+            android:exported="true"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,7 +53,7 @@
         <activity android:name=".CreatePlan"
             android:exported="false"/>
         <activity
-            android:name=".SignIn"
+            android:name=".data_struct.DetailedPost"
             android:exported="false">
         </activity>
     </application>

@@ -9,29 +9,28 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fit_20clc_hcmus_android_final_project.FavoriteLocation;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Comment;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Post;
 
-public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocationAdapter.ViewHolder>{
-    private FavoriteLocation[] favoriteLocations={
-            new FavoriteLocation(R.drawable.bali,"Bali"),
-            new FavoriteLocation(R.drawable.bali,"Bali"),
-            new FavoriteLocation(R.drawable.bali,"Bali"),
-            new FavoriteLocation(R.drawable.bali,"Bali"),
-            new FavoriteLocation(R.drawable.bali,"Bali"),
-            new FavoriteLocation(R.drawable.bali,"Bali")
+public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>{
+    private Comment[] comments={
+            new Comment("None","None", Comment.commentType.Plan,"None","amazing","None"),
+            new Comment("None","None",Comment.commentType.Plan,"None","interesting","None"),
+            new Comment("None","None",Comment.commentType.Plan,"None","bad trip","None"),
+            new Comment("None","None",Comment.commentType.Plan,"None","rich kid","None"),
             };
     Context context;
 
-    private FavoriteLocationAdapter.Callbacks listener;
-    public void setListener(FavoriteLocationAdapter.Callbacks listener) {
+    private CommentAdapter.Callbacks listener;
+    public void setListener(CommentAdapter.Callbacks listener) {
         this.listener = listener;
     }
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void swapToLocationInfo();
+        void swapToPost();
     }
 
     /**
@@ -41,11 +40,11 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
      * by RecyclerView.
      */
 
-    public FavoriteLocationAdapter(Context _context) {
+    public CommentAdapter(Context _context) {
         this.context = _context;
     }
 
-//    public FavoriteLocationAdapter(Context _context, ArrayList<String> posts) {
+//    public PostAdapter(Context _context, ArrayList<String> posts) {
 //        this.context = _context;
 //        this.posts = posts;
 //    }
@@ -56,9 +55,10 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
      */
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-
-        private final ImageView main_image;
-        private  final TextView name;
+        private final ImageView image_comment;
+        private final ImageView profile_image;
+        private  final TextView name_account;
+        private final TextView text_comment;
 
         private ItemClickListener itemClickListener;
 
@@ -66,8 +66,10 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
             super(view);
             // Define click listener for the ViewHolder's View
 
-            name = (TextView) view.findViewById(R.id.favorite_location_name);
-            main_image = (ImageView) view.findViewById(R.id.location_image);
+            name_account = (TextView) view.findViewById(R.id.profile_name);
+            text_comment = (TextView) view.findViewById(R.id.text_comment);
+            image_comment = (ImageView) view.findViewById(R.id.image_comment);
+            profile_image = (ImageView) view.findViewById(R.id.profile_image);
 
             view.setOnClickListener(this);
         }
@@ -87,28 +89,31 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
 
     // Create new views (invoked by the layout manager)
     @Override
-    public FavoriteLocationAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+    public CommentAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.custom_favorite_location_item, viewGroup, false);
+                .inflate(R.layout.custom_comment_item, viewGroup, false);
 
-        return new FavoriteLocationAdapter.ViewHolder(view);
+        return new CommentAdapter.ViewHolder(view);
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(FavoriteLocationAdapter.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(CommentAdapter.ViewHolder viewHolder, final int position) {
 
         // Get element from your posts at this position and replace the
         // contents of the view with that element
-        viewHolder.name.setText(favoriteLocations[position].getName());
 
-        viewHolder.main_image.setImageResource(favoriteLocations[position].getImage());
+        //viewHolder.name_account.setText(comments[position].get());
+        viewHolder.text_comment.setText(comments[position].getText_comment());
+        //viewHolder.profile_image.setImageResource(comments[position].getAvatar_url());
+        //viewHolder.image_comment.setImageResource(comments[position].getMain_image());
 
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                listener.swapToLocationInfo();
+                //can swap to another activity using this method
+                listener.swapToPost();
             }
         });
     }
@@ -116,6 +121,6 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
     // Return the size of your posts (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return favoriteLocations.length;
+        return comments.length;
     }
 }

@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.RegistrationBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,6 +37,10 @@ public class Registration extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         binding=RegistrationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Glide.with(this)
+                .load("https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/20/16/ho-chi-minh-city.jpg?width=1200")
+                .into(binding.testImage);
 
         mAuth=FirebaseAuth.getInstance();
 

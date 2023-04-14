@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Destination extends Location implements Serializable {
-//    protected String imageLink;
+    protected String imageLink;
     protected Float rating;
     protected List<String> commentInfoList; //includes IDs of comment lists
     protected String startTime;
@@ -13,6 +13,7 @@ public class Destination extends Location implements Serializable {
     protected String startDate;
     protected String endDate;
     protected String description;
+    protected String departureLocation;
 
 
     public Destination()
@@ -21,7 +22,7 @@ public class Destination extends Location implements Serializable {
         formalName= "None";
         longitude= "None";
         latitude= "None";
-//        imageLink= "None";
+        imageLink= "None";
         rating= 0F;
         startTime = "None";
         endTime = "None";
@@ -29,32 +30,30 @@ public class Destination extends Location implements Serializable {
         endDate = "None";
         description = "None";
         commentInfoList = new ArrayList<String>();
+
+        departureLocation="None";
     }
 
-//    public Destination(String inputName, String inputFormalName, String inputLongitude, String inputLatitude, String inputImageLink, Float inputRating,
-//                       String inputStartTime, String inputEndTime, String inputStartDate, String inputEndDate, String inputDescription)
-//    {
-//        name= inputName;
-//        formalName= inputFormalName;
-//        longitude= inputLongitude;
-//        latitude= inputLatitude;
-//        imageLink= inputImageLink;
-//        rating= inputRating;
-//        startTime = inputStartTime;
-//        endTime = inputEndTime;
-//        startDate = inputStartDate;
-//        endDate = inputEndDate;
-//        description = inputDescription;
-//        commentInfoList = new ArrayList<String>();
-//    }
+    public String getDescription() {
+        return description;
+    }
 
-    public Destination(String inputName, String inputFormalName, String inputLongitude, String inputLatitude, Float inputRating,
-                       String inputStartTime, String inputEndTime, String inputStartDate, String inputEndDate, String inputDescription)
+    public String getDepartureLocation() {
+        return departureLocation;
+    }
+
+    public void setDepartureLocation(String departureLocation) {
+        this.departureLocation = departureLocation;
+    }
+
+    public Destination(String inputName, String inputFormalName, String inputLongitude, String inputLatitude, String inputImageLink, Float inputRating,
+                       String inputStartTime, String inputEndTime, String inputStartDate, String inputEndDate, String inputDescription, String inputDepartureLocation)
     {
         name= inputName;
         formalName= inputFormalName;
         longitude= inputLongitude;
         latitude= inputLatitude;
+        imageLink= inputImageLink;
         rating= inputRating;
         startTime = inputStartTime;
         endTime = inputEndTime;
@@ -62,13 +61,14 @@ public class Destination extends Location implements Serializable {
         endDate = inputEndDate;
         description = inputDescription;
         commentInfoList = new ArrayList<String>();
+        departureLocation=inputDepartureLocation;
     }
 
 
-//    public void setImageLink(String inputImageLink)
-//    {
-//        imageLink = inputImageLink;
-//    }
+    public void setImageLink(String inputImageLink)
+    {
+        imageLink = inputImageLink;
+    }
 
     public void setRating(Float inputRating)
     {
@@ -105,10 +105,10 @@ public class Destination extends Location implements Serializable {
         commentInfoList = newList;
     }
 
-//    public String getImageLink()
-//    {
-//        return imageLink;
-//    }
+    public String getImageLink()
+    {
+        return imageLink;
+    }
 
     public String getStartTime()
     {
@@ -134,7 +134,6 @@ public class Destination extends Location implements Serializable {
     {
         return commentInfoList;
     }
-    public String getDescription() {return description;}
-    public Float getRating() {return rating;}
+
 
 }
