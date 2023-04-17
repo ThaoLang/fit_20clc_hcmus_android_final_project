@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -17,12 +18,12 @@ import com.example.fit_20clc_hcmus_android_final_project.adapter.ChatAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentChatBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
@@ -152,116 +153,44 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
         FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
         fb.collection("chatHistory")
-                .whereEqualTo("tripId", 0)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (!querySnapshot.isEmpty()) {
-                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    Chat chat;
-
-                                    int id = Integer.parseInt(String.valueOf(document.get("tripId")));
-                                    String message = String.valueOf(document.get("message"));
-                                    int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
-                                    String senderName = String.valueOf(document.get("senderName"));
-                                    String senderEmail = String.valueOf(document.get("senderEmail"));
-
-                                    chat = new Chat(id, message, sendTime, senderName, senderEmail);
-                                    chatHistory.add(chat);
-
-                                    Log.e("tripId", String.valueOf(id));
-                                    Log.e("message", message);
-                                }
-                                adapter = new ChatAdapter(context, chatHistory);
-                                adapter.setListener(chatFragment);
-                                binding.listItem.setAdapter(adapter);
-                            }
-                        } else {
-                            // show no intro
-                        }
-                    }
-                });
-
-        fb.collection("chatHistory")
                 .orderBy("sendTime", Query.Direction.ASCENDING)
-//                .whereEqualTo("tripId", currentTripId)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (!querySnapshot.isEmpty()) {
-                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    Chat chat;
-                                    int id = Integer.parseInt(String.valueOf(document.get("tripId")));
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error != null) {
+                    Log.w("TAG", "Listen failed.", error);
+                    return;
+                }
 
-                                    Log.e("tripId", String.valueOf(id));
+                if (!value.isEmpty()) {
+                  chatHistory.clear();
 
-                                    if (id == currentTripId){
-                                        String message = String.valueOf(document.get("message"));
-                                        int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
-                                        String senderName = String.valueOf(document.get("senderName"));
-                                        String senderEmail = String.valueOf(document.get("senderEmail"));
+                    for (DocumentSnapshot document : value.getDocuments()) {
+                        Chat chat;
+                        int id = Integer.parseInt(String.valueOf(document.get("tripId")));
 
-                                        chat = new Chat(id, message, sendTime, senderName, senderEmail);
-                                        chatHistory.add(chat);
+                        Log.e("tripId", String.valueOf(id));
 
-                                        Log.e("message", message);
-                                    }
-                                }
+                        if (id == 0 || id == currentTripId){
+                            String message = String.valueOf(document.get("message"));
+                            int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
+                            String senderName = String.valueOf(document.get("senderName"));
+                            String senderEmail = String.valueOf(document.get("senderEmail"));
 
-//                                for (int i=0;i<chatHistory.size();i++){
-//                                    Log.e("MESSAGE", chatHistory.get(i).getMessage());
-//                                    adapter.addMessage(chatHistory.get(i));
-//                                }
-                                adapter = new ChatAdapter(context, chatHistory);
-                                adapter.setListener(chatFragment);
-                                binding.listItem.setAdapter(adapter);
-                            }
-                        } else {
-                            // show "Plan has no chat yet"
+                            chat = new Chat(id, message, sendTime, senderName, senderEmail);
+                            chatHistory.add(chat);
+
+                            Log.e("message", message);
                         }
                     }
-                });
-
-//        fb.collection("chatHistory").addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                if (error != null) {
-//                    Log.w("TAG", "Listen failed.", error);
-//                    return;
-//                }
-//
-//                if (!value.isEmpty()) {
-////                  chatHistory.clear();
-//
-//                    for (DocumentSnapshot document : value.getDocuments()) {
-//                        Chat chat;
-//
-//                        Log.e("tripId", document.get("tripId").toString());
-//
-//                        int id = Integer.parseInt(document.get("tripId").toString());
-//                        String message = document.get("message").toString();
-//                        int sendTime = Integer.parseInt(document.get("sendTime").toString());
-//                        String senderName = document.get("senderName").toString();
-//                        String senderPhone = document.get("senderPhone").toString();
-//
-//                        chat = new Chat(id, message, sendTime, senderName, senderPhone);
-//                        chatHistory.add(chat);
-//                    }
-//                    adapter = new ChatAdapter(context, chatHistory);
-//                    adapter.setListener(chatFragment);
-//                    binding.listItem.setAdapter(adapter);
-//                } else {
-//                    Log.d("TAG", "Current data: null");
-//                }
-//            }
-//
-//        });
+                    adapter = new ChatAdapter(context, chatHistory);
+                    adapter.setListener(chatFragment);
+                    binding.listItem.setAdapter(adapter);
+                } else {
+                    Log.d("TAG", "Current data: null");
+                }
+            }
+        });
 
     }
 

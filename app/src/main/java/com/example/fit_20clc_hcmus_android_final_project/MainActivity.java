@@ -235,4 +235,8 @@ public class MainActivity extends FragmentActivity {
         return FirebaseFirestore.getInstance();
     }
 
+    public void setBottomNavigation(int id){
+        bottomNavigation.setSelectedItemId(id);
+    }
+
 }

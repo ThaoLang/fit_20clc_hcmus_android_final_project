@@ -157,7 +157,7 @@ public class AccountInfoPage extends Fragment {
                 auth.signOut();
 
                 startActivity(new Intent(getContext(), SignIn.class));
-                main.finish();
+                getParentFragment().onDetach();
             }
         });
 

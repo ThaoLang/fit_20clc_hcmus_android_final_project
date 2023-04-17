@@ -11,7 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -26,11 +26,11 @@ import android.view.ViewGroup;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPageBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -43,11 +43,8 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
     final private String CHANNEL_ID = "NOTIFICATION_CH_ID";
     final int notificationId = 1;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
 
     private MainActivity main_activity;
@@ -95,7 +92,6 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
         mLinearLayoutManager.setStackFromEnd(true);
 
         notificationList = new ArrayList<>();
-        //TODO: create notification dataset and update with this function
         getNotificationInfo(this);
 
         adapter = new CustomNotificationAdapter(context, notificationList);
@@ -137,9 +133,6 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
     }
 
     public void sendNotification() {
-        // TODO: CONSIDER: When click on notification, swap to trips using public method and var
-//         main_activity.switchScreenByScreenType(main_activity.TRIPS);
-
         // TODO: Revise intent to send to the right activity / plan when click on notification
         Intent intent = new Intent(context, ChatActivity.class); //supposedly from notification to plan detail?
 //        intent.putExtra(INTENT_EXTRA_NOTIFICATION, true);
@@ -181,36 +174,39 @@ public class NotificationPage extends Fragment implements CustomNotificationAdap
 
         fb.collection("chatHistory")
                 .orderBy("sendTime", Query.Direction.ASCENDING)
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (!querySnapshot.isEmpty()) {
-                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    Chat chat;
+                    public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.w("TAG", "Listen failed.", error);
+                            return;
+                        }
 
-                                    Log.e("tripId", document.get("tripId").toString());
+                        if (!querySnapshot.isEmpty()) {
+                            notificationList.clear();
+
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                Chat chat;
+
+                                Log.e("tripId", document.get("tripId").toString());
 
 //                                    int id = Integer.parseInt(document.get("tripId").toString());
-                                    String message = document.get("message").toString();
+                                String message = document.get("message").toString();
 //                                    int sendTime = Integer.parseInt(document.get("sendTime").toString());
 //                                    String senderName = document.get("senderName").toString();
 //                                    String senderPhone = document.get("senderPhone").toString();
 
 //                                    chat = new Chat(id, message, sendTime, senderName, senderPhone);
-                                    notificationList.add(message);
+                                notificationList.add(message);
 
-                                    Log.e("message", message);
-                                }
-
-                                adapter = new CustomNotificationAdapter(context, notificationList);
-                                adapter.setListener(notificationPage);
-                                binding.listItem.setAdapter(adapter);
+                                Log.e("message", message);
                             }
+
+                            adapter = new CustomNotificationAdapter(context, notificationList);
+                            adapter.setListener(notificationPage);
+                            binding.listItem.setAdapter(adapter);
                         } else {
-                            // no notification
+                            Log.d("TAG", "Current data: null");
                         }
                     }
                 });

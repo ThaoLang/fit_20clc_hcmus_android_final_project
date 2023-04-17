@@ -89,7 +89,7 @@ public class ChatActivity extends FragmentActivity {
         if(user == null)
         {
             startActivity(new Intent(ChatActivity.this, SignIn.class));
-            finish();
+            getParent().onBackPressed();
         }
         else
         {
@@ -108,11 +108,6 @@ public class ChatActivity extends FragmentActivity {
                 }
             });
         }
-    }
-
-    public FirebaseUser getTheCurrentUser()
-    {
-        return mAuth.getCurrentUser();
     }
 
     //change Fragment (screen)
@@ -168,9 +163,8 @@ public class ChatActivity extends FragmentActivity {
             }
             case RETURN:
             {
-//                MainActivity.switchScreenByScreenType(3);
-//                startActivity(new Intent(Intent.EXTRA_RETURN_RESULT));
-//                this.finish();
+                getParent().onBackPressed();
+//                getParent().setBottomNavigation();
                 break;
             }
         }
