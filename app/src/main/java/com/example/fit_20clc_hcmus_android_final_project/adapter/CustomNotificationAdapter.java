@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Notification;
 
 import java.util.ArrayList;
 
 
 public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotificationAdapter.ViewHolder> {
 
-    private ArrayList<String> dataSet;
+    private ArrayList<Notification> dataSet;
     Context context;
 
     private Callbacks listener;
@@ -27,31 +28,27 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void sendNotification();
+        void sendNotification(String title, String content);
 
-        void swapToTrips();
+        void swapToChat();
     }
 
-    public CustomNotificationAdapter(Context _context, ArrayList<String> dataSet) {
+    public CustomNotificationAdapter(Context _context, ArrayList<Notification> dataSet) {
         this.context = _context;
         this.dataSet = dataSet;
     }
 
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
-     */
-
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
-        private final TextView textView;
+        private final TextView title;
+        private final TextView content;
 
         private ItemClickListener itemClickListener;
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
 
-            textView = (TextView) view.findViewById(R.id.textView);
+            title = (TextView) view.findViewById(R.id.title);
+            content = (TextView) view.findViewById(R.id.content);
 
             view.setOnClickListener(this);
             view.setOnLongClickListener(this);
@@ -83,7 +80,7 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
                 .inflate(R.layout.notification, viewGroup, false);
 
         //DEBUG: Send notification on create
-        listener.sendNotification();
+        listener.sendNotification(dataSet.get(dataSet.size()-1).getTitle(), dataSet.get(dataSet.size()-1).getContent());
 
         return new ViewHolder(view);
     }
@@ -91,29 +88,25 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        viewHolder.title.setText(dataSet.get(position).getTitle());
+        viewHolder.content.setText(dataSet.get(position).getContent());
 
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
-        viewHolder.textView.setText(dataSet.get(position));
-
-//        Toast.makeText(context, "Hello " + dataSet[position], Toast.LENGTH_SHORT).show();
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 if(isLongClick)
-                    Toast.makeText(context, "Long Click: "+ dataSet.get(position), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Long Click: "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(context, " "+ dataSet.get(position), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, " "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
                 //DEBUG: Send notification here
-                listener.sendNotification();
+                listener.sendNotification(dataSet.get(position).getTitle(), dataSet.get(position).getContent());
 
-                listener.swapToTrips();
+                listener.swapToChat();
             }
         });
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return dataSet.size();
