@@ -56,6 +56,13 @@
             android:name=".data_struct.DetailedPost"
             android:exported="false">
         </activity>
+        <activity
+            android:name=".DetailedPlan"
+            android:exported="false">
+        </activity>
+        <activity android:name=".AddDestination"
+            android:exported="false">
+        </activity>
     </application>
 
 </manifest>

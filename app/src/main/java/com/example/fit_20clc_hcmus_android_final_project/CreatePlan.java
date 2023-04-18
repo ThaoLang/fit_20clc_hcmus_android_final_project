@@ -159,11 +159,20 @@ public class CreatePlan extends AppCompatActivity {
                 newPlan.setReturn_date(inputReturnDate);
                 newPlan.setPublicAttribute(isPublic);
                 newPlan.setOwner_email(DatabaseAccess.getMainUserInfo().getUserEmail());
-                newPlan.setImageLink(selectedImageUri.toString());
+                newPlan.setStatus(TripsPage.UPCOMING);
+
+                if(selectedImageUri == null)
+                {
+                    newPlan.setImageLink("None");
+                }
+                else
+                {
+                    newPlan.setImageLink(selectedImageUri.toString());
+                }
 
                 Bundle returnBundle = new Bundle();
                 returnBundle.putByteArray(RETURN_NEW_PLAN_CODE, Plan.planToByteArray(newPlan));
-
+                returnBundle.putString("CREATE_STATUS", "EXIST");
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(IDENTIFIED_CODE, returnBundle);
                 setResult(Activity.RESULT_OK, returnIntent);
@@ -276,10 +285,18 @@ public class CreatePlan extends AppCompatActivity {
                     try {
                         getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         selectedImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+//                        selectedImage.setHeight(image.getHeight());
+//                        selectedImage.setWidth(image.getWidth());
                         image.setImageBitmap(selectedImage);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        //throw new RuntimeException(e);
+                        selectedImageUri = null;
+                        image.setImageResource(R.drawable.image_48px);
                     }
+                }
+                else
+                {
+                    selectedImageUri = null;
                 }
             }
         }

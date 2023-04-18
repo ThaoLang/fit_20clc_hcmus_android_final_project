@@ -1,5 +1,14 @@
 package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
+import android.util.Log;
+
+import com.google.firebase.database.annotations.NotNull;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,5 +144,36 @@ public class Destination extends Location implements Serializable {
         return commentInfoList;
     }
 
+
+    public static byte[] toByteArray(@NotNull Destination destination)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try
+        {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(destination);
+            return baos.toByteArray();
+
+        } catch (IOException e) {
+            Log.e("<<Serializable error>>", e.getMessage());
+            return null;
+        }
+    }
+
+    public static Destination toObject(@NotNull byte[] inputByteArray)
+    {
+        ByteArrayInputStream bais = new ByteArrayInputStream(inputByteArray);
+        try
+        {
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            Destination dest = (Destination) ois.readObject();
+            return dest;
+        }
+        catch(IOException | ClassNotFoundException e)
+        {
+            Log.e("<<Serializable error>>", e.getMessage());
+            return null;
+        }
+    }
 
 }

@@ -24,11 +24,13 @@ public class Plan implements Serializable {
     private List<String> passengers;
     private boolean isPublic;
     private String status;
-    private List<Destination> listOfLocations = null;
+    private List<Destination> listOfLocations;
     private Float rating;
-    private List<String> listOfComments = null;
+    private List<String> listOfComments;
 
-    private List<String> listOfEditors = null;
+    private List<String> set_of_editors; //list of user email
+
+    private List<String> listOfLike;
 
     public Plan()
     {
@@ -43,7 +45,8 @@ public class Plan implements Serializable {
         listOfLocations = new ArrayList<Destination>();
         rating = 0F;
         listOfComments= new ArrayList<String>();
-        listOfEditors = new ArrayList<String>();
+        set_of_editors = new ArrayList<String>();
+        listOfLike = new ArrayList<String>();
     }
 
     public Plan(String inputPlanId, String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating, String inputImageLink)
@@ -58,12 +61,17 @@ public class Plan implements Serializable {
         rating= inputRating;
         listOfLocations = new ArrayList<Destination>();
         listOfComments= new ArrayList<String>();
-        listOfEditors = new ArrayList<String>();
+        set_of_editors = new ArrayList<String>();
+        listOfLike = new ArrayList<String>();
     }
 
 //    public Plan(String hoi_an_tour, String none, String inputDepartureDate, String inputEndDate, int i, boolean inputIsPublic, float inputRating) {
 //    }
 
+    public List<String> getListOfLike()
+    {
+        return listOfLike;
+    }
 
     public String getPlanId() {
         return planId;
@@ -117,11 +125,18 @@ public class Plan implements Serializable {
 
     public List<String> getSet_of_editors()
     {
-        return listOfEditors;
+        return set_of_editors;
     }
 
     //setter
     public String getStatus() {return status;}
+
+
+
+    public void setListOfLike(List<String> newListOfLike)
+    {
+        listOfLike = newListOfLike;
+    }
 
     public void setPlanId(String inputPlanId)
     {
@@ -177,9 +192,9 @@ public class Plan implements Serializable {
         listOfComments = newListOfComments;
     }
 
-    public void setListOfEditors(List<String> newListOfEditors)
+    public void setSet_of_editors(List<String> newListOfEditors)
     {
-        listOfEditors = newListOfEditors;
+        set_of_editors = newListOfEditors;
     }
 
     public void setPublic(boolean inputPublic)

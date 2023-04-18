@@ -1,5 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Address;
@@ -20,18 +21,35 @@ import com.google.type.LatLng;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.MissingFormatArgumentException;
 import java.util.stream.Collectors;
 
 public class Search extends AppCompatActivity {
 
     private ActivitySearchBinding binding;
 
+    private String _mode;
+
+    public final static String SEARCH_MODE = "MODE";
+
+    public final static String SEARCH_LOCATION_INFO = "SEARCH_LOCATION_INFO";
+    public final static String SEARCH_RETURN_FORMAL_NAME = "GET_FORMAL_NAME";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         binding= ActivitySearchBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        Intent requestIntent = getIntent();
+        if(requestIntent != null)
+        {
+            _mode = requestIntent.getStringExtra(SEARCH_MODE);
+            if(_mode == null)
+            {
+                throw new MissingFormatArgumentException("Missing _mode to start search activity. Put mode into Intent object when start this activity, intent.putExtras(Search.SEARCH_MODE, Search.<MODE>)");
+            }
+        }
 
         if(binding.suggestSearch.getVisibility() == View.VISIBLE)
         {
@@ -88,7 +106,15 @@ public class Search extends AppCompatActivity {
                 bundle.putString("location address",binding.searchView.getQuery().toString());
 
                 intent.putExtra("location search",bundle);
-                startActivity(intent);
+                if(_mode.equals(SEARCH_LOCATION_INFO))
+                {
+                    startActivity(intent);
+                }
+                else if(_mode.equals(SEARCH_RETURN_FORMAL_NAME))
+                {
+                    setResult(Activity.RESULT_OK, intent);
+                    finish();
+                }
                 return false;
             }
 

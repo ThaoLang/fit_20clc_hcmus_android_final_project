@@ -34,7 +34,7 @@
                 android:paddingRight="12dp"
                 android:textSize="18sp"
                 android:paddingVertical="8dp"
-                android:background="@color/CustomColor8"
+                android:background="@color/CustomColor11"
                 android:textAppearance="@style/half_right_pill_shape"
                 style="@style/half_right_pill_shape"
                 />
@@ -42,7 +42,7 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@color/CustomColor8"
+                android:background="@color/CustomColor11"
                 app:shapeAppearanceOverlay="@style/a_quarter_top_right_pill_shape"/>
         </LinearLayout>
 
@@ -60,12 +60,12 @@
                 android:paddingRight="12dp"
                 android:textSize="14sp"
                 android:paddingVertical="10dp"
-                android:background="@color/CustomColor8"
+                android:background="@color/CustomColor11"
                 />
             <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="@color/CustomColor8"
+                android:background="@color/CustomColor11"
                 app:shapeAppearanceOverlay="@style/a_quarter_bottom_right_pill_shape"/>
 
         </LinearLayout>

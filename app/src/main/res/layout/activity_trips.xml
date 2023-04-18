@@ -11,149 +11,159 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/default_gradient_account_info">
+        android:background="@color/CustomColor10">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="@string/material_toolbar_trips_title"
             app:titleCentered="true"
-            android:background="@null"
-            app:navigationIcon="@drawable/arrow_back_black_24dp"
+            app:titleTextColor="@color/cardview_light_background"
+            android:background="@color/CustomColor10"
             app:navigationContentDescription="back"
             />
-
-        <com.google.android.material.search.SearchBar
-            android:id="@+id/trips_search_bar"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/md_theme_light_onPrimary"
-            android:hint="@string/search_plan_bar"
-            />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/vertical_top_half_pill_shape_background">
 
 
-<!--        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/trips_tablayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/tab_bar_description"
-            >
-
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+            <com.google.android.material.search.SearchBar
+                android:id="@+id/trips_search_bar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:backgroundTint="@color/md_theme_light_onPrimary"
+                android:hint="@string/search_plan_bar"
+                android:contentDescription="seach bar"
                 />
 
-        </com.google.android.material.tabs.TabLayout>-->
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleSelection="true"
-            android:orientation="horizontal"
-            android:layout_gravity="center_horizontal"
-            >
+            <!--        <com.google.android.material.tabs.TabLayout
+                        android:id="@+id/trips_tablayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/tab_bar_description"
+                        >
 
+                        <com.google.android.material.tabs.TabItem
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/trips_incoming_button"
+                    </com.google.android.material.tabs.TabLayout>-->
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:contentDescription="Incoming trips"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-                android:backgroundTint="@color/CustomColor5"
-                app:icon="@drawable/local_fire_department_48px"
-                app:iconGravity="textTop"
-                android:text="@string/plan_toggle_1"
-                android:textAlignment="center"
+                app:singleSelection="true"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                >
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/trips_incoming_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Incoming trips"
+                    style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                    android:backgroundTint="@color/md_theme_light_background"
+                    app:icon="@drawable/local_fire_department_48px"
+                    app:iconGravity="textTop"
+                    android:text="@string/plan_toggle_1"
+                    android:textAlignment="center"
+                    />
+                <!-- <Button
+                     android:id="@+id/buttonIncoming"
+                     style="?attr/materialButtonOutlinedStyle"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:backgroundTint="@color/CustomColor5"
+                     android:text="@string/plan_toggle_1"
+                     />-->
+
+                <!--<Button
+                    android:id="@+id/buttonOngoing"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/CustomColor5"
+                    android:text="@string/plan_toggle_2" />-->
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/trips_ongoing_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Incoming trips"
+                    style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                    android:backgroundTint="@color/md_theme_light_background"
+                    app:icon="@drawable/hiking_48px"
+                    app:iconGravity="textTop"
+                    android:text="@string/plan_toggle_2"
+                    android:textAlignment="center"
+                    />
+                <!--            <Button-->
+                <!--                android:id="@+id/buttonHistory"-->
+                <!--                style="?attr/materialButtonOutlinedStyle"-->
+                <!--                android:layout_width="wrap_content"-->
+                <!--                android:layout_height="wrap_content"-->
+                <!--                android:backgroundTint="@color/CustomColor5"-->
+                <!--                android:text="@string/plan_toggle_3" />-->
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/trips_history_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="Incoming trips"
+                    style="@style/Widget.Material3.Button.ElevatedButton.Icon"
+                    android:backgroundTint="@color/md_theme_light_background"
+                    app:icon="@drawable/library_books_48px"
+                    app:iconGravity="textTop"
+                    android:text="@string/plan_toggle_3"
+                    android:textAlignment="center"
+                    />
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <!--        <FrameLayout-->
+            <!--            android:id="@+id/trips_frame_layout"-->
+            <!--            android:layout_width="match_parent"-->
+            <!--            android:layout_height="wrap_content"-->
+            <!--            android:layout_weight="6"-->
+            <!--            android:layout_marginTop="10dp"-->
+            <!--            android:paddingLeft="10dp"-->
+            <!--            android:paddingRight="10dp"-->
+            <!--            >-->
+            <!--        </FrameLayout>-->
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/trips_recyclerview_holder"
+                android:layout_width="match_parent"
+                android:layout_height="410dp"
+                android:layout_marginTop="20dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                >
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/trips_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:contentDescription="Add a new plan"
+                app:srcCompat="@drawable/add_48px"
+                app:backgroundTint="@color/CustomColor3"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="15dp"
+                app:pressedTranslationZ="@dimen/cardview_default_elevation"
                 />
-           <!-- <Button
-                android:id="@+id/buttonIncoming"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/CustomColor5"
-                android:text="@string/plan_toggle_1"
-                />-->
 
-            <!--<Button
-                android:id="@+id/buttonOngoing"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/CustomColor5"
-                android:text="@string/plan_toggle_2" />-->
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/trips_ongoing_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="Incoming trips"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-                android:backgroundTint="@color/CustomColor5"
-                app:icon="@drawable/hiking_48px"
-                app:iconGravity="textTop"
-                android:text="@string/plan_toggle_2"
-                android:textAlignment="center"
-                />
-<!--            <Button-->
-<!--                android:id="@+id/buttonHistory"-->
-<!--                style="?attr/materialButtonOutlinedStyle"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:backgroundTint="@color/CustomColor5"-->
-<!--                android:text="@string/plan_toggle_3" />-->
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/trips_history_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="Incoming trips"
-                style="@style/Widget.Material3.Button.ElevatedButton.Icon"
-                android:backgroundTint="@color/CustomColor5"
-                app:icon="@drawable/library_books_48px"
-                app:iconGravity="textTop"
-                android:text="@string/plan_toggle_3"
-                android:textAlignment="center"
-                />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-
-<!--        <FrameLayout-->
-<!--            android:id="@+id/trips_frame_layout"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="6"-->
-<!--            android:layout_marginTop="10dp"-->
-<!--            android:paddingLeft="10dp"-->
-<!--            android:paddingRight="10dp"-->
-<!--            >-->
-<!--        </FrameLayout>-->
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/trips_recyclerview_holder"
-            android:layout_width="match_parent"
-            android:layout_height="413dp"
-            android:layout_marginTop="20dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            >
-
-        </androidx.recyclerview.widget.RecyclerView>
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/trips_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:contentDescription="Add a new plan"
-            app:srcCompat="@drawable/add_48px"
-            app:backgroundTint="@color/CustomColor3"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="15dp"
-            />
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

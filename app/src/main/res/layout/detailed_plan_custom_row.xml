@@ -6,7 +6,7 @@
     android:orientation="horizontal"
     android:background="@drawable/detailed_planner_pill_shape_row">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.google.android.material.textview.MaterialTextView
         android:id="@+id/detailed_plan_custom_row_destination_name"
         android:layout_width="180dp"
         android:layout_height="90dp"
@@ -37,7 +37,7 @@
             android:layout_marginHorizontal="20dp"
             android:gravity="center_vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/detailed_plan_custom_row_startdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -45,10 +45,10 @@
                 android:textColor="@color/CustomColor12"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="30dp"
                 />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/detailed_plan_custom_row_starttime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,7 +66,7 @@
             android:layout_marginHorizontal="20dp"
             android:gravity="center_vertical">
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/detailed_plan_custom_row_enddate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,10 +74,10 @@
                 android:textColor="@color/CustomColor12"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:layout_marginRight="50dp"
+                android:layout_marginRight="30dp"
                 />
 
-            <androidx.appcompat.widget.AppCompatTextView
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/detailed_plan_custom_row_endtime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

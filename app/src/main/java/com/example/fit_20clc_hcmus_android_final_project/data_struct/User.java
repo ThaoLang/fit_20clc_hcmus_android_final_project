@@ -42,10 +42,10 @@ public class User {
         this._plans = plans;
     }
 
-    public void setEmail(String inputEmail)
-    {
-        _useremail= inputEmail;
-    }
+//    public void setUserEmail(String inputEmail)
+//    {
+//        _useremail= inputEmail;
+//    }
 
     public void setPlans(List<String> newPlans)
     {

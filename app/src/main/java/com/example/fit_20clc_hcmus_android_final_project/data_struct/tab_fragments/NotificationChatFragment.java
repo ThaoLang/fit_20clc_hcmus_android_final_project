@@ -1,4 +1,4 @@
-package com.example.fit_20clc_hcmus_android_final_project.tab_fragments;
+package com.example.fit_20clc_hcmus_android_final_project.data_struct.tab_fragments;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -27,38 +27,37 @@ import com.example.fit_20clc_hcmus_android_final_project.MainActivity;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Notification;
-import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPlanBinding;
+import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationChatBinding;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
-public class NotificationPlanFragment extends Fragment implements CustomNotificationAdapter.Callbacks {
+public class NotificationChatFragment extends Fragment implements CustomNotificationAdapter.Callbacks {
     private MainActivity main_activity;
     private Context context;
     private FirebaseUser currentUser;
 
-    private FragmentNotificationPlanBinding binding;
-
-    private CustomNotificationAdapter planAdapter;
-    private ArrayList<Notification> notificationPlanList;
+    private FragmentNotificationChatBinding binding;
+    private CustomNotificationAdapter chatAdapter;
+    private ArrayList<Notification> notificationChatList;
     LinearLayoutManager mLinearLayoutManager;
-
-    NotificationPlanFragment notificationPage;
-
+    NotificationChatFragment notificationPage;
     final private String CHANNEL_ID = "NOTIFICATION_CH_ID";
     final int notificationId = 1;
 
-    public NotificationPlanFragment() {
+
+    public NotificationChatFragment() {
         notificationPage = this;
     }
 
-    public static NotificationPlanFragment newInstance() {
-        NotificationPlanFragment fragment = new NotificationPlanFragment();
+    public static NotificationChatFragment newInstance() {
+        NotificationChatFragment fragment = new NotificationChatFragment();
         return fragment;
     }
 
@@ -76,62 +75,62 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        binding = FragmentNotificationPlanBinding.inflate(inflater, container, false);
+        binding = FragmentNotificationChatBinding.inflate(inflater, container, false);
+
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setStackFromEnd(false);
-        notificationPlanList = new ArrayList<>();
+        notificationChatList = new ArrayList<>();
 
         FirebaseFirestore fb = main_activity.getFirebaseFirestore();
 //        FirebaseFirestore fb = DatabaseAccess.getFirestore();
 
-        //TODO: show upcoming plans in notification
-        fb.collection("plans")
-                .whereEqualTo("status", "Upcoming")
+        fb.collection("chatHistory")
+                .orderBy("sendTime", Query.Direction.ASCENDING)
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
                         if (error != null) {
-                            Log.w("TAG_PLAN", "Listen failed.", error);
+                            Log.w("TAG", "Listen failed.", error);
                             return;
                         }
 
                         if (!querySnapshot.isEmpty()) {
-                            notificationPlanList.clear();
+                            notificationChatList.clear();
 
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-//                                String senderEmail = String.valueOf(document.get("senderEmail"));
-//                                if (!senderEmail.equals(currentUser.getEmail())) {
-                                Notification notification;
+                                String senderEmail = String.valueOf(document.get("senderEmail"));
+                                if (!senderEmail.equals(currentUser.getEmail())) {
+                                    Notification notification;
 
-                                String name = String.valueOf(document.get("name"));
-                                String message = String.valueOf(document.get("departure_date"));
+                                    Log.e("tripId", document.get("tripId").toString());
 
-                                notification = new Notification(name, message);
-                                notificationPlanList.add(notification);
+                                    String message = document.get("message").toString();
+                                    String senderName = document.get("senderName").toString();
 
-                                Log.e("plan_message", message);
-//                                }
+                                    notification = new Notification(senderName, message);
+                                    notificationChatList.add(notification);
+
+                                    Log.e("message", message);
+                                }
                             }
 
-                            planAdapter = new CustomNotificationAdapter(context, notificationPlanList);
-                            planAdapter.setListener(notificationPage);
-                            binding.listItem.setLayoutManager(mLinearLayoutManager);
-                            binding.listItem.setAdapter(planAdapter);
+                            chatAdapter = new CustomNotificationAdapter(context, notificationChatList);
+                            chatAdapter.setListener(notificationPage);
+                            binding.listItem.setAdapter(chatAdapter);
                             binding.listItem.smoothScrollToPosition(0);
                         } else {
-                            Log.d("TAG_PLAN", "Current plan data: null");
+                            Log.d("TAG", "Current data: null");
                         }
                     }
                 });
-        planAdapter = new CustomNotificationAdapter(context, notificationPlanList);
-        planAdapter.setListener(this);
+        chatAdapter = new CustomNotificationAdapter(context, notificationChatList);
+        chatAdapter.setListener(this);
         binding.listItem.setLayoutManager(mLinearLayoutManager);
-        binding.listItem.setAdapter(planAdapter);
+        binding.listItem.setAdapter(chatAdapter);
         binding.listItem.smoothScrollToPosition(0);
 
         return binding.getRoot();
     }
-
 
     @Override
     public void onStart() {
@@ -159,7 +158,6 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
     public void sendNotification(String title, String content) {
         // TODO: Revise intent to send to the right activity / plan when click on notification
         Intent intent = new Intent(context, ChatActivity.class); //supposedly from notification to plan detail?
-//        intent.putExtra(INTENT_EXTRA_NOTIFICATION, true);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
@@ -192,4 +190,5 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
     public void swapToChat(){
         getActivity().startActivity(new Intent(getContext(), ChatActivity.class));
     }
+
 }

@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -49,6 +51,7 @@ public class TripsPage extends Fragment {
 
     private SearchBar searchBar;
     private MaterialButton IncomingButton, OngoingButton, HistoryButton;
+
     private FloatingActionButton fab;
 
     private RecyclerView recyclerViewPosition;
@@ -59,6 +62,10 @@ public class TripsPage extends Fragment {
     public static String EDIT_PLAN_MODE = "EDIT_PLAN_MODE";
 
     private static final String INIT_PARAM = "INIT_PARAM";
+
+    public static final String UPCOMING = "Upcoming";
+    public static final String ONGOING = "Ongoing";
+    public static final String HISTORY = "Finished";
 
 
 
@@ -108,10 +115,6 @@ public class TripsPage extends Fragment {
         recyclerViewPosition = (RecyclerView) view.findViewById(R.id.trips_recyclerview_holder);
 
 
-        demoData = DatabaseAccess.getDemoData();
-        Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(getContext(), demoData);
-        recyclerViewPosition.setAdapter(adapter);
-
         currentMode = 0;
         IncomingButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,11 +125,12 @@ public class TripsPage extends Fragment {
                     return;
                 }
                 currentMode= 0;
-                demoData = DatabaseAccess.getDemoData();
-                Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(getContext(), demoData);
+
+                Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(context, DatabaseAccess.getPlansByStatus(TripsPage.UPCOMING));
                 recyclerViewPosition.setAdapter(adapter);
-                IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor7, Resources.getSystem().newTheme()));
-                OngoingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor3, Resources.getSystem().newTheme()));
+                IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
+                OngoingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
+                HistoryButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
             }
         });
 
@@ -139,23 +143,34 @@ public class TripsPage extends Fragment {
                     return;
                 }
                 currentMode = 1;
-                demoData = DatabaseAccess.getDemoData();
-                Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), demoData);
+
+                Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), DatabaseAccess.getPlansByStatus(TripsPage.ONGOING));
                 recyclerViewPosition.setAdapter(adapter);
-                OngoingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor7, Resources.getSystem().newTheme()));
-                IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor3, Resources.getSystem().newTheme()));
+                OngoingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
+                IncomingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
+                HistoryButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
             }
         });
 
         HistoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentMode = 2;
                 System.out.println("History");
+                if(currentMode == 2)
+                {
+                    return;
+                }
+                currentMode = 2;
+
+                Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), DatabaseAccess.getPlansByStatus(TripsPage.HISTORY));
+                recyclerViewPosition.setAdapter(adapter);
+                HistoryButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
+                OngoingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
+                IncomingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
             }
         });
 
-        IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor7, Resources.getSystem().newTheme()));
+        IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +183,7 @@ public class TripsPage extends Fragment {
             }
         });
 
+
         return view;
     }
 
@@ -175,6 +191,21 @@ public class TripsPage extends Fragment {
     public void onStart()
     {
         super.onStart();
+        if(currentMode == 0)
+        {
+            Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(getContext(), DatabaseAccess.getPlansByStatus(UPCOMING));
+            recyclerViewPosition.setAdapter(adapter);
+        }
+        else if(currentMode == 1)
+        {
+            Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), DatabaseAccess.getPlansByStatus(TripsPage.ONGOING));
+            recyclerViewPosition.setAdapter(adapter);
+        }
+        else if(currentMode == 2)
+        {
+            Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), DatabaseAccess.getPlansByStatus(TripsPage.HISTORY));
+            recyclerViewPosition.setAdapter(adapter);
+        }
     }
 
     //receive results returned from the specific activity launched by activityLauncher.launch(...);
@@ -188,17 +219,37 @@ public class TripsPage extends Fragment {
                 Plan newPlan;
                 if(intentReturned != null)
                 {
+                    Runnable successfulTask = new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "Create the new plan successfully!", Toast.LENGTH_LONG).show();
+                            onStart();
+                        }
+                    };
+
+                    Runnable failedTask = new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "Create the new plan failed!", Toast.LENGTH_LONG).show();
+                        }
+                    };
+
                     //get the new plan created by CreatePlan activity
                     Bundle bundle = intentReturned.getBundleExtra(CreatePlan.IDENTIFIED_CODE);
+                    if(bundle.getString("CREATE_STATUS") == null)
+                    {
+                        return;
+                    }
                     byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_NEW_PLAN_CODE);
                     newPlan = Plan.byteArrayToObject(byteArray);
+
 //                    System.out.println("<<<System out>>> " + plan.getName());
                     //run insertion task
-                    DatabaseAccess.addNewPlan(newPlan, null, null);
+                    DatabaseAccess.addNewPlan(newPlan, successfulTask, failedTask);
                 }
             }
         }
-        });
+    });
 
 
 }

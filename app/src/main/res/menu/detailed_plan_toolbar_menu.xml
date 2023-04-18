@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/detailed_plan_toolbar_menu_add_friend"
+        android:enabled="true"
+        android:contentDescription="add new friend to join the trip"
+        android:icon="@drawable/person_add_48px"
+        android:title="@null"
+        android:visible="true"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/detailed_plan_toolbar_menu_more"
+        android:title="@null"
+        android:enabled="true"
+        android:contentDescription="look up more action"
+        android:icon="@drawable/more_vert_24px"
+        android:iconTint="@color/cardview_light_background"
+        app:showAsAction="ifRoom"/>
+
+</menu>

@@ -3,11 +3,13 @@ package com.example.fit_20clc_hcmus_android_final_project;
 import android.accessibilityservice.GestureDescription;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.gms.tasks.Continuation;
@@ -24,6 +26,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.storage.FirebaseStorage;
@@ -65,6 +69,7 @@ public class DatabaseAccess{
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
+        plans = new ArrayList<Plan>();
     }
 
     public static boolean load_data()
@@ -80,21 +85,69 @@ public class DatabaseAccess{
                             mainUserInfo = task.getResult().toObject(User.class);
                             handler.post(MainActivity.increaseProgress());
                         }
+                        else
+                        {
+                            handler.post(MainActivity.hideProgressBar());
+                        }
                     }
                 });
 
-                //Demo data - should be removed after using to database
-                /*LocalDate date = LocalDate.now();
-                LocalDate endDate = LocalDate.of(2023,4,20);
-
-                demoData.add(new Plan("Hoi An Tour", "None", date.toString(), endDate.toString(), false, 1F));
-                endDate = LocalDate.of(2023, 4, 30);
-
-                demoData.add(new Plan("Hoi An Tour", "None", date.toString(), endDate.toString(), false, 1F));
-                //Demo data*/
-
                 //load plans from database
-                handler.post(MainActivity.hideProgressBar());
+                while(MainActivity.getCurrentProgressStepOfProgressBar() < 1)
+                {
+//                    Log.i("Wait", "run: I'm stuck 1");
+                }
+                if(MainActivity.getCurrentProgressStepOfProgressBar() == MainActivity.getProgressMax())
+                {
+                    runForegroundTask(MainActivity.hideProgressBar());
+                    return;
+                }
+
+                List<String> setOfPlanId = mainUserInfo.getPlans();
+                if(setOfPlanId.isEmpty())
+                {
+                    System.out.println("<<Loaddata>>: empty data");
+                    return;
+                }
+                for(int i=0; i< setOfPlanId.size(); i++)
+                {
+                    System.out.println(i+ ": "+ setOfPlanId.get(i));
+                }
+
+                Query getSetPlansQuery = firestore.collection(ACCESS_PLANS_COLLECTION).whereIn("planId", setOfPlanId);
+                getSetPlansQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        if(queryDocumentSnapshots.isEmpty())
+                        {
+                            System.out.println("queryDoc is empty");
+
+                            return;
+                        }
+                        List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
+                        for (DocumentSnapshot doc: docs) {
+                            Plan convertedDoc = doc.toObject(Plan.class);
+                            Log.i("<<LoadData>>", "Plan " + convertedDoc.getPlanId() + " " + convertedDoc.getName());
+                            plans.add(convertedDoc);
+                        }
+                        runForegroundTask(MainActivity.increaseProgress());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Load data: " + e);
+                        runForegroundTask(MainActivity.hideProgressBar());
+                    }
+                });
+
+                while(MainActivity.getCurrentProgressStepOfProgressBar() < 2)
+                {
+//                    Log.i("Wait", "run: I'm stuck 2");
+                }
+                for(int i = 0; i< plans.size(); i++)
+                {
+                    System.out.println(i + ": " + plans.get(i).getDeparture_date());
+                }
             }
         });
         backgroundLoadDataThread.start();
@@ -122,7 +175,7 @@ public class DatabaseAccess{
         return true;
     }
 
-    public static void updateUserInfo_In_Database(User newUserInfo, Runnable successfullForegroundAction, Runnable failedForegroundAction)
+    public static void updateUserInfo_In_Database(User newUserInfo, Runnable successfulForegroundAction, Runnable failedForegroundAction)
     {
         if(auth == null || firestore == null)
         {
@@ -132,9 +185,9 @@ public class DatabaseAccess{
         firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getUid()).set(newUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if(task.isSuccessful() && successfullForegroundAction != null)
+                if(task.isSuccessful() && successfulForegroundAction != null)
                 {
-                    handler.post(successfullForegroundAction);
+                    handler.post(successfulForegroundAction);
                 }
                 else
                 {
@@ -171,16 +224,18 @@ public class DatabaseAccess{
                         transaction.update(accountDoc, "plans", FieldValue.arrayUnion(newPlanId));
                         return newPlanId;
                     }
-                    }).addOnSuccessListener(new OnSuccessListener<String>() {
-                        @Override
-                        public void onSuccess(String newPlanIdCreated) {
-                            //update local data
-                            System.out.println("<<NewPlanId created: >>" + newPlanIdCreated);
-                            mainUserInfo.addNewPlan(newPlanIdCreated);
+                }).addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String newPlanIdCreated) {
+                        //update local data
+                        System.out.println("<<NewPlanId created: >>" + newPlanIdCreated);
+                        mainUserInfo.addNewPlan(newPlanIdCreated);
 
-                            //get uri of the selected image in local storage, which was selected by the user as the result returned by CreatePlan
-                            Uri imageNeedToUpload = Uri.parse(newPlan.getImageLink());
-                            String childName = newPlanIdCreated+".jpg";
+                        //get uri of the selected image in local storage, which was selected by the user as the result returned by CreatePlan
+                        String imageLink = newPlan.getImageLink();
+                        if (!imageLink.equals("None")) {
+                            Uri imageNeedToUpload = Uri.parse(imageLink);
+                            String childName = newPlanIdCreated + ".jpg";
                             StorageReference plansImageReference = firebaseStorage.getReference().child(ACCESS_PLANS_STORAGE + childName);
                             System.out.println("imageLocalUri" + imageNeedToUpload);
                             StorageMetadata metadata = new StorageMetadata.Builder()
@@ -189,31 +244,116 @@ public class DatabaseAccess{
                             UploadTask uploadTask = (UploadTask) plansImageReference.putFile(imageNeedToUpload, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                 @Override
                                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    String downloadUrl = String.valueOf(plansImageReference.getDownloadUrl());
-
+                                    String downloadUrl = ACCESS_PLANS_STORAGE + childName;
+                                    firestore.collection(ACCESS_PLANS_COLLECTION).document(newPlanIdCreated)
+                                            .update("imageLink", downloadUrl);
                                 }
                             });
+                        }
+                        //update the local list of plans
+                        plans.add(newPlan);
 
-                            if(successfulTask != null)
-                            {
-                                runForegroundTask(successfulTask);
-                            }
+                        if(successfulTask != null)
+                        {
+                            runForegroundTask(successfulTask);
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            System.out.println("Exception: " + e);
-                            if(failureTask != null)
-                            {
-                                runForegroundTask(failureTask);
-                            }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Exception: " + e);
+                        if(failureTask != null)
+                        {
+                            runForegroundTask(failureTask);
                         }
-                    });
+                    }
+                });
 
             }
         });
         backgroundAddition.start();
     }
 
+    public static List<Plan> getPlansByStatus(@NotNull String inputStatus)
+    {
+        List<Plan> suitablePlans = new ArrayList<Plan>();
+        for(int i=0; i<plans.size(); i++)
+        {
+            Plan planAtIndexI = plans.get(i);
+            if(planAtIndexI.getStatus().equals(inputStatus))
+            {
+                suitablePlans.add(planAtIndexI);
+            }
+        }
+        return suitablePlans;
+    }
 
+    public static Plan getPlanById(@NotNull String planId)
+    {
+        Plan specPlan = null;
+        for(int i=0;i < plans.size(); i++)
+        {
+            if(plans.get(i).getPlanId().equals(planId))
+            {
+                specPlan = plans.get(i);
+                break;
+            }
+        }
+        return specPlan;
+    }
+    public static FirebaseFirestore getFirestore() {
+        return firestore;
+    }
+
+    public static FirebaseStorage getFirebaseStorage()
+    {
+        return firebaseStorage;
+    }
+
+    public static void addNewDestinationTo(@NotNull Destination newDestination, @NotNull String planId, Runnable successfulTask, Runnable failedTask)
+    {
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                firestore.collection(ACCESS_PLANS_COLLECTION).document(planId).update("listOfLocations", FieldValue.arrayUnion(newDestination))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                getPlanById(planId).addNewLocation(newDestination);
+                                if(successfulTask != null)
+                                {
+                                    runForegroundTask(successfulTask);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("<<Add destination exception>> ", e.getMessage());
+                                if(failedTask != null)
+                                {
+                                    runForegroundTask(failedTask);
+                                }
+                            }
+                        });
+            }
+        });
+        backgroundTask.start();
+    }
+
+//    public void static updateDestinationListTo(@NotNull List<Destination> newList,@NotNull String planId)
+//    {
+//        Thread backgroundTask = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                firestore.collection(ACCESS_PLANS_COLLECTION).document(planId).update("listOfLocations", newList)
+//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                            @Override
+//                            public void onSuccess(Void unused) {
+//
+//                            }
+//                        });
+//            }
+//        })
+//    }
 }

@@ -24,6 +24,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -229,6 +230,45 @@ public class MainActivity extends FragmentActivity {
             }
         };
         return hide;
+    }
+
+    public static int getImplementedProgressStep()
+    {
+        return progressStep;
+    }
+    public static int getCurrentProgressStepOfProgressBar()
+    {
+        return progressBar.getProgress();
+    }
+
+
+    public Runnable toast(@NotNull String message)
+    {
+        Runnable toastTask = new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+        };
+        return toastTask;
+    }
+
+    public static int getProgressMax()
+    {
+        return progressBar.getMax();
+    }
+
+    public Runnable startSpecificActivity(Intent intent)
+    {
+        Runnable foregroundTask = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                startActivity(intent);
+            }
+        };
+        return foregroundTask;
     }
 
     public FirebaseFirestore getFirebaseFirestore(){
