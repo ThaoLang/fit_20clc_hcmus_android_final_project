@@ -26,7 +26,7 @@ public class AccountInfoPage extends Fragment {
 
     private TextInputEditText username, userbio, useremail, userphone, useraddress;
     private MaterialButton edit_save_button, logout_button;
-    private MaterialButton chat_button;
+//    private MaterialButton chat_button;
 
     private String initParam;
 
@@ -78,12 +78,12 @@ public class AccountInfoPage extends Fragment {
         useraddress = accountScreen.findViewById(R.id.mac_text_input_edittext_useraddress);
         edit_save_button = accountScreen.findViewById(R.id.mac_edit_save_button);
         logout_button = accountScreen.findViewById(R.id.mac_logout_button);
-        chat_button = accountScreen.findViewById(R.id.mac_chat_button);
+//        chat_button = accountScreen.findViewById(R.id.mac_chat_button);
 
         edit_save_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (EDIT_OR_SAVE == false)//the current mode is edit-mode
+                if (!EDIT_OR_SAVE)//the current mode is edit-mode
                 {
                     username.setEnabled(true);
                     username.setTextColor(Color.parseColor("#A8C0FF"));
@@ -93,15 +93,15 @@ public class AccountInfoPage extends Fragment {
                     userphone.setEnabled(true);
                     useraddress.setEnabled(true);
                     //change edit_save_button to save_button
-                    edit_save_button.setText("Save");
+                    edit_save_button.setText(R.string.save_account);
                     edit_save_button.setIconResource(R.drawable.save_48px);
                     EDIT_OR_SAVE = true;
-                } else if (EDIT_OR_SAVE) {
-                    String inputusername = username.getText().toString();
-                    String inputuserbio = userbio.getText().toString();
-//                    String inputuseremail = useremail.getText().toString();
-                    String inputuserphone = userphone.getText().toString();
-                    String inputuseraddress = useraddress.getText().toString();
+                } else {
+                    String inputusername = String.valueOf(username.getText());
+                    String inputuserbio = String.valueOf(userbio.getText());
+//                    String inputuseremail = String.valueOf(useremail.getText());
+                    String inputuserphone = String.valueOf(userphone.getText());
+                    String inputuseraddress = String.valueOf(useraddress.getText());
 
                     if (inputusername.isEmpty()) {
                         Toast.makeText(getContext(), "Please provide username", Toast.LENGTH_LONG).show();
@@ -123,7 +123,7 @@ public class AccountInfoPage extends Fragment {
 //                    useremail.setEnabled(false);
                     userphone.setEnabled(false);
                     useraddress.setEnabled(false);
-                    edit_save_button.setText("Edit");
+                    edit_save_button.setText(R.string.edit_account);
                     edit_save_button.setIconResource(R.drawable.edit_48px);
                     EDIT_OR_SAVE = false;
 
@@ -161,12 +161,12 @@ public class AccountInfoPage extends Fragment {
             }
         });
 
-        chat_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getContext(), ChatActivity.class));
-            }
-        });
+//        chat_button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(getContext(), ChatActivity.class));
+//            }
+//        });
 
         return accountScreen;
     }
