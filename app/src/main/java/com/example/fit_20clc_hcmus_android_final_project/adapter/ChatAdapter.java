@@ -111,8 +111,4 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
             return dataSet.size();
         else return 0;
     }
-
-//    public void addMessage(Chat input){
-//        dataSet.add(input);
-//    }
 }

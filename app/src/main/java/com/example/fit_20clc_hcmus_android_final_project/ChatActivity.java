@@ -62,7 +62,6 @@ public class ChatActivity extends FragmentActivity {
         bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//                System.out.println("Item clicked: " + item.getItemId());
                 int idItemSelected = item.getItemId();
                 switchScreenBySelectMenuItem(idItemSelected);
                 //return true if we want to the item be selected (be colored). Else, return false
@@ -164,7 +163,6 @@ public class ChatActivity extends FragmentActivity {
             case RETURN:
             {
 //                getParent().onBackPressed();
-//                getParent().setBottomNavigation();
                 break;
             }
         }

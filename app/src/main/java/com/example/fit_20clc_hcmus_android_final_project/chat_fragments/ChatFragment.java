@@ -105,7 +105,6 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                 binding.chatTextField.setText("");
 
                 if (isValidMessage(input)) {
-//                    adapter.addMessage(input); // only temporary local data
                     User user = chat_activity.getMainUserInfo();
                     FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 

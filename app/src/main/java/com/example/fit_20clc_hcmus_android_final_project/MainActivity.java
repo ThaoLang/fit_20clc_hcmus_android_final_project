@@ -270,13 +270,4 @@ public class MainActivity extends FragmentActivity {
         };
         return foregroundTask;
     }
-
-    public FirebaseFirestore getFirebaseFirestore(){
-        return FirebaseFirestore.getInstance();
-    }
-
-    public void setBottomNavigation(int id){
-        bottomNavigation.setSelectedItemId(id);
-    }
-
 }
