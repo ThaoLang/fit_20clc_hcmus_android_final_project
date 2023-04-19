@@ -1,18 +1,11 @@
-package com.example.fit_20clc_hcmus_android_final_project.data_struct.tab_fragments;
+package com.example.fit_20clc_hcmus_android_final_project.tab_fragments;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -23,11 +16,12 @@ import android.view.ViewGroup;
 
 import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
+import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.MainActivity;
-import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Notification;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPlanBinding;
+import com.example.fit_20clc_hcmus_android_final_project.service.NotificationService;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -47,19 +41,11 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
     private CustomNotificationAdapter planAdapter;
     private ArrayList<Notification> notificationPlanList;
     LinearLayoutManager mLinearLayoutManager;
-
     NotificationPlanFragment notificationPage;
-
-    final private String CHANNEL_ID = "NOTIFICATION_CH_ID";
-    final int notificationId = 1;
+    NotificationService notificationService;
 
     public NotificationPlanFragment() {
         notificationPage = this;
-    }
-
-    public static NotificationPlanFragment newInstance() {
-        NotificationPlanFragment fragment = new NotificationPlanFragment();
-        return fragment;
     }
 
     @Override
@@ -81,8 +67,7 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
         mLinearLayoutManager.setStackFromEnd(false);
         notificationPlanList = new ArrayList<>();
 
-        FirebaseFirestore fb = main_activity.getFirebaseFirestore();
-//        FirebaseFirestore fb = DatabaseAccess.getFirestore();
+        FirebaseFirestore fb = DatabaseAccess.getFirestore();
 
         //TODO: show upcoming plans in notification
         fb.collection("plans")
@@ -118,6 +103,15 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             binding.listItem.setLayoutManager(mLinearLayoutManager);
                             binding.listItem.setAdapter(planAdapter);
                             binding.listItem.smoothScrollToPosition(0);
+
+                            // TODO: Revise intent to send to the right activity / plan when click on notification
+                            Intent intent = new Intent(context, DetailedPlan.class); //supposedly from notification to plan detail?
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+                            String latestTitle = notificationPlanList.get(notificationPlanList.size()-1).getTitle();
+                            String latestContent = notificationPlanList.get(notificationPlanList.size()-1).getContent();
+                            notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
                         } else {
                             Log.d("TAG_PLAN", "Current plan data: null");
                         }
@@ -132,7 +126,6 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
         return binding.getRoot();
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -140,56 +133,12 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
         currentUser = DatabaseAccess.getCurrentUser();
         //user has signed in
         if(currentUser != null) {
-            createNotificationChannel();
+            notificationService = new NotificationService(context);
+            notificationService.createNotificationChannel();
         }
-    }
-
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            NotificationManager notificationManager = (NotificationManager)this.getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-
-    public void sendNotification(String title, String content) {
-        // TODO: Revise intent to send to the right activity / plan when click on notification
-        Intent intent = new Intent(context, ChatActivity.class); //supposedly from notification to plan detail?
-//        intent.putExtra(INTENT_EXTRA_NOTIFICATION, true);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notifications_48px)
-                .setContentTitle(title)
-                .setContentText(content)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
-        // notificationId is a unique int for each notification that you must define
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        // TODO: Revise notificationId
-        notificationManager.notify(notificationId, builder.build());
     }
 
     public void swapToChat(){
-        getActivity().startActivity(new Intent(getContext(), ChatActivity.class));
+        getActivity().startActivity(new Intent(context, DetailedPlan.class));
     }
 }

@@ -82,7 +82,6 @@ public class AccountInfoPage extends Fragment {
         useraddress = accountScreen.findViewById(R.id.mac_text_input_edittext_useraddress);
         edit_save_button = accountScreen.findViewById(R.id.mac_edit_save_button);
         logout_button = accountScreen.findViewById(R.id.mac_logout_button);
-//        chat_button = accountScreen.findViewById(R.id.mac_chat_button);
 
         edit_save_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,13 +163,6 @@ public class AccountInfoPage extends Fragment {
                 getParentFragment().onDetach();
             }
         });
-
-//        chat_button.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                startActivity(new Intent(getContext(), ChatActivity.class));
-//            }
-//        });
 
         return accountScreen;
     }

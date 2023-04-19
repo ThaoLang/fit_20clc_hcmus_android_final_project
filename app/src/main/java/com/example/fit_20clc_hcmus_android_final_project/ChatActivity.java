@@ -163,7 +163,7 @@ public class ChatActivity extends FragmentActivity {
             }
             case RETURN:
             {
-                getParent().onBackPressed();
+//                getParent().onBackPressed();
 //                getParent().setBottomNavigation();
                 break;
             }

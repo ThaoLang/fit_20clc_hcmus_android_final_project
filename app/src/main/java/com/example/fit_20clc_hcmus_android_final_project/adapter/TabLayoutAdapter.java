@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.tab_fragments.NotificationChatFragment;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.tab_fragments.NotificationPlanFragment;
+import com.example.fit_20clc_hcmus_android_final_project.tab_fragments.NotificationChatFragment;
+import com.example.fit_20clc_hcmus_android_final_project.tab_fragments.NotificationPlanFragment;
 
 public class TabLayoutAdapter extends FragmentStatePagerAdapter {
 

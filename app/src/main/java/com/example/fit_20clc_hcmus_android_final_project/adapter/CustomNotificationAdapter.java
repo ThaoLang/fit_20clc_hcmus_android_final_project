@@ -28,8 +28,6 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void sendNotification(String title, String content);
-
         void swapToChat();
     }
 
@@ -78,10 +76,6 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
         // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.notification, viewGroup, false);
-
-        //DEBUG: Send notification on create
-        listener.sendNotification(dataSet.get(dataSet.size()-1).getTitle(), dataSet.get(dataSet.size()-1).getContent());
-
         return new ViewHolder(view);
     }
 
@@ -98,9 +92,6 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
                     Toast.makeText(context, "Long Click: "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
                 else
                     Toast.makeText(context, " "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-
-                //DEBUG: Send notification here
-                listener.sendNotification(dataSet.get(position).getTitle(), dataSet.get(position).getContent());
 
                 listener.swapToChat();
             }
