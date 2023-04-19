@@ -48,7 +48,7 @@ public class Plan implements Serializable {
         listOfLocations = new ArrayList<Destination>();
         rating = 0F;
         listOfComments= new ArrayList<String>();
-        listOfEditors = new ArrayList<String>();
+        set_of_editors = new ArrayList<String>();
         listOfLike = new ArrayList<String>();
         //createdTime=null;
     }
@@ -61,7 +61,7 @@ public class Plan implements Serializable {
         this.listOfLike = listOfLike;
     }
 
-    public Plan(String inputPlanId, String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating, String inputImageLink)
+    public Plan(String inputPlanId, String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating, String inputImageLink, String inputStatus)
     {
         planId = inputPlanId;
         imageLink = inputImageLink;
@@ -71,7 +71,7 @@ public class Plan implements Serializable {
         return_date= inputEndDate;
         isPublic= inputIsPublic;
         rating= inputRating;
-        listOfLocations = new ArrayList<Destination>(inputlistOfLocation);
+        //listOfLocations = new ArrayList<Destination>(inputlistOfLocation);
         //listOfLocations = null;
 //        if (inputlistOfComment==null) {
 //
@@ -79,10 +79,10 @@ public class Plan implements Serializable {
 //        else {
 //            listOfComments = new ArrayList<String>(inputlistOfComment);
 //        }
-        listOfComments = new ArrayList<String>(inputlistOfComment);
-        listOfLike= new ArrayList<String>(inputlistOfLike);
-        passengers=new ArrayList<String>(inputPassengers);
-        listOfEditors = new ArrayList<String>();
+        //listOfComments = new ArrayList<String>(inputlistOfComment);
+        //listOfLike= new ArrayList<String>(inputlistOfLike);
+        //passengers=new ArrayList<String>(inputPassengers);
+        //listOfEditors = new ArrayList<String>();
         status=inputStatus;
         //createdTime=inputCreatedTime;
     }
@@ -90,10 +90,7 @@ public class Plan implements Serializable {
 //    public Plan(String hoi_an_tour, String none, String inputDepartureDate, String inputEndDate, int i, boolean inputIsPublic, float inputRating) {
 //    }
 
-    public List<String> getListOfLike()
-    {
-        return listOfLike;
-    }
+
 
 //    public Timestamp getCreatedTime() {
 //        return createdTime;
@@ -156,7 +153,7 @@ public class Plan implements Serializable {
 
     public List<String> getSet_of_editors()
     {
-        return listOfEditors;
+        return set_of_editors;
     }
 
     //setter
@@ -164,10 +161,7 @@ public class Plan implements Serializable {
 
 
 
-    public void setListOfLike(List<String> newListOfLike)
-    {
-        listOfLike = newListOfLike;
-    }
+
 
     public void setPlanId(String inputPlanId)
     {
