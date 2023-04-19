@@ -177,6 +177,7 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
             @Override
             public void onClick(View view) {
                 Intent intent =new Intent(getActivity(),Search.class);
+                intent.putExtra(Search.SEARCH_MODE,Search.SEARCH_LOCATION_INFO);
                 startActivity(intent);
             }
         });

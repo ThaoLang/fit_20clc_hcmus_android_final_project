@@ -64,6 +64,7 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
     private PostAdapter postAdapter;
     LinearLayoutManager mLinearLayoutManager;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -182,7 +183,11 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
                                     List<String> passengers = (List<String>) document.get("passengers");
                                     List<String> listOfLike = (List<String>) document.get("listOfLike");
 
-                                    plan=new Plan(planId,name,owner_email,sDate,eDate,true,0F,imageLink,listOfLocations,listOfLike,listOfComments,passengers,status);
+                                    plan=new Plan(planId,name,owner_email,sDate,eDate,true,0F,imageLink,status);
+                                    plan.setListOfLocations(listOfLocations);
+                                    plan.setListOfComments(listOfComments);
+                                    plan.setListOfLike(listOfLike);
+                                    plan.setPassengers(passengers);
                                     plans.add(plan);
                                     Log.e("MANY POST",String.valueOf(plans.size()));
                                 }
@@ -248,6 +253,7 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onMapReady(@NonNull GoogleMap Map) {
+
         Geocoder geocoder = new Geocoder(getApplicationContext());
 
         try {

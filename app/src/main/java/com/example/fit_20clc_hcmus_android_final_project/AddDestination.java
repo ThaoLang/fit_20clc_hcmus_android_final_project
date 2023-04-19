@@ -229,7 +229,7 @@ public class AddDestination extends AppCompatActivity {
 
                 Destination newDest = new Destination();
                 newDest.setFormalName(finalFormalName);
-                newDest.setName(finalAlias);
+                newDest.setAliasName(finalAlias);
                 newDest.setStartDate(finalStartDate);
                 newDest.setStartTime(finalStartTime);
                 newDest.setEndDate(finalEndDate);
@@ -280,7 +280,7 @@ public class AddDestination extends AppCompatActivity {
                 mainButton.setVisibility(View.INVISIBLE);
             }
             formalName.setText(_destination.getFormalName());
-            alias.setText(_destination.getName());
+            alias.setText(_destination.getAliasName());
             startDate.setText(_destination.getStartDate());
             endDate.setText(_destination.getEndDate());
             startTime.setText(_destination.getStartTime());
@@ -289,11 +289,11 @@ public class AddDestination extends AppCompatActivity {
             formalName.setEnabled(false);
             alias.setEnabled(false);
             description.setEnabled(false);
-            toolbar.setTitle(_destination.getName());
+            toolbar.setTitle(_destination.getAliasName());
         } else if (_currentMode.equals(EDIT_DESTINATION)) {
             if (isPermittedToEdit == true) {
                 formalName.setText(_destination.getFormalName());
-                alias.setText(_destination.getName());
+                alias.setText(_destination.getAliasName());
                 startDate.setText(_destination.getStartDate());
                 endDate.setText(_destination.getEndDate());
                 startTime.setText(_destination.getStartTime());
@@ -307,7 +307,7 @@ public class AddDestination extends AppCompatActivity {
                 endDatePickerButton.setVisibility(View.VISIBLE);
                 startTimePickerButton.setVisibility(View.VISIBLE);
                 endTimePickerButton.setVisibility(View.VISIBLE);
-                toolbar.setTitle(_destination.getName());
+                toolbar.setTitle(_destination.getAliasName());
             }
         }
         else if(_currentMode.equals(ADD_DESTINATION))
