@@ -31,10 +31,11 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
-                android:text="TRIPUDDY"
+                android:text="@string/channel_name"
                 android:textStyle="bold"
-                android:textSize="30dp"
-                android:textColor="@color/CustomColor1"/>
+                android:fontFamily="@font/dancing_script"
+                android:textSize="40dp"
+                android:textColor="@color/CustomColor10"/>
             <Button
                 android:id="@+id/search_btn"
                 android:layout_width="wrap_content"

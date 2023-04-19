@@ -19,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Location;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.LocationInfoBinding;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,12 +37,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -50,7 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class LocationInfo extends AppCompatActivity implements OnMapReadyCallback{
+public class LocationInfo extends AppCompatActivity implements OnMapReadyCallback, PostAdapter.Callbacks {
     private LocationInfoBinding binding;
     private GoogleMap googleMap;
 
@@ -58,6 +61,7 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
     private double longitude=0;
     String locationName="";
 
+    private PostAdapter postAdapter;
     LinearLayoutManager mLinearLayoutManager;
 
     @Override
@@ -96,7 +100,10 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
                                 }
                             } else {
                                 // Xử lí khi không có kết quả trả về
-                                slideModels.add(new SlideModel("https://img.freepik.com/free-vector/happy-family-travelling-by-car-with-camping-equipment-top_74855-10751.jpg", ScaleTypes.FIT));
+                                for (int i=0;i<DatabaseAccess.default_image_url.length;i++){
+                                    slideModels.add(new SlideModel(DatabaseAccess.default_image_url[i], ScaleTypes.FIT));
+
+                                }
                                 binding.imageSlider.setImageList(slideModels, ScaleTypes.FIT);
                                 ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) binding.locationDescription.getLayoutParams();
                                 params.setMargins(30, 0, 0, 0);
@@ -134,6 +141,7 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         //Small map
+
         binding.mapView.getMapAsync(this);
         binding.mapView.onCreate(savedInstanceState);
 
@@ -143,8 +151,57 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
 
         binding.listPost.setLayoutManager(mLinearLayoutManager);
 
-        binding.listPost.setAdapter(new PostAdapter(this));
-        binding.listPost.smoothScrollToPosition(0);
+        ArrayList<Plan> plans= new ArrayList<Plan>();
+        FirebaseFirestore fb = FirebaseFirestore.getInstance();
+//        FirebaseFirestore fb = DatabaseAccess.getFirestore();
+
+        fb.collection("plans")
+
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Plan plan;
+
+                                    String owner_email = document.get("owner_email").toString();
+                                    String name = document.get("name").toString();
+                                    String imageLink = document.get("imageLink").toString();
+                                    String planId = document.get("planId").toString();
+                                    String sDate = document.get("departure_date").toString();
+                                    String eDate = document.get("return_date").toString();
+                                    String status = document.get("status").toString();
+
+                                    List<String> listOfComments = (List<String>) document.get("listOfComments");
+
+                                    Log.e("COMMENT SIZE",String.valueOf(listOfComments.size()));
+                                    List<Destination> listOfLocations = (List<Destination>) document.get("listOfLocations");
+                                    List<String> passengers = (List<String>) document.get("passengers");
+                                    List<String> listOfLike = (List<String>) document.get("listOfLike");
+
+                                    plan=new Plan(planId,name,owner_email,sDate,eDate,true,0F,imageLink,listOfLocations,listOfLike,listOfComments,passengers,status);
+                                    plans.add(plan);
+                                    Log.e("MANY POST",String.valueOf(plans.size()));
+                                }
+
+                                Log.e("Last POST",String.valueOf(plans.size()));
+
+                                postAdapter = new PostAdapter(LocationInfo.this,plans);
+                                postAdapter.setListener(LocationInfo.this);
+                                binding.listPost.setAdapter(postAdapter);
+                                binding.listPost.smoothScrollToPosition(0);
+                            }
+                        } else {
+                            // no notification
+                        }
+                    }
+                });
+
+//        binding.listPost.setAdapter(new PostAdapter(this,plans));
+//        binding.listPost.smoothScrollToPosition(0);
     }
 
     @Override
@@ -218,5 +275,10 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
 
         // Enable zoom controls
         googleMap.getUiSettings().setZoomControlsEnabled(true);
+    }
+
+    @Override
+    public void swapToPost(Plan plan) {
+
     }
 }

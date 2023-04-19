@@ -13,75 +13,61 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Destination extends Location implements Serializable {
-    protected String imageLink;
-    protected Float rating;
+public class Destination implements Serializable {
+    //protected String imageLink;
+    //protected Float rating;
     protected List<String> commentInfoList; //includes IDs of comment lists
     protected String startTime;
     protected String endTime;
     protected String startDate;
     protected String endDate;
     protected String description;
-    protected String departureLocation;
+    protected String aliasName;
+    protected String formalName;
 
 
     public Destination()
     {
-        name= "None";
+        aliasName= "None";
         formalName= "None";
-        longitude= "None";
-        latitude= "None";
-        imageLink= "None";
-        rating= 0F;
         startTime = "None";
         endTime = "None";
         startDate = "None";
         endDate = "None";
         description = "None";
         commentInfoList = new ArrayList<String>();
-
-        departureLocation="None";
     }
 
     public String getDescription() {
         return description;
     }
 
-    public String getDepartureLocation() {
-        return departureLocation;
-    }
-
-    public void setDepartureLocation(String departureLocation) {
-        this.departureLocation = departureLocation;
-    }
-
-    public Destination(String inputName, String inputFormalName, String inputLongitude, String inputLatitude, String inputImageLink, Float inputRating,
-                       String inputStartTime, String inputEndTime, String inputStartDate, String inputEndDate, String inputDescription, String inputDepartureLocation)
+    public Destination(String inputName, String inputFormalName,String inputStartTime, String inputEndTime, String inputStartDate, String inputEndDate, String inputDescription, List<String> inputListOfComments)
     {
-        name= inputName;
+        aliasName= inputName;
         formalName= inputFormalName;
-        longitude= inputLongitude;
-        latitude= inputLatitude;
-        imageLink= inputImageLink;
-        rating= inputRating;
         startTime = inputStartTime;
         endTime = inputEndTime;
         startDate = inputStartDate;
         endDate = inputEndDate;
         description = inputDescription;
-        commentInfoList = new ArrayList<String>();
-        departureLocation=inputDepartureLocation;
+        commentInfoList = inputListOfComments;
     }
 
-
-    public void setImageLink(String inputImageLink)
-    {
-        imageLink = inputImageLink;
+    public String getAliasName() {
+        return aliasName;
     }
 
-    public void setRating(Float inputRating)
-    {
-        rating = inputRating;
+    public void setAliasName(String aliasName) {
+        this.aliasName = aliasName;
+    }
+
+    public String getFormalName() {
+        return formalName;
+    }
+
+    public void setFormalName(String formalName) {
+        this.formalName = formalName;
     }
 
     public void setStartTime(String inputStartTime)
@@ -114,10 +100,6 @@ public class Destination extends Location implements Serializable {
         commentInfoList = newList;
     }
 
-    public String getImageLink()
-    {
-        return imageLink;
-    }
 
     public String getStartTime()
     {

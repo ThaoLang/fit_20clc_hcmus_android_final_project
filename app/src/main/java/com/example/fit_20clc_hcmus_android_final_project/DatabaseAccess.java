@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,14 +39,44 @@ import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.grpc.Context;
 import io.grpc.Metadata;
 
+import com.google.firebase.firestore.FieldValue;
+
+
 public class DatabaseAccess{
+    public static String[] default_avatar_url={
+            "https://helios-i.mashable.com/imagery/articles/06zoscMHTZxU5KEFx8SRyDg/hero-image.fill.size_1200x1200.v1630023012.jpg",
+            "https://static.vecteezy.com/system/resources/previews/000/209/190/non_2x/road-trip-illustration-vector.jpg",
+            "https://static.vecteezy.com/system/resources/thumbnails/007/922/503/small_2x/family-vacation-road-trip-background-free-vector.jpg",
+            "https://st2.depositphotos.com/1830693/10664/v/950/depositphotos_106645944-stock-illustration-road-trip-flat-design-icon.jpg",
+            "https://thumbs.dreamstime.com/b/travelling-car-view-back-luggage-background-roads-trees-sky-clouds-vector-illustration-cartoon-176081268.jpg",
+            "https://img.freepik.com/premium-vector/flat-travel-background_23-2148048061.jpg?w=2000",
+            "https://previews.123rf.com/images/pollygrimm/pollygrimm1712/pollygrimm171200014/91507576-happy-family-on-a-car-trip-family-summer-vacation-vector-colorful-illustration-in-flat-style-image.jpg",
+            "https://thumbs.dreamstime.com/b/car-travel-vintage-flat-design-vector-122216325.jpg",
+            "https://st2.depositphotos.com/1001380/8150/v/450/depositphotos_81508814-stock-illustration-travel-by-car.jpg",
+            "https://media.istockphoto.com/id/1214983915/vector/cute-couple-travel-by-car.jpg?s=612x612&w=0&k=20&c=dRZlTL7HpCPddHNC3OJLLdjiHKUgVVqZ1Zk7lbMJ5hI="
+    };
+
+    public static String[] default_image_url={
+            "https://www.shutterstock.com/image-vector/go-road-trip-vector-illustration-260nw-624096107.jpg",
+            "https://thumbs.dreamstime.com/b/road-trip-adventure-concept-vacation-travel-driving-car-highway-vector-urban-landscape-cartoon-road-trip-adventure-concept-137874821.jpg",
+            "https://st4.depositphotos.com/1005738/39270/v/450/depositphotos_392702024-stock-illustration-happy-man-woman-driving-car.jpg",
+            "https://static.vecteezy.com/system/resources/thumbnails/000/209/171/small_2x/roadtrip-01.jpg",
+            "https://img.freepik.com/premium-vector/family-car-parents-kid-pet-weekend-holiday-road-trip-minivan-with-people-cartoon-adventure-travel-mountain-vector-concept-illustration-outdoors-vacation-trip-drive-family_102902-4005.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT7AaCZm4JK7_WgMb_gJpHYQ58IdBhMG8dEdA&usqp=CAU",
+            "https://thumbs.dreamstime.com/b/road-trip-red-car-passenger-retro-luggage-roof-concept-adventure-outdoor-recreation-summer-vacation-planning-216951977.jpg",
+            "https://www.revv.co.in/blogs/wp-content/uploads/2021/07/Road-Trips-Essential.png",
+            "https://img.freepik.com/premium-vector/take-vacation-travelling-concept-with-red-car-flat-design-illustration-car-travel-concept_95169-3329.jpg?w=2000"
+    };
     public static String ACCESS_ACCOUNT_COLLECTION = "account";
     public static String ACCESS_PLANS_COLLECTION = "plans";
     public static String ACCESS_COMMENT_SET_COLLECTION = "commentSets";
@@ -220,6 +251,8 @@ public class DatabaseAccess{
                     public String apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
                         String newPlanId = plansDoc.getId();
                         newPlan.setPlanId(newPlanId);
+                        //newPlan.setCreatedTime(Timestamp.now());
+
                         transaction.set(plansDoc, newPlan);
                         transaction.update(accountDoc, "plans", FieldValue.arrayUnion(newPlanId));
                         return newPlanId;

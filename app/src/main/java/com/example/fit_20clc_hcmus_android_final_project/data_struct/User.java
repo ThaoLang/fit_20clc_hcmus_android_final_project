@@ -1,5 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
+import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.jetbrains.annotations.NotNull;
@@ -20,6 +21,8 @@ public class User {
     private List<String> _favorite_locations;
     private String _userbio;
 
+    private String _avatar_url;
+
     public User()
     {
         _username = "00";
@@ -29,9 +32,10 @@ public class User {
         _favorite_locations = new ArrayList<>();
         _useraddress = "0000";
         _userbio = "00000";
+        _avatar_url= DatabaseAccess.default_avatar_url[0];
     }
 
-    public User(String name, String email, String phone, String address, String bio, List<String> plans, List<String> favorite_locations)
+    public User(String name, String email, String phone, String address, String bio, List<String> plans, List<String> favorite_locations,String avatar_url)
     {
         this._useremail = email;
         this._username = name;
@@ -40,6 +44,15 @@ public class User {
         this._userbio = bio;
         this._favorite_locations = favorite_locations;
         this._plans = plans;
+        this._avatar_url=avatar_url;
+    }
+
+    public String get_avatar_url() {
+        return _avatar_url;
+    }
+
+    public void set_avatar_url(String _avatar_url) {
+        this._avatar_url = _avatar_url;
     }
 
 //    public void setUserEmail(String inputEmail)

@@ -19,40 +19,39 @@ import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.DetailedPost;
 
+import java.util.List;
+
 public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapter.ViewHolder>{
     
-    private Destination[] destinations={
-            new Destination("Dam Sen Park",
-                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
-                            "no","no","no", 5.0F,
-                    "10am","5pm","03/04/2023","05/04/2023",
-                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
-                            "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
-            new Destination("Waterbus",
-                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
-                            "no","no","no", 5.0F,
-                    "10am","5pm","03/04/2023","05/04/2023",
-                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
-                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
-            new Destination("Sapa",
-                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
-                            "no","no","no", 5.0F,
-                    "10am","5pm","03/04/2023","05/04/2023",
-                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
-                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
-            new Destination("Madagui",
-                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
-                            "no","no","no", 5.0F,
-                    "10am","5pm","03/04/2023","05/04/2023",
-                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
-                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
-            new Destination("Da Lat",
-                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
-                            "no","no","no", 5.0F,
-                    "10am","5pm","03/04/2023","05/04/2023",
-                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
-                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
-    };
+//    private Destination[] destinations={
+//            new Destination("Dam Sen Park",
+//                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
+//                    "10am","5pm","03/04/2023","05/04/2023",
+//                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
+//                            "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
+//            new Destination("Waterbus",
+//                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
+//                    "10am","5pm","03/04/2023","05/04/2023",
+//                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
+//                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
+//            new Destination("Sapa",
+//                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
+//                    "10am","5pm","03/04/2023","05/04/2023",
+//                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
+//                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
+//            new Destination("Madagui",
+//                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
+//                    "10am","5pm","03/04/2023","05/04/2023",
+//                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
+//                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
+//            new Destination("Da Lat",
+//                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
+//                    "10am","5pm","03/04/2023","05/04/2023",
+//                            "Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games",
+//                    "78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"),
+//    };
+//
+    private List<Destination> destinations;
     Context context;
 
     private boolean isExpand=true;
@@ -76,8 +75,9 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
      * by RecyclerView.
      */
 
-    public TripLocationAdapter(Context _context) {
+    public TripLocationAdapter(Context _context, List<Destination> _destinations) {
         this.context = _context;
+        this.destinations=_destinations;
     }
 
 //    public DestinationAdapter(Context _context, ArrayList<String> Destinations) {
@@ -94,12 +94,11 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
         //private  final TextView location_count;
         private  final TextView trip_time;
-        private  final TextView departure_location;
         private  final TextView destination;
         private  final TextView number_comment;
         private  final TextView description;
         private final Button location_name;
-        private final Button add_Favorite;
+        private final Button add_favorite;
         private final Button view_on_map;
         private final Button comment;
 
@@ -116,13 +115,12 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
             //location_count = (TextView) view.findViewById(R.id.location_count);
             trip_time = (TextView) view.findViewById(R.id.location_trip_time);
-            departure_location = (TextView) view.findViewById(R.id.departure_location);
             destination = (TextView) view.findViewById(R.id.destination);
             number_comment = (TextView) view.findViewById(R.id.number_comment);
             description = (TextView) view.findViewById(R.id.description);
             arrow_expand = (ImageView) view.findViewById(R.id.arrow_expand);
             location_name = (Button) view.findViewById(R.id.location_name);
-            add_Favorite = (Button) view.findViewById(R.id.add_Favorite);
+            add_favorite = (Button) view.findViewById(R.id.add_Favorite);
             view_on_map = (Button) view.findViewById(R.id.view_on_map);
             comment = (Button) view.findViewById(R.id.comment);
             expand_comtent=(View) view.findViewById(R.id.content_location_item);
@@ -160,14 +158,13 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
         // Get element from your Destinations at this position and replace the
         // contents of the view with that element
-        viewHolder.trip_time.setText(destinations[position].getStartTime()+" "+
-                                        destinations[position].getStartDate()+" - "+
-                                        destinations[position].getEndTime()+" "+
-                                        destinations[position].getEndDate());
-        viewHolder.departure_location.setText(destinations[position].getDepartureLocation());
-        viewHolder.description.setText(destinations[position].getDescription());
-        viewHolder.destination.setText(destinations[position].getFormalName());
-        viewHolder.location_name.setText(destinations[position].getName());
+        viewHolder.trip_time.setText(destinations.get(position).getStartTime()+" "+
+                                        destinations.get(position).getStartDate()+" - "+
+                                        destinations.get(position).getEndTime()+" "+
+                                        destinations.get(position).getEndDate());
+        viewHolder.description.setText(destinations.get(position).getDescription());
+        viewHolder.destination.setText(destinations.get(position).getFormalName());
+        viewHolder.location_name.setText(destinations.get(position).getAliasName());
 
 
         viewHolder.arrow_expand.setOnClickListener(new View.OnClickListener() {
@@ -188,18 +185,18 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
             }
         });
 
-        viewHolder.add_Favorite.setOnClickListener(new View.OnClickListener() {
+        viewHolder.add_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(isFavorite){
                     //viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_icon, 0, 0, 0);
-                    viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_icon, 0, 0, 0);
+                    viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_icon, 0, 0, 0);
                     isFavorite=!isFavorite;
                 }
                 else{
                     //viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.calendar_icon, 0, 0, 0);
                     //viewHolder.add_Favorite.setDra
-                    viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_heart_icon, 0, 0, 0);
+                    viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_heart_icon, 0, 0, 0);
                     isFavorite=!isFavorite;
                 }
             }
@@ -232,7 +229,7 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
     // Return the size of your Destinations (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return destinations.length;
+        return destinations.size();
     }
 
 

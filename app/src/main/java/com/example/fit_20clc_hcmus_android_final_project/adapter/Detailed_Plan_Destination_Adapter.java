@@ -1,5 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 
 import android.content.Intent;
@@ -85,7 +86,7 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
 //        holder.getStarttime().setText(presentStartTime.toString());
 //        holder.getEndtime().setText(presentEndTime.toString());
 
-        holder.getDestname().setText(destination.getName());
+        holder.getDestname().setText(destination.getAliasName());
         holder.getStartdate().setText(destination.getStartDate());
         holder.getEnddate().setText(destination.getEndDate());
         holder.getStarttime().setText(destination.getStartTime());
@@ -109,5 +110,4 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
     public int getItemCount() {
         return _data.size();
     }
-
 }

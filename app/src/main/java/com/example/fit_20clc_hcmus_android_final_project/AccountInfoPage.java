@@ -6,12 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
@@ -26,7 +28,7 @@ public class AccountInfoPage extends Fragment {
 
     private TextInputEditText username, userbio, useremail, userphone, useraddress;
     private MaterialButton edit_save_button, logout_button;
-//    private MaterialButton chat_button;
+    private ImageView avatar;
 
     private String initParam;
 
@@ -71,6 +73,8 @@ public class AccountInfoPage extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View accountScreen = inflater.inflate(R.layout.activity_manage_account, null);
         //connect to the layout
+
+        avatar = accountScreen.findViewById(R.id.mac_avatar);
         username = accountScreen.findViewById(R.id.mac_text_input_edittext_username);
         userbio = accountScreen.findViewById(R.id.mac_text_input_edittext_userbio);
         userphone = accountScreen.findViewById(R.id.mac_text_input_edittext_userphone);
@@ -183,6 +187,9 @@ public class AccountInfoPage extends Fragment {
             useremail.setText(user.getEmail());
             useraddress.setText(mainUserInfo.getAddress());
             userphone.setText(mainUserInfo.getPhone());
+            Glide.with(this)
+                    .load(mainUserInfo.get_avatar_url())
+                    .into(avatar);
         }
     }
 

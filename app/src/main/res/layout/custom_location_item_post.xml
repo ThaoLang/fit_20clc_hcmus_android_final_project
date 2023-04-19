@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
@@ -8,7 +8,7 @@
     android:layout_margin="5dp">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -81,13 +81,13 @@
                     android:drawableTint="@color/md_theme_light_error"
                     android:textAlignment="center"
                     android:text="Favorite"
-                    android:backgroundTint="@color/CustomColor1"
+                    android:backgroundTint="@color/CustomColor7"
                     android:layout_alignParentRight="true"/>
 
             </RelativeLayout>
             <LinearLayout
                 android:id="@+id/content_location_item"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
             <TextView
@@ -101,28 +101,29 @@
                 android:text="10am 03/04/2023 - 11pm 05/04/2023"
                 android:layout_gravity="center_vertical"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:text="Departure location:"
-                    android:textStyle="bold"/>
-                <TextView
-                    android:id="@+id/departure_location"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"
-                    android:layout_gravity="center_vertical"/>
-            </LinearLayout>
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:padding="10dp">-->
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginRight="10dp"-->
+<!--                    android:text="Departure location:"-->
+<!--                    android:textStyle="bold"/>-->
+<!--                <TextView-->
+<!--                    android:id="@+id/departure_location"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="78 Bach Dang Street, Ward 11, Binh Thanh District, Ho Chi Minh City"-->
+<!--                    android:layout_gravity="center_vertical"/>-->
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:orientation="horizontal"
                 >
                 <TextView
@@ -130,7 +131,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:text="Destination:"
+                    android:text="Address:"
                     android:textStyle="bold"/>
                 <TextView
                     android:id="@+id/destination"
@@ -193,9 +194,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="10 Comments"
-                        android:layout_alignParentRight="true"
                         android:textSize="16dp"
-                        android:layout_marginStart="10dp"/>
+                        android:layout_alignParentRight="true" />
 
                 </RelativeLayout>
         </LinearLayout>

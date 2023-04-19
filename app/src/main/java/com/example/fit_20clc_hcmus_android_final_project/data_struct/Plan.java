@@ -2,6 +2,9 @@ package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
 import android.os.Parcelable;
 
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +27,7 @@ public class Plan implements Serializable {
     private List<String> passengers;
     private boolean isPublic;
     private String status;
-    private List<Destination> listOfLocations;
+    private List<Destination> listOfLocations = null;
     private Float rating;
     private List<String> listOfComments;
 
@@ -45,8 +48,17 @@ public class Plan implements Serializable {
         listOfLocations = new ArrayList<Destination>();
         rating = 0F;
         listOfComments= new ArrayList<String>();
-        set_of_editors = new ArrayList<String>();
+        listOfEditors = new ArrayList<String>();
         listOfLike = new ArrayList<String>();
+        //createdTime=null;
+    }
+
+    public List<String> getListOfLike() {
+        return listOfLike;
+    }
+
+    public void setListOfLike(List<String> listOfLike) {
+        this.listOfLike = listOfLike;
     }
 
     public Plan(String inputPlanId, String inputName, String inputOwnerEmail, String inputDepartureDate, String inputEndDate, boolean inputIsPublic, Float inputRating, String inputImageLink)
@@ -59,10 +71,20 @@ public class Plan implements Serializable {
         return_date= inputEndDate;
         isPublic= inputIsPublic;
         rating= inputRating;
-        listOfLocations = new ArrayList<Destination>();
-        listOfComments= new ArrayList<String>();
-        set_of_editors = new ArrayList<String>();
-        listOfLike = new ArrayList<String>();
+        listOfLocations = new ArrayList<Destination>(inputlistOfLocation);
+        //listOfLocations = null;
+//        if (inputlistOfComment==null) {
+//
+//        }
+//        else {
+//            listOfComments = new ArrayList<String>(inputlistOfComment);
+//        }
+        listOfComments = new ArrayList<String>(inputlistOfComment);
+        listOfLike= new ArrayList<String>(inputlistOfLike);
+        passengers=new ArrayList<String>(inputPassengers);
+        listOfEditors = new ArrayList<String>();
+        status=inputStatus;
+        //createdTime=inputCreatedTime;
     }
 
 //    public Plan(String hoi_an_tour, String none, String inputDepartureDate, String inputEndDate, int i, boolean inputIsPublic, float inputRating) {
@@ -72,6 +94,15 @@ public class Plan implements Serializable {
     {
         return listOfLike;
     }
+
+//    public Timestamp getCreatedTime() {
+//        return createdTime;
+//    }
+//
+//
+//    public void setCreatedTime(Timestamp createdTime) {
+//        this.createdTime = createdTime;
+//    }
 
     public String getPlanId() {
         return planId;
@@ -125,7 +156,7 @@ public class Plan implements Serializable {
 
     public List<String> getSet_of_editors()
     {
-        return set_of_editors;
+        return listOfEditors;
     }
 
     //setter

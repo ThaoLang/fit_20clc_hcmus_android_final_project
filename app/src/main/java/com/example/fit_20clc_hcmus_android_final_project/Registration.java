@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,9 +39,7 @@ public class Registration extends AppCompatActivity {
         binding=RegistrationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        Glide.with(this)
-                .load("https://static.independent.co.uk/s3fs-public/thumbnails/image/2017/06/20/16/ho-chi-minh-city.jpg?width=1200")
-                .into(binding.testImage);
+
 
         mAuth=FirebaseAuth.getInstance();
 
@@ -95,7 +94,9 @@ public class Registration extends AppCompatActivity {
                     return;
                 }
 
-                createAccount(_username,_email,_phone_number,_password,_address);
+                Random rng=new Random();
+                String random_avatar_url=DatabaseAccess.default_avatar_url[rng.nextInt(DatabaseAccess.default_avatar_url.length)];
+                createAccount(_username,_email,_phone_number,_password,_address,random_avatar_url);
             }
         });
 
@@ -107,7 +108,7 @@ public class Registration extends AppCompatActivity {
         });
     }
 
-    private void createAccount(String username, String email, String phone_number, String password,String address){
+    private void createAccount(String username, String email, String phone_number, String password,String address,String avatar){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         mAuth=FirebaseAuth.getInstance();
         System.out.println("Authentication success");
@@ -120,7 +121,7 @@ public class Registration extends AppCompatActivity {
                     List<String> favorite_locations=new ArrayList<String>();
                     List<String> plans=new ArrayList<String>();
 
-                    User data = new User(username, email, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locations);
+                    User data = new User(username, email, phone_number, address, DEFAULT_USER_BIO, plans, favorite_locations,avatar);
 
                     FirebaseUser user= task.getResult().getUser();
                     db.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION)

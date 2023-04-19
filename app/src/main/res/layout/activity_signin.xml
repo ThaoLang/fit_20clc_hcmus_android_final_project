@@ -28,7 +28,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/channel_name"
                 android:textStyle="bold"
-                android:textSize="40sp"
+                android:fontFamily="@font/dancing_script"
+                android:textSize="50dp"
                 android:textColor="@color/CustomColor1"
                 android:padding="30dp"
                 android:layout_gravity="center_vertical"/>

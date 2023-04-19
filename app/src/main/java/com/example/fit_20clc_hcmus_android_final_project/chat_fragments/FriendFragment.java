@@ -114,7 +114,8 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                                     String phone = String.valueOf(document.get("phone"));
                                     String address = String.valueOf(document.get("address"));
                                     String email = String.valueOf(document.get("userEmail"));
-                                    friend = new User(name, email, phone, address,null,null,null);
+                                    String avatar_url = String.valueOf(document.get("avatarUrl"));
+                                    friend = new User(name, email, phone, address,null,null,null,avatar_url);
                                     users.add(friend);
                                 }
                                     binding.textView.setText("Friend");
