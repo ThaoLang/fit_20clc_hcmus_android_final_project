@@ -92,8 +92,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                String phone = dataSet.get(position).getPhone();
-                listener.swapToChat(phone);
+                String email = dataSet.get(position).getUserEmail();
+                listener.swapToChat(email);
             }
         });
     }

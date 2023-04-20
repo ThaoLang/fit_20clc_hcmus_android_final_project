@@ -31,8 +31,7 @@ import java.util.ArrayList;
 public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, ChatActivity.ChatCallbacks {
     private FragmentChatBinding binding;
 
-    private static final String ARG_PARAM1 = "friendPhone";
-    private String param1;
+    private static final String ARG_PARAM1 = "param1";
     private ChatActivity chat_activity;
     private Context context;
 
@@ -58,7 +57,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            param1 = getArguments().getString(ARG_PARAM1);
+            currentTripId = getArguments().getString(ARG_PARAM1);
         }
 
         try {
@@ -82,14 +81,19 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
         chatHistory = new ArrayList<>();
         readChat(this);
 
+//        TODO: not working yet
         if (friendEmail!=null){
+            Log.e("friendEmail", friendEmail);
+
             for (Chat c : chatHistory){
                 if (c.getSenderEmail().equals(friendEmail)){
                     tagFriend(c.getSenderName());
+                    Log.e("Tagged Name",c.getSenderName());
                     break;
                 }
             }
         }
+        // ERROR.end
 
         adapter = new ChatAdapter(context, chatHistory);
         adapter.setListener(this);
@@ -109,13 +113,12 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                     FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
                     String id = currentTripId;
-                    String message = input;
                     int sendTime = chatHistory.size();
                     String senderName = user.getName();
                     String senderEmail = user.getUserEmail();
                     String senderAvatarURL = user.getAvatarUrl();
 
-                    Chat chat = new Chat(id, message, sendTime, senderName, senderEmail, senderAvatarURL);
+                    Chat chat = new Chat(id, input, sendTime, senderName, senderEmail, senderAvatarURL);
                     chatHistory.add(chat);
                     adapter.notifyDataSetChanged();
                     binding.listItem.smoothScrollToPosition(chatHistory.size()-1);
@@ -146,9 +149,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
     }
 
     private boolean isValidMessage(String input) {
-        if (input.isEmpty())
-            return false;
-        return true;
+        return !input.isEmpty();
     }
 
     private void readChat(ChatFragment chatFragment) {
@@ -168,12 +169,12 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                   chatHistory.clear();
 
                     for (DocumentSnapshot document : value.getDocuments()) {
-                        Chat chat;
                         String id = String.valueOf(document.get("tripId"));
 
-                        Log.e("tripId", String.valueOf(id));
+                        Log.e("tripId", id);
 
                         if (id.equals("0") || id.equals(currentTripId)){
+                            Chat chat;
                             String message = String.valueOf(document.get("message"));
                             int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
                             String senderName = String.valueOf(document.get("senderName"));
@@ -200,9 +201,10 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
     }
 
     public void setFriendEmail(String email) {
-        Log.e("friendEmail", email);
         friendEmail = email;
     }
+
+    // TODO: Notify friend when they are tagged
 
     public void tagFriend(String friend) {
         String tag = binding.chatTextField.getText() + "@" + friend;

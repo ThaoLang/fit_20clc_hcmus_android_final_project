@@ -29,7 +29,6 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
     private FragmentFriendBinding binding;
 
     private static final String ARG_PARAM1 = "param1";
-    private String mParam1;
 
     private ChatActivity chat_activity;
     private Context context;
@@ -41,6 +40,8 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
 
     private User user;
     private FirebaseFirestore fb;
+    private String currentTripId;
+    ArrayList<User> passengers;
 
     public FriendFragment() {
         // Required empty public constructor
@@ -58,7 +59,7 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
+            currentTripId = getArguments().getString(ARG_PARAM1);
         }
 
         try {
@@ -94,7 +95,26 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
         user = chat_activity.getMainUserInfo();
         fb = chat_activity.getFirebaseFirestore();
 
-        Log.e("userphoneff",user.getPhone());
+        Log.e("useremail",user.getUserEmail());
+
+        passengers = new ArrayList<>();
+
+        fb.collection("plans")
+                .whereEqualTo("planId", currentTripId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()){
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()){
+                                    passengers = (ArrayList<User>) document.get("passengers");
+                                }
+                            }
+                        }
+                    }
+                });
 
         fb.collection("account")
                 .whereNotEqualTo("userEmail", user.getUserEmail())
@@ -106,25 +126,33 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                             QuerySnapshot querySnapshot = task.getResult();
                             if (!querySnapshot.isEmpty()){
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()){
-                                    User friend;
-
-                                    Log.e("name",document.get("name").toString());
-
-                                    String name = String.valueOf(document.get("name"));
-                                    String phone = String.valueOf(document.get("phone"));
-                                    String address = String.valueOf(document.get("address"));
                                     String email = String.valueOf(document.get("userEmail"));
-                                    String avatar_url = String.valueOf(document.get("avatarUrl"));
-                                    friend = new User(name, email, phone, address,null,null,null,avatar_url);
-                                    users.add(friend);
+
+                                    if (passengers.contains(email)) {
+                                        User friend;
+
+                                        Log.e("name", document.get("name").toString());
+
+                                        String name = String.valueOf(document.get("name"));
+                                        String phone = String.valueOf(document.get("phone"));
+                                        String address = String.valueOf(document.get("address"));
+                                        String avatar_url = String.valueOf(document.get("avatarUrl"));
+                                        friend = new User(name, email, phone, address, null, null, null, avatar_url);
+                                        users.add(friend);
+                                    }
                                 }
+                                if(users.size()>0) {
                                     binding.textView.setText("Friend");
                                     adapter = new FriendAdapter(context, users);
                                     adapter.setListener(friendFragment);
                                     binding.listItem.setAdapter(adapter);
+                                }
+                                else{
+                                    binding.textView.setText("No one else here...");
+                                }
                             }
                         } else{
-                            binding.textView.setText("No one else here...,");
+                            binding.textView.setText("No one else here...");
                         }
                     }
                 });

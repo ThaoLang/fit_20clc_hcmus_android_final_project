@@ -28,7 +28,7 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void swapToChat();
+        void swapToChat(String planId);
     }
 
     public CustomNotificationAdapter(Context _context, ArrayList<Notification> dataSet) {
@@ -93,7 +93,7 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
                 else
                     Toast.makeText(context, " "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
 
-                listener.swapToChat();
+                listener.swapToChat(dataSet.get(position).getTripId());
             }
         });
     }

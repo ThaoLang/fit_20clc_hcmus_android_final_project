@@ -54,6 +54,7 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
         try {
             context = getActivity();
             main_activity = (MainActivity) getActivity();
+            currentUser = DatabaseAccess.getCurrentUser();
         } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
@@ -109,9 +110,11 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-                            String latestTitle = notificationPlanList.get(notificationPlanList.size()-1).getTitle();
-                            String latestContent = notificationPlanList.get(notificationPlanList.size()-1).getContent();
-                            notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
+                            if (notificationPlanList.size()>0) {
+                                String latestTitle = notificationPlanList.get(notificationPlanList.size() - 1).getTitle();
+                                String latestContent = notificationPlanList.get(notificationPlanList.size() - 1).getContent();
+                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
+                            }
                         } else {
                             Log.d("TAG_PLAN", "Current plan data: null");
                         }
@@ -138,7 +141,12 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
         }
     }
 
-    public void swapToChat(){
-        getActivity().startActivity(new Intent(context, DetailedPlan.class));
+    public void swapToChat(String tripId){
+        Intent intent = new Intent(context, DetailedPlan.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        intent.putExtra("DETAILED_PLAN_ID", tripId);
+
+        getActivity().startActivity(intent);
     }
 }

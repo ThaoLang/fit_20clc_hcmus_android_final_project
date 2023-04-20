@@ -22,6 +22,15 @@ public class Notification {
         this.content = content;
     }
 
+    public String getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(String tripId) {
+        this.tripId = tripId;
+    }
+
     private String title;
     private String content;
+    private String tripId;
 }

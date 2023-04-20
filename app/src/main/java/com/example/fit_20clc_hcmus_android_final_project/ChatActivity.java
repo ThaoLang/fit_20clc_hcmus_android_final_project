@@ -23,7 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ChatActivity extends FragmentActivity {
-
+    static boolean active = false;
     private static FirebaseAuth mAuth = null;
     private Fragment currentScreen;
     private NavigationBarView bottomNavigation;
@@ -36,11 +36,8 @@ public class ChatActivity extends FragmentActivity {
     public static final int FRIEND = 1;
     public static final int RETURN = 2;
 
-    public static String CHAT_INIT_PARAM = "CHAT";
-    public static String FRIEND_INIT_PARAM = "FRIEND";
-
     private User mainUserInfo;
-
+    private String currentTripId;
     private ChatActivity.ChatCallbacks listener;
 
     public void setListener(ChatActivity.ChatCallbacks listener) {
@@ -59,6 +56,10 @@ public class ChatActivity extends FragmentActivity {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         mAuth = FirebaseAuth.getInstance();
 
+        Bundle bundle = getIntent().getBundleExtra("CHAT");
+        currentTripId = bundle.get("PlanId").toString();
+        Log.e("PlanId", currentTripId);
+
         bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -72,7 +73,7 @@ public class ChatActivity extends FragmentActivity {
         //Default: currentScreen is homepage-screen at the beginning
         if(screenType == 0)
         {
-            currentScreen = ChatFragment.newInstance(CHAT_INIT_PARAM);
+            currentScreen = ChatFragment.newInstance(currentTripId);
         }
 
         transaction.replace(R.id.main_frame,currentScreen);
@@ -81,9 +82,16 @@ public class ChatActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        active = false; //?
+    }
+
+    @Override
     protected void onStart()
     {
         super.onStart();
+        active = true;
         FirebaseUser user = mAuth.getCurrentUser();
         if(user == null)
         {
@@ -145,7 +153,7 @@ public class ChatActivity extends FragmentActivity {
         {
             case CHAT:
             {
-                currentScreen = ChatFragment.newInstance(CHAT_INIT_PARAM);
+                currentScreen = ChatFragment.newInstance(currentTripId);
                 if (email!=null){
                     Log.e("email", email);
                     listener.setFriendEmail(email);
@@ -156,7 +164,7 @@ public class ChatActivity extends FragmentActivity {
             }
             case FRIEND:
             {
-                currentScreen = FriendFragment.newInstance(FRIEND_INIT_PARAM);
+                currentScreen = FriendFragment.newInstance(currentTripId);
                 bottomNavigation.setSelectedItemId(R.id.bottom_nav_friend);
                 break;
             }

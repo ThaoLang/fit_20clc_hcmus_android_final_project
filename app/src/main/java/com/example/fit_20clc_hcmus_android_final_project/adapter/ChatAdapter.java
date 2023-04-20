@@ -39,8 +39,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        //        private final ImageView main_image;
         private  final TextView message;
 //        private  final TextView sendTime;
         private  final TextView senderName;
@@ -99,8 +97,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 listener.tagFriend(dataSet.get(position).getSenderName());
-
-                // TODO: Notify friend
             }
         });
     }

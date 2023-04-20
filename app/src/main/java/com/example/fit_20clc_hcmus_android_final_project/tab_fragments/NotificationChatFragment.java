@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
+import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.MainActivity;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Notification;
@@ -85,17 +86,22 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                                 String senderEmail = String.valueOf(document.get("senderEmail"));
                                 if (!senderEmail.equals(currentUser.getEmail())) {
-                                    Notification notification;
+                                    String id = String.valueOf(document.get("tripId"));
 
-                                    Log.e("tripId", document.get("tripId").toString());
+                                    Log.e("tripId", id);
 
-                                    String message = document.get("message").toString();
-                                    String senderName = document.get("senderName").toString();
+                                    // TODO: implement below
+//                                    if (!id.equals("0") && id.equals(<< tripId of trips that user is in >>)){
+                                    if (!id.equals("0")){
+                                        Notification notification;
+                                        String message = document.get("message").toString();
+                                        String senderName = document.get("senderName").toString();
 
-                                    notification = new Notification(senderName, message);
-                                    notificationChatList.add(notification);
+                                        notification = new Notification(senderName, message);
+                                        notificationChatList.add(notification);
 
-                                    Log.e("message", message);
+                                        Log.e("message", message);
+                                    }
                                 }
                             }
 
@@ -109,10 +115,11 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-                            String latestTitle = notificationChatList.get(notificationChatList.size()-1).getTitle();
-                            String latestContent = notificationChatList.get(notificationChatList.size()-1).getContent();
-                            notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
-
+                            if (notificationChatList.size()>0) {
+                                String latestTitle = notificationChatList.get(notificationChatList.size() - 1).getTitle();
+                                String latestContent = notificationChatList.get(notificationChatList.size() - 1).getContent();
+                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
+                            }
                         } else {
                             Log.d("TAG", "Current data: null");
                         }
@@ -139,8 +146,14 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
         }
     }
 
-    public void swapToChat(){
-        getActivity().startActivity(new Intent(getContext(), ChatActivity.class));
-    }
+    public void swapToChat(String tripId){
+        Intent intent = new Intent(context, ChatActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
+        Bundle bundle = new Bundle();
+        bundle.putString("PlanId", tripId);
+        intent.putExtra("CHAT", bundle);
+
+        getActivity().startActivity(intent);
+    }
 }

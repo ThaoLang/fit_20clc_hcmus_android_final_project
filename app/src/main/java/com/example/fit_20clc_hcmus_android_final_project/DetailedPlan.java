@@ -81,7 +81,18 @@ public class DetailedPlan extends AppCompatActivity
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId() == R.id.detailed_plan_toolbar_menu_add_friend)
                 {
-                    Log.i("<<ADD FIREND>>", "add new friend");
+                    Log.i("<<ADD FRIEND>>", "add new friend");
+                }
+                else if(item.getItemId() == R.id.detailed_plan_toolbar_menu_chat)
+                {
+                    Log.i("<<OPEN CHAT>>", "talk to friends");
+
+                    Intent intent = new Intent(context, ChatActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("PlanId", specPlanId);
+                    intent.putExtra("CHAT", bundle);
+
+                    startActivity(intent);
                 }
                 else if(item.getItemId() == R.id.detailed_plan_toolbar_menu_more)
                 {
