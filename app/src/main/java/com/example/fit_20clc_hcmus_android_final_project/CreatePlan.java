@@ -5,10 +5,13 @@ import android.app.DatePickerDialog;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
@@ -17,9 +20,12 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -46,10 +52,11 @@ public class CreatePlan extends AppCompatActivity {
 
     private Calendar calendar;
 
-    private String LAUNCH_MODE = TripsPage.CREATE_PLAN_MODE;
-    private Plan newPlan;
+    private String SETTING_MODE = TripsPage.CREATE_PLAN_MODE;
+    private Plan _plan;
     private int typeOfSelectedDatePicker; //0: none, 1: departure date, 2: return date
 
+    private boolean isTransacted;
     private Uri selectedImageUri = null;
     private String EMPTY_PLAN_NAME = "Please provide the plan's name!";
     private String EMPTY_DEPARTURE_DATE= "Please provide the departure date!";
@@ -58,8 +65,13 @@ public class CreatePlan extends AppCompatActivity {
     private String INVALID_RETURN_DATE = "Invalid return date provided. Format: dd/MM/yyyy";
     private final String INVALID_OCCURENCE_DATE = "Please revise the departure date and the return date!";
     private String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
-    public static String IDENTIFIED_CODE = "CREATE_PLAN";
+    public static String RETURN_BUNDLE = "CREATE_PLAN";
     public static String RETURN_NEW_PLAN_CODE = "RETURN_NEW_PLAN";
+    public static final String RETURN_EDITED_PLAN = "RETURN_EDITED_PLAN";
+
+    public static final String RETURN_RESULT = "RETURN_RESULT";
+
+    public static final String IDENTIFY = "CREATE_PLAN_CODE";
 
     public static String RETURN_IMAGE_URI = "RETURN_IMAGE_URI";
 
@@ -84,8 +96,18 @@ public class CreatePlan extends AppCompatActivity {
 
         typeOfSelectedDatePicker = 0;
 
-        newPlan = new Plan();
+        _plan = new Plan();
+        isTransacted = false;
 
+        SETTING_MODE = getIntent().getStringExtra("SETTING_MODE");
+
+        if(SETTING_MODE.equals(TripsPage.EDIT_PLAN_MODE))
+        {
+            String planId = getIntent().getStringExtra(DetailedPlan.DETAILED_PLAN_ID);
+            _plan = DatabaseAccess.getPlanById(planId);
+        }
+        
+        
         calendar = Calendar.getInstance();
         int instanceDay = calendar.get(Calendar.DAY_OF_MONTH);
         int instanceMonth = calendar.get(Calendar.MONTH);
@@ -154,27 +176,56 @@ public class CreatePlan extends AppCompatActivity {
                 {
                     isPublic = true;
                 }
-                newPlan.setName(inputPlanName);
-                newPlan.setDeparture_date(inputDepartureDate);
-                newPlan.setReturn_date(inputReturnDate);
-                newPlan.setPublicAttribute(isPublic);
-                newPlan.setOwner_email(DatabaseAccess.getMainUserInfo().getUserEmail());
-                newPlan.setStatus(TripsPage.UPCOMING);
+                _plan.setName(inputPlanName);
+                _plan.setDeparture_date(inputDepartureDate);
+                _plan.setReturn_date(inputReturnDate);
+                _plan.setPublicAttribute(isPublic);
 
-                if(selectedImageUri == null)
+                if(SETTING_MODE.equals(TripsPage.CREATE_PLAN_MODE))
                 {
-                    newPlan.setImageLink("None");
+                    _plan.setOwner_email(DatabaseAccess.getMainUserInfo().getUserEmail());
+                    _plan.setStatus(TripsPage.UPCOMING);
                 }
-                else
+
+                if(SETTING_MODE.equals(TripsPage.CREATE_PLAN_MODE))
                 {
-                    newPlan.setImageLink(selectedImageUri.toString());
+                    if(selectedImageUri == null)
+                    {
+                        _plan.setImageLink("None");
+                    }
+                    else
+                    {
+                        _plan.setImageLink(selectedImageUri.toString());
+                    }
                 }
+                else if(SETTING_MODE.equals(TripsPage.EDIT_PLAN_MODE))
+                {
+                    if(selectedImageUri != null)
+                    {
+                        _plan.setImageLink(selectedImageUri.toString());
+                    }
+                }
+
 
                 Bundle returnBundle = new Bundle();
-                returnBundle.putByteArray(RETURN_NEW_PLAN_CODE, Plan.planToByteArray(newPlan));
+//                if(SETTING_MODE.equals(TripsPage.CREATE_PLAN_MODE))
+//                {
+//                    returnBundle.putByteArray(RETURN_NEW_PLAN_CODE, Plan.planToByteArray(_plan));
+//                    returnBundle.putString("CREATE_STATUS", "EXIST");
+//                }
+//                else if(SETTING_MODE.equals(TripsPage.EDIT_PLAN_MODE))
+//                {
+//                    returnBundle.putByteArray(RETURN_EDITED_PLAN, Plan.planToByteArray(_plan));
+//                    returnBundle.putString("CREATE_STATUS", "EXIST");
+//                }
+                returnBundle.putByteArray(RETURN_RESULT, Plan.planToByteArray(_plan));
                 returnBundle.putString("CREATE_STATUS", "EXIST");
+                returnBundle.putString("MODE", SETTING_MODE);
+
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra(IDENTIFIED_CODE, returnBundle);
+                returnIntent.putExtra(RETURN_BUNDLE, returnBundle);
+                returnIntent.putExtra("IDENTIFY", IDENTIFY);
+                isTransacted = true;
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
@@ -198,11 +249,54 @@ public class CreatePlan extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        LAUNCH_MODE = getIntent().getStringExtra("MODE");
 
-        if(LAUNCH_MODE.equals(TripsPage.EDIT_PLAN_MODE))
+        if(SETTING_MODE.equals(TripsPage.EDIT_PLAN_MODE))
         {
+            planName.setText(_plan.getName());
+            departureDate.setText(_plan.getDeparture_date());
+            returnDate.setText(_plan.getReturn_date());
+            passengers.setText(String.valueOf(_plan.getPassengers().size()));
+            publicSwitch.setChecked(_plan.getPublicAttribute());
+            publicSwitch.setVisibility(View.INVISIBLE);
+            inviteButton.setVisibility(View.INVISIBLE);
 
+            if(_plan.getImageLink().equals("None"))
+            {
+                image.setImageResource(R.drawable.image_48px);
+            }
+            else
+            {
+                DatabaseAccess.getFirebaseStorage().getReference().child(_plan.getImageLink())
+                        .getBytes(1024*2*1024).addOnSuccessListener(
+                                new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        Bitmap loadedImage = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                        image.setImageBitmap(loadedImage);
+                                    }
+                                }
+                        ).addOnFailureListener(
+                                new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.e("LOAD IMAGE FAILED", e.getMessage());
+                                        image.setImageResource(R.drawable.image_48px);
+                                    }
+                                }
+                        );
+            }
+
+            continueButton.setText("Edit");
+        }
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        if(isTransacted == false)
+        {
+            setResult(Activity.RESULT_CANCELED);
         }
     }
 
@@ -225,6 +319,7 @@ public class CreatePlan extends AppCompatActivity {
             return false;
         }
     }
+
 
     private Date parseDateFromString(String format_pattern, String value)
     {
@@ -281,7 +376,7 @@ public class CreatePlan extends AppCompatActivity {
                 {
                     selectedImageUri = imageData.getData();
                     Bitmap selectedImage;
-                    System.out.println("ImageUri: " + selectedImageUri);
+//                    System.out.println("ImageUri: " + selectedImageUri);
                     try {
                         getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         selectedImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);

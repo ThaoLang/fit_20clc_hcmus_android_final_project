@@ -58,8 +58,8 @@ public class TripsPage extends Fragment {
 
     private int currentMode;
 
-    public static String CREATE_PLAN_MODE = "CREATE_PLAN_MODE";
-    public static String EDIT_PLAN_MODE = "EDIT_PLAN_MODE";
+    public static String CREATE_PLAN_MODE = "TRIPS_CREATE_PLAN_MODE";
+    public static String EDIT_PLAN_MODE = "TRIPS_EDIT_PLAN_MODE";
 
     private static final String INIT_PARAM = "INIT_PARAM";
 
@@ -178,7 +178,7 @@ public class TripsPage extends Fragment {
                 //start CreatePlan activity
                 //new way to start a activity and receive results from that activity.
                 Intent createPlanLaunchIntent = new Intent(context, CreatePlan.class);
-                createPlanLaunchIntent.putExtra("MODE", CREATE_PLAN_MODE);
+                createPlanLaunchIntent.putExtra("SETTING_MODE", CREATE_PLAN_MODE);
                 activityLauncher.launch(createPlanLaunchIntent);
             }
         });
@@ -191,6 +191,7 @@ public class TripsPage extends Fragment {
     public void onStart()
     {
         super.onStart();
+        recyclerViewPosition.removeAllViews();
         if(currentMode == 0)
         {
             Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(getContext(), DatabaseAccess.getPlansByStatus(UPCOMING));
@@ -219,33 +220,41 @@ public class TripsPage extends Fragment {
                 Plan newPlan;
                 if(intentReturned != null)
                 {
-                    Runnable successfulTask = new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(context, "Create the new plan successfully!", Toast.LENGTH_LONG).show();
-                            onStart();
-                        }
-                    };
-
-                    Runnable failedTask = new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(context, "Create the new plan failed!", Toast.LENGTH_LONG).show();
-                        }
-                    };
-
-                    //get the new plan created by CreatePlan activity
-                    Bundle bundle = intentReturned.getBundleExtra(CreatePlan.IDENTIFIED_CODE);
-                    if(bundle.getString("CREATE_STATUS") == null)
+                    String identify = intentReturned.getStringExtra("IDENTIFY");
+                    if (identify.equals(CreatePlan.IDENTIFY))
                     {
-                        return;
-                    }
-                    byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_NEW_PLAN_CODE);
-                    newPlan = Plan.byteArrayToObject(byteArray);
+                        //get the new plan created by CreatePlan activity
+                        Bundle bundle = intentReturned.getBundleExtra(CreatePlan.RETURN_BUNDLE);
+                        String returnMode = bundle.getString("MODE");
+                        if(bundle.getString("CREATE_STATUS") == null)
+                        {
+                            return;
+                        }
+                        byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_NEW_PLAN_CODE);
+                        newPlan = Plan.byteArrayToObject(byteArray);
 
-//                    System.out.println("<<<System out>>> " + plan.getName());
-                    //run insertion task
-                    DatabaseAccess.addNewPlan(newPlan, successfulTask, failedTask);
+//                      System.out.println("<<<System out>>> " + plan.getName());
+                        //run insertion task
+                        if(returnMode.equals(TripsPage.CREATE_PLAN_MODE))
+                        {
+                            Runnable successfulTask = new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Create the new plan successfully!", Toast.LENGTH_LONG).show();
+                                    onStart();
+                                }
+                            };
+
+                            Runnable failedTask = new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(context, "Create the new plan failed!", Toast.LENGTH_LONG).show();
+                                }
+                            };
+
+                            DatabaseAccess.addNewPlan(newPlan, successfulTask, failedTask);
+                        }
+                    }
                 }
             }
         }

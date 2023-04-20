@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
@@ -48,6 +50,8 @@ public class DetailedPlan extends AppCompatActivity
     private String specPlanId;
     private Plan specPlan;
 
+    private boolean isEditable;
+
     private static int selectedDestinationPosition = -1;
     private final static String PERMISSION_CODE = "X31aLjuNNm4j1d";
 
@@ -55,12 +59,15 @@ public class DetailedPlan extends AppCompatActivity
 
     public final static String DETAILED_PLAN_ID = "DETAILED_PLAN_ID";
 
+    private final static String SETTING_MODE = "SETTING_MODE";
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detailed_plan);
         context = this;
 
+        isEditable = false;
         toolbar = findViewById(R.id.detailed_plan_toolbar);
         destinations = findViewById(R.id.detailed_plan_recyclerview_destinations);
         travelers = findViewById(R.id.detailed_plan_recyclerview_travelers);
@@ -96,7 +103,37 @@ public class DetailedPlan extends AppCompatActivity
                 }
                 else if(item.getItemId() == R.id.detailed_plan_toolbar_menu_more)
                 {
+                    PopupMenu popupMenu = new PopupMenu(toolbar.getContext(), item.getActionView());
+                    popupMenu.inflate(R.menu.detailed_plan_toolbar_popup_menu);
+                    Menu menu = popupMenu.getMenu();
 
+                    if(isEditable == false)
+                    {
+                        menu.getItem(0).setVisible(false);
+                        menu.getItem(2).setVisible(false);
+                    }
+                    if(specPlan.getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail())==true)
+                    {
+                        menu.getItem(0).setVisible(true);
+                        menu.getItem(2).setVisible(true);
+                        menu.getItem(1).setVisible(false);
+                    }
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem menuItem) {
+                            if(menuItem.getItemId() == R.id.detailed_plan_toolbar_popup_menu_edit)
+                            {
+                                Intent intent = new Intent(DetailedPlan.this, CreatePlan.class);
+                                intent.putExtra("SETTING_MODE", TripsPage.EDIT_PLAN_MODE);
+                                intent.putExtra(DetailedPlan.DETAILED_PLAN_ID, specPlanId);
+                                launcher.launch(intent);
+                            }
+
+                            return false;
+                        }
+                    });
+                    popupMenu.show();
                 }
 
                 return true;
@@ -108,7 +145,7 @@ public class DetailedPlan extends AppCompatActivity
             public void onClick(View view) {
                 Intent intent = new Intent(context, AddDestination.class);
                 Bundle bundle = new Bundle();
-                bundle.putString(AddDestination.SETTING_MODE, AddDestination.ADD_DESTINATION);
+                bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
                 bundle.putString("PLAN_ID", specPlanId);
                 intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
                 launcher.launch(intent);
@@ -117,16 +154,27 @@ public class DetailedPlan extends AppCompatActivity
 
         Intent planIntent = getIntent();
         specPlanId = planIntent.getStringExtra(DETAILED_PLAN_ID);
+        specPlan = DatabaseAccess.getPlanById(specPlanId);
+
+        if(specPlan.getSet_of_editors().contains(DatabaseAccess.getMainUserInfo().getUserEmail()) ||
+                specPlan.getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail()))
+        {
+            isEditable = true;
+        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        specPlan = DatabaseAccess.getPlanById(specPlanId);
+
         destinations.setVisibility(View.VISIBLE);
         travelers.setVisibility(View.VISIBLE);
         no_plan.setVisibility(View.GONE);
         no_invited_friends.setVisibility(View.GONE);
+        if(isEditable == false)
+        {
+            toolbar.getMenu().getItem(0).setVisible(false);
+        }
         if(specPlan == null)
         {
             destinations.setVisibility(View.GONE);
@@ -146,44 +194,73 @@ public class DetailedPlan extends AppCompatActivity
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if(result.getResultCode() == Activity.RESULT_OK)
-                    {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
                         //receive the result from AddDestination activity
                         Log.i("<<Returned result>>", "NEW DESTINATION");
                         Intent intent = result.getData();
-                        String mode = intent.getStringExtra(AddDestination.SETTING_MODE);
-                        byte[] bytesArray = intent.getByteArrayExtra(AddDestination.RETURN_RESULT);
-                        Destination destination = Destination.toObject(bytesArray);
-                        if(mode.equals(AddDestination.VIEW_DESTINATION))
+                        String identify = intent.getStringExtra("IDENTIFY");
+                        Bundle bundle = intent.getBundleExtra("RETURN_BUNDLE");
+                        if (identify.equals(AddDestination.IDENTIFY))
                         {
-                            return;
-                        }
-                        else if(mode.equals(AddDestination.EDIT_DESTINATION))
-                        {
+                            String mode = bundle.getString("MODE");
+                            byte[] bytesArray = intent.getByteArrayExtra(AddDestination.RETURN_RESULT);
+                            Destination destination = Destination.toObject(bytesArray);
+                            if (mode.equals(AddDestination.VIEW_DESTINATION))
+                            {
+                                return;
+                            }
+                            else if (mode.equals(AddDestination.EDIT_DESTINATION))
+                            {
 
-                        }
-                        else //mode == AddDestination.ADD_DESTINATION
-                        {
-                            Runnable successfulTask = new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, "Add new destination successfully...", Toast.LENGTH_SHORT).show();
-                                    onStart();
-                                }
-                            };
+                            }
+                            else //mode == AddDestination.ADD_DESTINATION
+                            {
+                                Runnable successfulTask = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, "Add new destination successfully...", Toast.LENGTH_SHORT).show();
+                                        onStart();
+                                    }
+                                };
 
-                            Runnable failedTask = new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(context, "Add new destination failed", Toast.LENGTH_SHORT).show();
-                                }
-                            };
-                            DatabaseAccess.addNewDestinationTo(destination, specPlanId, successfulTask, failedTask);
+                                Runnable failedTask = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, "Add new destination failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                };
+                                DatabaseAccess.addNewDestinationTo(destination, specPlanId, successfulTask, failedTask);
+                            }
+                        }
+                        else if(identify.equals(CreatePlan.IDENTIFY))
+                        {
+                            String mode = bundle.getString("MODE");
+                            byte[] bytesArray = intent.getByteArrayExtra(CreatePlan.RETURN_RESULT);
+                            specPlan = Plan.byteArrayToObject(bytesArray);
+                            if(mode.equals(TripsPage.EDIT_PLAN_MODE))
+                            {
+                                Runnable successfulTask = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, "Update plan successfully", Toast.LENGTH_LONG).show();
+                                        onStart();
+                                    }
+                                };
+
+                                Runnable failedTask = new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(context, "Update plan failed", Toast.LENGTH_LONG).show();
+                                    }
+                                };
+
+                                DatabaseAccess.updatePlanInfo(specPlan, successfulTask, failedTask);
+                            }
+
                         }
                     }
                 }
             });
-
     @Override
     public void onPause()
     {

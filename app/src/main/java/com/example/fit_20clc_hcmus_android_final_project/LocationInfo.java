@@ -64,7 +64,6 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
     private PostAdapter postAdapter;
     LinearLayoutManager mLinearLayoutManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

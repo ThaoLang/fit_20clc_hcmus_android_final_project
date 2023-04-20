@@ -41,13 +41,16 @@ public class AddDestination extends AppCompatActivity {
 
     private boolean isPermittedToEdit = false;
 
-    public final static String SETTING_MODE = "SETTING_MODE";
+    private final static String SETTING_MODE = "SETTING_MODE";
 
-    public final static String ADD_DESTINATION = "ADD_DESTINATION";
+    public final static String IDENTIFY = "ADDDESTINATION";
+    public final static String ADD_DESTINATION = "ADDDESTINATION_ADD_DESTINATION";
 
-    public final static String EDIT_DESTINATION = "EDIT_DESTINATION";
-    public final static String VIEW_DESTINATION = "VIEW_DESTINATION";
-    public final static String RETURN_RESULT = "RETURN_RESULT";
+    public final static String EDIT_DESTINATION = "ADDDESTINATION_EDIT_DESTINATION";
+    public final static String VIEW_DESTINATION = "ADDDESTINATION_VIEW_DESTINATION";
+    public final static String RETURN_RESULT = "ADDDESTINATION_RETURN_RESULT";
+
+    public final static String RETURN_BUNDLE = "RETURN_BUNDLE";
 
     private final String INVALID_FORMAL_NAME = "Please search for a destination!";
     private final String EMPTY_ALIAS = "Please provide an alias for the destination";
@@ -236,9 +239,12 @@ public class AddDestination extends AppCompatActivity {
                 newDest.setEndTime(finalEndTime);
                 newDest.setDescription(finalDescription);
 
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(RETURN_RESULT, Destination.toByteArray(newDest));
+                bundle.putString("MODE", _currentMode);
                 Intent intent = new Intent();
-                intent.putExtra(SETTING_MODE, _currentMode);
-                intent.putExtra(RETURN_RESULT, Destination.toByteArray(newDest));
+                intent.putExtra(RETURN_BUNDLE, bundle);
+                intent.putExtra("IDENTIFY", IDENTIFY);
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -273,7 +279,7 @@ public class AddDestination extends AppCompatActivity {
         endTimePickerButton.setVisibility(View.INVISIBLE);
         mainButton.setVisibility(View.VISIBLE);
         mainButton.setText("Add");
-//        toolbar.setTitle(_destination.getName());
+//        toolbar.setTitle(_destination.getAliasName());
         if (_currentMode.equals(VIEW_DESTINATION)) {
             mainButton.setText("Edit");
             if (isPermittedToEdit == false) {

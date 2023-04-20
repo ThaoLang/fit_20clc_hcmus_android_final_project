@@ -71,6 +71,7 @@ public class Plan implements Serializable {
         return_date= inputEndDate;
         isPublic= inputIsPublic;
         rating= inputRating;
+        status = "Upcoming";
         //listOfLocations = new ArrayList<Destination>(inputlistOfLocation);
         //listOfLocations = null;
 //        if (inputlistOfComment==null) {

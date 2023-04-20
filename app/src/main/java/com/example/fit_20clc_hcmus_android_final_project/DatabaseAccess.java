@@ -261,7 +261,7 @@ public class DatabaseAccess{
                     @Override
                     public void onSuccess(String newPlanIdCreated) {
                         //update local data
-                        System.out.println("<<NewPlanId created: >>" + newPlanIdCreated);
+//                        System.out.println("<<NewPlanId created: >>" + newPlanIdCreated);
                         mainUserInfo.addNewPlan(newPlanIdCreated);
 
                         //get uri of the selected image in local storage, which was selected by the user as the result returned by CreatePlan
@@ -389,4 +389,67 @@ public class DatabaseAccess{
 //            }
 //        })
 //    }
+
+    public static void updatePlanInfo(@NotNull Plan newPlanInfo, Runnable successfulTask, Runnable failedTask)
+    {
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DocumentReference planDoc =  firestore.collection(ACCESS_PLANS_COLLECTION).document(newPlanInfo.getPlanId());
+
+                firestore.runTransaction(new Transaction.Function<String>() {
+                    @Nullable
+                    @Override
+                    public String apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
+                        transaction.update(planDoc, "name", newPlanInfo.getName());
+                        transaction.update(planDoc, "departure_date", newPlanInfo.getDeparture_date());
+                        transaction.update(planDoc, "return_date", newPlanInfo.getReturn_date());
+                        transaction.update(planDoc, "status", newPlanInfo.getStatus());
+                        transaction.update(planDoc, "rating", newPlanInfo.getRating());
+                        return newPlanInfo.getImageLink();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String imageLink) {
+                        if (!imageLink.equals("None"))
+                        {
+                            Uri imageNeedToUpload = Uri.parse(imageLink);
+                            StorageReference plansImageReference = firebaseStorage.getReference().child(imageLink);
+//                            System.out.println("imageLocalUri" + imageNeedToUpload);
+                            StorageMetadata metadata = new StorageMetadata.Builder()
+                                    .setContentType("image/jpg").build();
+
+                            UploadTask uploadTask = (UploadTask) plansImageReference.putFile(imageNeedToUpload, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    runForegroundTask(successfulTask);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("<<Update image>>", e.getMessage());
+                                    runForegroundTask(failedTask);
+                                }
+                            });
+
+                            for(int i=0; i< plans.size(); i++)
+                            {
+                                if(plans.get(i).getPlanId().equals(newPlanInfo.getPlanId()))
+                                {
+                                    plans.set(i, newPlanInfo);
+                                }
+                            }
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("<<Update Plan>>", e.getMessage());
+                        runForegroundTask(failedTask);
+                    }
+                });
+            }
+        });
+        backgroundTask.start();
+    }
 }

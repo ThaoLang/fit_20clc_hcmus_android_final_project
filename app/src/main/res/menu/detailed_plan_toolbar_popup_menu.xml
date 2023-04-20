@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/detailed_plan_toolbar_popup_menu_edit"
+        android:title="Edit the trip"
+        android:enabled="true"
+        android:contentDescription="edit the trip"/>
+    <item
+        android:id="@+id/detailed_plan_toolbar_popup_menu_leave"
+        android:title="Leave the trip"
+        android:enabled="true"
+        android:contentDescription="leave the trip"/>
+    <item
+        android:id="@+id/detailed_plan_toolbar_popup_menu_delete"
+        android:title="Delete the trip"
+        android:enabled="true"
+        android:contentDescription="delete the trip"/>
+</menu>
