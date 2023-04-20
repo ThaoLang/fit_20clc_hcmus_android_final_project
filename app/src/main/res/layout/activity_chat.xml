@@ -20,8 +20,11 @@
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:itemBackground="@color/CustomColor5"
         app:menu="@menu/chat_menu"
+        app:itemIconTint="@color/cardview_light_background"
+        app:backgroundTint="@color/CustomColor9"
+        app:itemTextColor="@color/cardview_light_background"
+        android:background="@drawable/detailed_planner_pill_shape_row"
         android:layout_gravity="bottom"
         />
 

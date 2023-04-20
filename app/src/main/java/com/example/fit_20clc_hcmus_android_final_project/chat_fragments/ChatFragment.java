@@ -40,7 +40,7 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
     private ChatAdapter adapter;
     private ArrayList<Chat> chatHistory;
     private String friendEmail;
-    private int currentTripId = 1;
+    private String currentTripId = "1";
 
     public ChatFragment() {
         // Required empty public constructor
@@ -108,16 +108,19 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
                     User user = chat_activity.getMainUserInfo();
                     FirebaseFirestore fb = chat_activity.getFirebaseFirestore();
 
-                    int id = currentTripId;
+                    String id = currentTripId;
                     String message = input;
                     int sendTime = chatHistory.size();
                     String senderName = user.getName();
                     String senderEmail = user.getUserEmail();
+                    String senderAvatarURL = user.getAvatarUrl();
 
-                    Chat chat = new Chat(id, message, sendTime, senderName, senderEmail);
+                    Chat chat = new Chat(id, message, sendTime, senderName, senderEmail, senderAvatarURL);
                     chatHistory.add(chat);
                     adapter.notifyDataSetChanged();
                     binding.listItem.smoothScrollToPosition(chatHistory.size()-1);
+
+                    Log.d("user avatar URL", user.getAvatarUrl());
 
                     // add to database
                     fb.collection("chatHistory").document()
@@ -166,17 +169,20 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
 
                     for (DocumentSnapshot document : value.getDocuments()) {
                         Chat chat;
-                        int id = Integer.parseInt(String.valueOf(document.get("tripId")));
+                        String id = String.valueOf(document.get("tripId"));
 
                         Log.e("tripId", String.valueOf(id));
 
-                        if (id == 0 || id == currentTripId){
+                        if (id.equals("0") || id.equals(currentTripId)){
                             String message = String.valueOf(document.get("message"));
                             int sendTime = Integer.parseInt(String.valueOf(document.get("sendTime")));
                             String senderName = String.valueOf(document.get("senderName"));
                             String senderEmail = String.valueOf(document.get("senderEmail"));
+                            String senderAvatarURL = String.valueOf(document.get("senderAvatarURL"));
 
-                            chat = new Chat(id, message, sendTime, senderName, senderEmail);
+                            Log.d("user avatar URL", senderAvatarURL);
+
+                            chat = new Chat(id, message, sendTime, senderName, senderEmail, senderAvatarURL);
                             chatHistory.add(chat);
 
                             Log.e("message", message);
@@ -191,10 +197,6 @@ public class ChatFragment extends Fragment implements ChatAdapter.Callbacks, Cha
             }
         });
 
-    }
-
-    public void swapToFriend() { //TODO: pass over friend user
-        chat_activity.switchScreenByScreenType(1, null);
     }
 
     public void setFriendEmail(String email) {

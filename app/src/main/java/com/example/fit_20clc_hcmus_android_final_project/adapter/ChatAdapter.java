@@ -4,10 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
@@ -28,7 +30,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void swapToFriend();
         void tagFriend(String friend);
     }
 
@@ -43,7 +44,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         private  final TextView message;
 //        private  final TextView sendTime;
         private  final TextView senderName;
-
+        private  final ImageView avatar;
         private ItemClickListener itemClickListener;
 
         public ViewHolder(View view) {
@@ -53,7 +54,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
             message = (TextView) view.findViewById(R.id.message);
 //            sendTime = (TextView) view.findViewById(R.id.time);
             senderName = (TextView) view.findViewById(R.id.chat_username);
-//            main_image = (ImageView) view.findViewById(R.id.location_image);
+            avatar = (ImageView) view.findViewById(R.id.profile_image);
 
             view.setOnClickListener(this);
         }
@@ -89,14 +90,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         viewHolder.message.setText(dataSet.get(position).getMessage());
 //        viewHolder.sendTime.setText(dataSet.get(position).getSendTime());
         viewHolder.senderName.setText(dataSet.get(position).getSenderName());
-
-//        viewHolder.main_image.setImageResource(dataSet.get(position).getImage());
-
+        if (dataSet.get(position).getSenderAvatarURL()!=null) {
+            Glide.with(context.getApplicationContext())
+                    .load(dataSet.get(position).getSenderAvatarURL())
+                    .into(viewHolder.avatar);
+        }
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-//                listener.swapToFriend();
-
                 listener.tagFriend(dataSet.get(position).getSenderName());
 
                 // TODO: Notify friend

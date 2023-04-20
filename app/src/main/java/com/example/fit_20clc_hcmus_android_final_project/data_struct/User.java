@@ -47,11 +47,11 @@ public class User {
         this._avatar_url=avatar_url;
     }
 
-    public String get_avatar_url() {
+    public String getAvatarUrl() {
         return _avatar_url;
     }
 
-    public void set_avatar_url(String _avatar_url) {
+    public void setAvatarUrl(String _avatar_url) {
         this._avatar_url = _avatar_url;
     }
 

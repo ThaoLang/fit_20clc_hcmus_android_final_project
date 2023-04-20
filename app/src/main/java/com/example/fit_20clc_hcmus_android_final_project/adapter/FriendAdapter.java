@@ -9,12 +9,12 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder> {
     private ArrayList<User> dataSet;
@@ -40,7 +40,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-//        private final ImageView main_image;
+        private final ImageView avatar;
         private  final TextView name;
 
         private ItemClickListener itemClickListener;
@@ -50,7 +50,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
             // Define click listener for the ViewHolder's View
 
             name = (TextView) view.findViewById(R.id.username);
-//            main_image = (ImageView) view.findViewById(R.id.location_image);
+            avatar = (ImageView) view.findViewById(R.id.profile_image);
 
             view.setOnClickListener(this);
         }
@@ -84,8 +84,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         // Get element from your posts at this position and replace the
         // contents of the view with that element
         viewHolder.name.setText(dataSet.get(position).getName());
-//        viewHolder.main_image.setImageResource(favoriteLocations[position].getImage());
-
+        if (dataSet.get(position).getAvatarUrl()!=null) {
+            Glide.with(context.getApplicationContext())
+                    .load(dataSet.get(position).getAvatarUrl())
+                    .into(viewHolder.avatar);
+        }
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {

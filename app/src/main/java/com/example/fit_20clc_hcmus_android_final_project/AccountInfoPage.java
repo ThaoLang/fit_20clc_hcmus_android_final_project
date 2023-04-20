@@ -180,7 +180,7 @@ public class AccountInfoPage extends Fragment {
             useraddress.setText(mainUserInfo.getAddress());
             userphone.setText(mainUserInfo.getPhone());
             Glide.with(this)
-                    .load(mainUserInfo.get_avatar_url())
+                    .load(mainUserInfo.getAvatarUrl())
                     .into(avatar);
         }
     }
