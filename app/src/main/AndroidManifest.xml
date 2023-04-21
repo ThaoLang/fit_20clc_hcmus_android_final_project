@@ -53,7 +53,7 @@
         <activity android:name=".CreatePlan"
             android:exported="false"/>
         <activity
-            android:name=".data_struct.DetailedPost"
+            android:name=".DetailedPost"
             android:exported="false">
         </activity>
         <activity

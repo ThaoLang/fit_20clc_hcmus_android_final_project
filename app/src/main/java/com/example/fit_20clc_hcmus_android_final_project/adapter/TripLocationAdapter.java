@@ -2,7 +2,6 @@ package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +16,6 @@ import com.example.fit_20clc_hcmus_android_final_project.CommentActivity;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.DetailedPost;
 
 import java.util.List;
 

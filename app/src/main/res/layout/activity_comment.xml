@@ -25,9 +25,9 @@
 
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="330dp"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_marginLeft="10dp"
                 android:hint="Write a comment..."
                 app:hintTextColor="@color/CustomColor1"
                 android:textCursorDrawable="@color/CustomColor1"
@@ -44,18 +44,36 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/pick_image_button"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:drawableLeft="@drawable/gallery_icon"
+                android:drawableTint="@color/CustomColor10"
+                android:backgroundTint="@color/md_theme_light_onPrimary"
+                android:layout_gravity="center_vertical"
+                />
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/chat_button"
-                android:layout_width="wrap_content"
+                android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:baselineAlignBottom="false"
                 android:clickable="true"
                 android:drawableLeft="@drawable/baseline_send_24"
-                android:drawableTint="@color/CustomColor7"
+                android:drawableTint="@color/CustomColor10"
                 android:backgroundTint="@color/md_theme_light_onPrimary"
-                android:paddingLeft="10dp"
                 android:layout_gravity="center_vertical"
                 />
         </LinearLayout>
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/demo_image"
+        android:layout_width="150dp"
+        android:layout_height="120dp"
+        android:background="@drawable/image_48px"
+        android:layout_marginRight="-50dp"
+        />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/list_comment"

@@ -82,6 +82,7 @@ public class DatabaseAccess{
     public static String ACCESS_COMMENT_SET_COLLECTION = "commentSets";
 
     public static String ACCESS_PLANS_STORAGE = "plans/";
+    public static String ACCESS_COMMENTS_STORAGE = "comments/";
 
     private static FirebaseAuth auth;
     private static User mainUserInfo;
@@ -411,6 +412,7 @@ public class DatabaseAccess{
                         transaction.update(planDoc, "return_date", newPlanInfo.getReturn_date());
                         transaction.update(planDoc, "status", newPlanInfo.getStatus());
                         transaction.update(planDoc, "rating", newPlanInfo.getRating());
+                        transaction.update(planDoc,"publicAttribute",newPlanInfo.getPublicAttribute());
                         return newPlanInfo.getImageLink();
                     }
                 }).addOnSuccessListener(new OnSuccessListener<String>() {

@@ -257,7 +257,7 @@ public class CreatePlan extends AppCompatActivity {
             returnDate.setText(_plan.getReturn_date());
             passengers.setText(String.valueOf(_plan.getPassengers().size()));
             publicSwitch.setChecked(_plan.getPublicAttribute());
-            publicSwitch.setVisibility(View.INVISIBLE);
+//            publicSwitch.setVisibility(View.INVISIBLE);
             inviteButton.setVisibility(View.INVISIBLE);
 
 

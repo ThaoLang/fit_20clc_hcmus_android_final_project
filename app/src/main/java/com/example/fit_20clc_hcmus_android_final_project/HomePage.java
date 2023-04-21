@@ -1,7 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +17,15 @@ import android.view.ViewGroup;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.FavoriteLocationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.DetailedPost;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.ActivityHomepageBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -103,7 +96,7 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
 //        FirebaseFirestore fb = DatabaseAccess.getFirestore();
 
         fb.collection("plans")
-
+                .whereEqualTo("publicAttribute",Boolean.valueOf("true"))
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -216,7 +209,7 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
     public void swapToPost(Plan plan){ //swap locationinfo into postdetail
         Intent intent=new Intent(context, DetailedPost.class);
         Bundle bundle=new Bundle();
-        bundle.putSerializable("plan", plan);
+        bundle.putString("plan id", plan.getPlanId());
         intent.putExtra("plan post",bundle);
         startActivity(intent);
     }

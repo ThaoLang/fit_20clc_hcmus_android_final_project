@@ -2,6 +2,8 @@ package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
+import com.example.fit_20clc_hcmus_android_final_project.DetailedPost;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
@@ -24,18 +27,22 @@ import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Post;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
@@ -166,15 +173,37 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                                             .into(viewHolder.avatar);
                                 }
                             } else {
-
                             }
 
                         } else {
-
                         }
-
                     }
                 });
+        if (plans.get(position).getImageLink().equals("None")) {
+            Random rng = new Random();
+            Glide.with(context.getApplicationContext())
+                    .load(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)])
+                    .into(viewHolder.main_image);
+            //slideModels.add(new SlideModel(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)], ScaleTypes.FIT));
+        } else {
+            final long MAX_BYTE = 1024 * 2 * 1024;
+            StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(plans.get(position).getImageLink());
+            storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    viewHolder.main_image.setImageBitmap(image);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Random rng = new Random();
+                    Glide.with(context.getApplicationContext())
+                            .load(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)])
+                            .into(viewHolder.main_image);
+                }
+            });
+        }
 //
         viewHolder.number_like.setText(String.valueOf(plans.get(position).getListOfLike().size()));
         viewHolder.number_comment.setText(String.valueOf(plans.get(position).getListOfComments().size()));
