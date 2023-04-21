@@ -92,8 +92,9 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
 
                                     String name = String.valueOf(document.get("name"));
                                     String message = String.valueOf(document.get("departure_date"));
+                                    String planId = String.valueOf(document.get("planId"));
 
-                                    notification = new Notification(name, message);
+                                    notification = new Notification(name, message, planId);
                                     notificationPlanList.add(notification);
 
                                     Log.e("plan_message", message);
@@ -109,6 +110,7 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             // TODO: Revise intent to send to the right activity / plan when click on notification
                             Intent intent = new Intent(context, DetailedPlan.class); //supposedly from notification to plan detail?
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.putExtra("DETAILED_PLAN_ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
                             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
                             if (notificationPlanList.size()>0) {
