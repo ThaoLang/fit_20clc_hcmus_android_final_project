@@ -14,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.MainActivity;
@@ -85,18 +84,20 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             notificationPlanList.clear();
 
                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-//                                String senderEmail = String.valueOf(document.get("senderEmail"));
-//                                if (!senderEmail.equals(currentUser.getEmail())) {
-                                Notification notification;
+                                ArrayList<String> passengers = (ArrayList<String>) document.get("passengers");
+                                passengers.add(String.valueOf(document.get("owner_email")));
 
-                                String name = String.valueOf(document.get("name"));
-                                String message = String.valueOf(document.get("departure_date"));
+                                if (passengers.contains(currentUser.getEmail())){
+                                    Notification notification;
 
-                                notification = new Notification(name, message);
-                                notificationPlanList.add(notification);
+                                    String name = String.valueOf(document.get("name"));
+                                    String message = String.valueOf(document.get("departure_date"));
 
-                                Log.e("plan_message", message);
-//                                }
+                                    notification = new Notification(name, message);
+                                    notificationPlanList.add(notification);
+
+                                    Log.e("plan_message", message);
+                                }
                             }
 
                             planAdapter = new CustomNotificationAdapter(context, notificationPlanList);
@@ -113,7 +114,7 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             if (notificationPlanList.size()>0) {
                                 String latestTitle = notificationPlanList.get(notificationPlanList.size() - 1).getTitle();
                                 String latestContent = notificationPlanList.get(notificationPlanList.size() - 1).getContent();
-                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
+                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent, main_activity);
                             }
                         } else {
                             Log.d("TAG_PLAN", "Current plan data: null");
@@ -147,6 +148,6 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
 
         intent.putExtra("DETAILED_PLAN_ID", tripId);
 
-        getActivity().startActivity(intent);
+        main_activity.startActivity(intent);
     }
 }

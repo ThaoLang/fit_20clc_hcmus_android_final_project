@@ -41,7 +41,7 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
     private User user;
     private FirebaseFirestore fb;
     private String currentTripId;
-    ArrayList<User> passengers;
+    ArrayList<String> passengers;
 
     public FriendFragment() {
         // Required empty public constructor
@@ -109,7 +109,8 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                             QuerySnapshot querySnapshot = task.getResult();
                             if (!querySnapshot.isEmpty()){
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()){
-                                    passengers = (ArrayList<User>) document.get("passengers");
+                                    passengers = (ArrayList<String>) document.get("passengers");
+                                    passengers.add(String.valueOf(document.get("owner_email")));
                                 }
                             }
                         }

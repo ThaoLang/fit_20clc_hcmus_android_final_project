@@ -59,7 +59,7 @@ public class ChatActivity extends FragmentActivity {
         mAuth = FirebaseAuth.getInstance();
 
         Bundle bundle = getIntent().getBundleExtra("CHAT");
-        currentTripId = bundle.get("PlanId").toString();
+        currentTripId = String.valueOf(bundle.get("PlanId"));
         Log.e("PlanId", currentTripId);
 
         active = true;

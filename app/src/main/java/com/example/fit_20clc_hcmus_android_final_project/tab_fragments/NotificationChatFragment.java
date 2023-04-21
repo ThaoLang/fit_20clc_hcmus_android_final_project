@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 
 import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
-import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.MainActivity;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Notification;
@@ -40,6 +39,7 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
     private FragmentNotificationChatBinding binding;
     private CustomNotificationAdapter chatAdapter;
     private ArrayList<Notification> notificationChatList;
+    private ArrayList<String> planIdList;
     LinearLayoutManager mLinearLayoutManager;
     NotificationChatFragment notificationPage;
     NotificationService notificationService;
@@ -69,6 +69,29 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
         notificationChatList = new ArrayList<>();
 
         FirebaseFirestore fb = DatabaseAccess.getFirestore();
+        planIdList = new ArrayList<>();
+
+        fb.collection("plans")
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
+                        if (error != null) {
+                            Log.w("TAG_PLAN", "Listen failed.", error);
+                            return;
+                        }
+
+                        if (!querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                ArrayList<String> passengers = (ArrayList<String>) document.get("passengers");
+                                passengers.add(String.valueOf(document.get("owner_email")));
+
+                                if(passengers.contains(currentUser.getEmail())){
+                                    planIdList.add(String.valueOf(document.get("planId")));
+                                }
+                            }
+                        }
+                    }
+                    });
 
         fb.collection("chatHistory")
                 .orderBy("sendTime", Query.Direction.ASCENDING)
@@ -90,12 +113,10 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
 
                                     Log.e("tripId", id);
 
-                                    // TODO: implement below
-//                                    if (!id.equals("0") && id.equals(<< tripId of trips that user is in >>)){
-                                    if (!id.equals("0")){
+                                    if (!id.equals("0") && planIdList.contains(id)){
                                         Notification notification;
-                                        String message = document.get("message").toString();
-                                        String senderName = document.get("senderName").toString();
+                                        String message = String.valueOf(document.get("message"));
+                                        String senderName = String.valueOf(document.get("senderName"));
 
                                         notification = new Notification(senderName, message);
                                         notificationChatList.add(notification);
@@ -118,7 +139,7 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
                             if (notificationChatList.size()>0) {
                                 String latestTitle = notificationChatList.get(notificationChatList.size() - 1).getTitle();
                                 String latestContent = notificationChatList.get(notificationChatList.size() - 1).getContent();
-                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent);
+                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent, main_activity);
                             }
                         } else {
                             Log.d("TAG", "Current data: null");
@@ -154,6 +175,6 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
         bundle.putString("PlanId", tripId);
         intent.putExtra("CHAT", bundle);
 
-        getActivity().startActivity(intent);
+        main_activity.startActivity(intent);
     }
 }
