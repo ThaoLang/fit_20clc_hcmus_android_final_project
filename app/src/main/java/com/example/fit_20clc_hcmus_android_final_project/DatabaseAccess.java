@@ -89,7 +89,6 @@ public class DatabaseAccess{
 
     private static List<Plan> plans;
     private static FirebaseFirestore firestore;
-
     private static FirebaseStorage firebaseStorage;
 
     private static Handler handler = new Handler();
@@ -112,8 +111,10 @@ public class DatabaseAccess{
         Thread backgroundLoadDataThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!isInitialized)
-                {}
+                while (isInitialized == false)
+                {
+                    //wait for initialization be done
+                }
                 firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -494,6 +495,7 @@ public class DatabaseAccess{
                                     }
                                     runForegroundTask(successfulTask);
                                 }
+
                             }
                         })
                         .addOnFailureListener(new OnFailureListener() {

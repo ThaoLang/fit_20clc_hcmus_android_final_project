@@ -91,7 +91,9 @@ public class DetailedPlan extends AppCompatActivity
             public boolean onMenuItemClick(MenuItem item) {
                 if(item.getItemId() == R.id.detailed_plan_toolbar_menu_add_friend)
                 {
-                    Log.i("<<ADD FRIEND>>", "add new friend");
+                    Log.i("<<Invite FRIEND>>", "invite new friend");
+                    Intent intent = new Intent(DetailedPlan.this, InviteFriends.class);
+                    startActivity(intent);
                 }
                 else if(item.getItemId() == R.id.detailed_plan_toolbar_menu_chat)
                 {

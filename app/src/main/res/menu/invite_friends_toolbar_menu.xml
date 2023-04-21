@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/invite_friend_toolbar_menu_confirm_invitation"
+        android:title="start inviting"
+        android:icon="@drawable/forward_to_inbox_48px"
+        android:iconTint="@color/cardview_light_background"/>
+
+</menu>

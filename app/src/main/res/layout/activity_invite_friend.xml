@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/CustomColor10"
+        >
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/invite_friend_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="Invite friends"
+            app:titleTextColor="@color/cardview_light_background"
+            android:background="@color/CustomColor10"
+            app:navigationIcon="@drawable/back_icon"
+            app:menu="@menu/invite_friends_toolbar_menu"
+            />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/vertical_top_half_pill_shape_background">
+
+
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/invite_friend_search"
+                    android:layout_marginTop="15dp"
+                    android:hint="find friend by their name"
+                    android:textAlignment="textStart"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@drawable/detailed_planner_pill_shape_row"
+                    android:drawableLeft="@drawable/ic_search_48px"
+                    android:paddingHorizontal="5sp"
+                    />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:text="Suggestions"/>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/CustomColor12"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="10dp"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/invite_friend_suggestions"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:padding="10dp"
+                android:scrollbarSize="10dp"/>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/detailed_plan_no_plan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="...Empty plan..."
+                android:textColor="@color/md_theme_light_outline"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:visibility="gone"/>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="Selected"/>
+
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/CustomColor12"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginHorizontal="10dp"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/invite_friend_invited"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:padding="10dp"
+                />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/detailed_plan_no_invited_friends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="...No invited friends..."
+                android:textColor="@color/md_theme_light_outline"
+                android:gravity="center_horizontal"
+                android:textSize="20sp"
+                android:visibility="gone"/>
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+</androidx.core.widget.NestedScrollView>

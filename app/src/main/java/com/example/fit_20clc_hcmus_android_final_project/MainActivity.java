@@ -84,6 +84,10 @@ public class MainActivity extends FragmentActivity {
             }
         });
         DatabaseAccess.initDatabaseAccess();
+        if(DatabaseAccess.getCurrentUser() != null)
+        {
+            DatabaseAccess.load_data();
+        }
 
         progressBar = (ContentLoadingProgressBar) findViewById(R.id.loading_progressbar);
 
@@ -95,7 +99,6 @@ public class MainActivity extends FragmentActivity {
         DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
         transaction.replace(R.id.main_frame,currentScreen);
         transaction.commit();
-        DatabaseAccess.load_data();
     }
 
     @Override
@@ -284,5 +287,9 @@ public class MainActivity extends FragmentActivity {
         return foregroundTask;
     }
 
+    public void setIsRunning(@NotNull boolean status)
+    {
+        isRunning = status;
+    }
 
 }

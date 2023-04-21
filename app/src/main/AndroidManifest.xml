@@ -63,6 +63,10 @@
         <activity android:name=".AddDestination"
             android:exported="false">
         </activity>
+        <activity android:name=".InviteFriends"
+            android:exported="false">
+
+        </activity>
     </application>
 
 </manifest>
