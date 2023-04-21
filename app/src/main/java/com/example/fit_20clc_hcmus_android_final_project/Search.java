@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -101,17 +102,25 @@ public class Search extends AppCompatActivity {
 //                {
 //                    suggest_search.setVisibility(View.GONE);
 //                }
-                Intent intent= new Intent(Search.this, LocationInfo.class);
-                Bundle bundle=new Bundle();
-                bundle.putString("location address",binding.searchView.getQuery().toString());
 
-                intent.putExtra("location search",bundle);
+                Intent intent;
                 if(_mode.equals(SEARCH_LOCATION_INFO))
                 {
+                    intent= new Intent(Search.this, LocationInfo.class);
+                    Bundle bundle=new Bundle();
+                    bundle.putString("location address",binding.searchView.getQuery().toString());
+
+                    intent.putExtra("location search",bundle);
                     startActivity(intent);
                 }
                 else if(_mode.equals(SEARCH_RETURN_FORMAL_NAME))
                 {
+                    Log.e("SEARCH","RETURN FORMAL NAME");
+                    intent= new Intent();
+                    Bundle bundle=new Bundle();
+                    bundle.putString("location address",binding.searchView.getQuery().toString());
+
+                    intent.putExtra("location search",bundle);
                     setResult(Activity.RESULT_OK, intent);
                     finish();
                 }

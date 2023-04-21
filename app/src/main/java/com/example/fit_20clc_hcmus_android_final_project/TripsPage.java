@@ -234,7 +234,7 @@ public class TripsPage extends Fragment {
                         {
                             return;
                         }
-                        byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_NEW_PLAN_CODE);
+                        byte[] byteArray = bundle.getByteArray(CreatePlan.RETURN_RESULT);
                         newPlan = Plan.byteArrayToObject(byteArray);
 
 //                      System.out.println("<<<System out>>> " + plan.getName());

@@ -176,7 +176,7 @@ public class DetailedPlan extends AppCompatActivity
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, AddDestination.class);
+                Intent intent = new Intent(DetailedPlan.this, AddDestination.class);
                 Bundle bundle = new Bundle();
                 bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
                 bundle.putString("PLAN_ID", specPlanId);
@@ -206,7 +206,7 @@ public class DetailedPlan extends AppCompatActivity
         no_invited_friends.setVisibility(View.GONE);
         if(isEditable == false)
         {
-            toolbar.getMenu().getItem(0).setVisible(false);
+            toolbar.getMenu().getItem(1).setVisible(false);
         }
         if(specPlan == null)
         {
@@ -237,7 +237,7 @@ public class DetailedPlan extends AppCompatActivity
                         if (identify.equals(AddDestination.IDENTIFY))
                         {
                             String mode = bundle.getString("MODE");
-                            byte[] bytesArray = intent.getByteArrayExtra(AddDestination.RETURN_RESULT);
+                            byte[] bytesArray = bundle.getByteArray(AddDestination.RETURN_RESULT);
                             Destination destination = Destination.toObject(bytesArray);
                             if (mode.equals(AddDestination.VIEW_DESTINATION))
                             {
@@ -245,7 +245,7 @@ public class DetailedPlan extends AppCompatActivity
                             }
                             else if (mode.equals(AddDestination.EDIT_DESTINATION))
                             {
-
+                                //TODO: edit destination
                             }
                             else //mode == AddDestination.ADD_DESTINATION
                             {

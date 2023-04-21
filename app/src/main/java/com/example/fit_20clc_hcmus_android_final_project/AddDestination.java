@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
@@ -243,7 +244,7 @@ public class AddDestination extends AppCompatActivity {
                 newDest.setDescription(finalDescription);
 
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(RETURN_RESULT, Destination.toByteArray(newDest));
+                bundle.putByteArray(RETURN_RESULT, Destination.toByteArray(newDest));
                 bundle.putString("MODE", _currentMode);
                 Intent intent = new Intent();
                 intent.putExtra(RETURN_BUNDLE, bundle);
@@ -259,7 +260,7 @@ public class AddDestination extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-
+        isTransacted = true;
         if(DatabaseAccess.getPlanById(_planId).getSet_of_editors().contains(DatabaseAccess.getMainUserInfo().getUserEmail()) ||
                 DatabaseAccess.getPlanById(_planId).getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail()))
         {
@@ -395,6 +396,7 @@ public class AddDestination extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         Bundle returnedBundle = result.getData().getBundleExtra("location search");
                         String returnedFormalName = returnedBundle.getString("location address");
+                        Log.e("RETURN SEARCH", "RECEIVED");
                         formalName.setText(returnedFormalName);
                         alias.setText(returnedFormalName);
                     } else {
