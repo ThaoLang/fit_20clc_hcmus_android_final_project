@@ -8,6 +8,6 @@
         android:title="Edit plan" />
     <item android:id="@+id/action_set_private"
         android:title="Set private" />
-    <item android:id="@+id/action_delete"
-        android:title="Delete" />
+    <item android:id="@+id/action_remove"
+        android:title="Remove" />
 </menu>

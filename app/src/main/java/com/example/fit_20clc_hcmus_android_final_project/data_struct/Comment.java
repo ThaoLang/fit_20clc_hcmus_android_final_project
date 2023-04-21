@@ -1,22 +1,37 @@
 package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
 public class Comment {
-    public enum commentType{
-        Plan,
-        Location
-    }
+
     private String commentId;
-    private String accountId;
-    private commentType type;
-    private String targetId;    //planId or locationId
+    private String accountEmail;
+    private String type;
+    private String targetPlanId;    //planId or locationId
+    private String targetLocationId;    //planId or locationId
     private String textComment;
     private String imageLink;
 
-    public Comment(String commentId, String accountId, commentType type, String targetId, String text_comment, String imageLink) {
+    public Comment(){
+        commentId="";
+        accountEmail="";
+        type="Plan";
+        targetLocationId="None";
+        targetPlanId="";
+        textComment="";
+        imageLink="None";
+    }
+    public String getTargetLocationId() {
+        return targetLocationId;
+    }
+
+    public void setTargetLocationId(String targetLocationId) {
+        this.targetLocationId = targetLocationId;
+    }
+
+    public Comment(String commentId, String accountId, String type, String targetId, String text_comment, String imageLink) {
         this.commentId = commentId;
-        this.accountId = accountId;
+        this.accountEmail = accountId;
         this.type = type;
-        this.targetId = targetId;
+        //this.targetId = targetId;
         this.textComment = text_comment;
         this.imageLink = imageLink;
     }
@@ -29,28 +44,28 @@ public class Comment {
         this.commentId = commentId;
     }
 
-    public String getAccountId() {
-        return accountId;
+    public String getAccountEmail() {
+        return accountEmail;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setAccountEmail(String accountId) {
+        this.accountEmail = accountId;
     }
 
-    public commentType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(commentType type) {
+    public void setType(String type) {
         this.type = type;
     }
 
-    public String getTargetId() {
-        return targetId;
+    public String getTargetPlanId() {
+        return targetPlanId;
     }
 
-    public void setTargetId(String targetId) {
-        this.targetId = targetId;
+    public void setTargetPlanId(String targetId) {
+        this.targetPlanId = targetId;
     }
 
     public String getText_comment() {

@@ -484,6 +484,14 @@ public class DatabaseAccess{
                                 mainUserInfo.getPlans().remove(planId);
                                 if(successfulTask != null)
                                 {
+
+                                    for (int i=0;i<plans.size();i++){
+                                         if (mainUserInfo.getPlans().get(i).equals(planId))
+                                         {
+                                             mainUserInfo.getPlans().remove(i);
+                                             break;
+                                         }
+                                    }
                                     runForegroundTask(successfulTask);
                                 }
                             }
