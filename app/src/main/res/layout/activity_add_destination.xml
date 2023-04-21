@@ -48,6 +48,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="55sp"
                     android:layout_marginHorizontal="15dp"
+                    android:inputType="textMultiLine"
                     />
 
                 <com.google.android.material.button.MaterialButton

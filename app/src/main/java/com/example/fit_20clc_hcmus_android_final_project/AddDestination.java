@@ -63,6 +63,7 @@ public class AddDestination extends AppCompatActivity {
     private final String CONFLICT_START_END_DATE = "There is a conflict with start date and end date";
 
 
+    private boolean isTransacted;
     private int typeOfSelectedDatePicker;
     private int typeOfSelectedTimePicker;
     private Calendar calendar;
@@ -86,14 +87,16 @@ public class AddDestination extends AppCompatActivity {
         startTimePickerButton = findViewById(R.id.destination_start_time_picker);
         endTimePickerButton = findViewById(R.id.destination_end_time_picker);
         mainButton = findViewById(R.id.destination_main_button);
-
         toolbar = findViewById(R.id.destination_toolbar);
+
+        isTransacted = false;
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent();
-                intent.putExtra(SETTING_MODE, _currentMode);
-                setResult(Activity.RESULT_OK, intent);
+//                intent.putExtra(SETTING_MODE, _currentMode);
+//                setResult(Activity.RESULT_CANCELED, intent);
+                isTransacted = false;
                 finish();
             }
         });
@@ -245,6 +248,7 @@ public class AddDestination extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra(RETURN_BUNDLE, bundle);
                 intent.putExtra("IDENTIFY", IDENTIFY);
+                isTransacted = true;
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -333,6 +337,17 @@ public class AddDestination extends AppCompatActivity {
                 return;
             }
 
+        }
+    }
+
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if(isTransacted == false)
+        {
+            setResult(Activity.RESULT_CANCELED);
+            finish();
         }
     }
 

@@ -35,12 +35,16 @@ public class Trips_Incoming_Adapter extends RecyclerView.Adapter<Incoming_view_h
 //    @DrawableRes
 //    private int DEMO_IMAGE = R.drawable.hoi_an_ancient_town_hoi_an_private_taxi_2;
     private Context _context;
-    private List<Plan> _data;
+    private List<Plan> _data = null;
 
 
     public Trips_Incoming_Adapter(Context context, List<Plan> data)
     {
         _context = context;
+        if(_data != null)
+        {
+            _data.clear();
+        }
         _data = data;
     }
 

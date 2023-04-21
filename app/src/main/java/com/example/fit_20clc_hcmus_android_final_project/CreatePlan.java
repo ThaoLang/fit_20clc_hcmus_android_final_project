@@ -65,7 +65,7 @@ public class CreatePlan extends AppCompatActivity {
     private String INVALID_RETURN_DATE = "Invalid return date provided. Format: dd/MM/yyyy";
     private final String INVALID_OCCURENCE_DATE = "Please revise the departure date and the return date!";
     private String DATE_FORMAT_PATTERN = "dd/MM/yyyy";
-    public static String RETURN_BUNDLE = "CREATE_PLAN";
+    public static String RETURN_BUNDLE = "RETURN_BUNDLE";
     public static String RETURN_NEW_PLAN_CODE = "RETURN_NEW_PLAN";
     public static final String RETURN_EDITED_PLAN = "RETURN_EDITED_PLAN";
 
@@ -260,9 +260,21 @@ public class CreatePlan extends AppCompatActivity {
             publicSwitch.setVisibility(View.INVISIBLE);
             inviteButton.setVisibility(View.INVISIBLE);
 
+
             if(_plan.getImageLink().equals("None"))
             {
                 image.setImageResource(R.drawable.image_48px);
+            }
+            else if(selectedImageUri != null)
+            {
+                Bitmap selectedImage;
+                getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                try {
+                    selectedImage = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImageUri);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                image.setImageBitmap(selectedImage);
             }
             else
             {

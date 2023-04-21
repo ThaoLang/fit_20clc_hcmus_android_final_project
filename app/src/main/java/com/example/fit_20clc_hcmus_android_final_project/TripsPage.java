@@ -127,6 +127,7 @@ public class TripsPage extends Fragment {
                 currentMode= 0;
 
                 Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(context, DatabaseAccess.getPlansByStatus(TripsPage.UPCOMING));
+                recyclerViewPosition.removeAllViews();
                 recyclerViewPosition.setAdapter(adapter);
                 IncomingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
                 OngoingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
@@ -144,7 +145,9 @@ public class TripsPage extends Fragment {
                 }
                 currentMode = 1;
 
+
                 Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), DatabaseAccess.getPlansByStatus(TripsPage.ONGOING));
+                recyclerViewPosition.removeAllViews();
                 recyclerViewPosition.setAdapter(adapter);
                 OngoingButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
                 IncomingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));
@@ -163,6 +166,7 @@ public class TripsPage extends Fragment {
                 currentMode = 2;
 
                 Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(getContext(), DatabaseAccess.getPlansByStatus(TripsPage.HISTORY));
+                recyclerViewPosition.removeAllViews();
                 recyclerViewPosition.setAdapter(adapter);
                 HistoryButton.setBackgroundColor(getResources().getColor(R.color.CustomColor10, Resources.getSystem().newTheme()));
                 OngoingButton.setBackgroundColor(getResources().getColor(R.color.md_theme_light_onPrimary, Resources.getSystem().newTheme()));

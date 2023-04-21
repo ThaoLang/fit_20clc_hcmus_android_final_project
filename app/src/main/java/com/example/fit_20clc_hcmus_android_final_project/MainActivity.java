@@ -42,6 +42,8 @@ public class MainActivity extends FragmentActivity {
     private static ContentLoadingProgressBar progressBar;
     private static int progressStep;
 
+    private static boolean isRunning;
+
     private int CURRENT_SELECTED_ID = 0;
 
     private static Integer screenType = 0;
@@ -57,13 +59,17 @@ public class MainActivity extends FragmentActivity {
     public static String NOTIFICATION_PAGE_INIT_PARAM = "NOTIFICATION_PAGE";
     public static String ACCOUNT_INFO_INIT_PARAM = "ACCOUNT_INFO";
 
+    private FragmentTransaction transaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction = getSupportFragmentManager().beginTransaction();
+
+        isRunning  = true;
 
         //handle bottom navigation bar/////////////////////////////////////////////////
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -77,18 +83,19 @@ public class MainActivity extends FragmentActivity {
                 return true;
             }
         });
+        DatabaseAccess.initDatabaseAccess();
 
         progressBar = (ContentLoadingProgressBar) findViewById(R.id.loading_progressbar);
 
-        DatabaseAccess.initDatabaseAccess();
         //Default: currentScreen is homepage-screen at the beginning
         if(screenType == 0)
         {
             currentScreen = HomePage.newInstance(HOME_PAGE_INIT_PARAM);
         }
-
+        DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
         transaction.replace(R.id.main_frame,currentScreen);
         transaction.commit();
+        DatabaseAccess.load_data();
     }
 
     @Override
@@ -117,11 +124,17 @@ public class MainActivity extends FragmentActivity {
                     }
                 }
             });*/
-            DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
-            DatabaseAccess.load_data();
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(isRunning == false || DatabaseAccess.getCurrentUser() == null)
+        {
+            transaction.detach(currentScreen);
+        }
+    }
 
     //change Fragment (screen)
     private void switchScreenBySelectMenuItem(int idItemSelected)
@@ -270,4 +283,6 @@ public class MainActivity extends FragmentActivity {
         };
         return foregroundTask;
     }
+
+
 }

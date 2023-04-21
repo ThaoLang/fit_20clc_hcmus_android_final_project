@@ -1,7 +1,10 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -103,7 +106,7 @@ public class DetailedPlan extends AppCompatActivity
                 }
                 else if(item.getItemId() == R.id.detailed_plan_toolbar_menu_more)
                 {
-                    PopupMenu popupMenu = new PopupMenu(toolbar.getContext(), item.getActionView());
+                    PopupMenu popupMenu = new PopupMenu(DetailedPlan.this, toolbar.getChildAt(2));
                     popupMenu.inflate(R.menu.detailed_plan_toolbar_popup_menu);
                     Menu menu = popupMenu.getMenu();
 
@@ -129,7 +132,35 @@ public class DetailedPlan extends AppCompatActivity
                                 intent.putExtra(DetailedPlan.DETAILED_PLAN_ID, specPlanId);
                                 launcher.launch(intent);
                             }
+                            else if(menuItem.getItemId() == R.id.detailed_plan_toolbar_popup_menu_delete)
+                            {
 
+                            }
+                            else if(menuItem.getItemId() == R.id.detailed_plan_toolbar_popup_menu_leave)
+                            {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(DetailedPlan.this);
+                                builder.setMessage("Do you want to leave the trip")
+                                        .setTitle("Confirm to leave the trip");
+                                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        Runnable successfulTask = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(DetailedPlan.this, "Leave trip successfully!", Toast.LENGTH_LONG).show();
+                                                onStart();
+                                            }
+                                        };
+                                        Runnable failureTask = new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(DetailedPlan.this, "Leave trip failed", Toast.LENGTH_LONG).show();
+                                            }
+                                        };
+                                        DatabaseAccess.leaveATrip(specPlanId, successfulTask, failureTask);
+                                    }
+                                });
+                            }
                             return false;
                         }
                     });
@@ -194,7 +225,8 @@ public class DetailedPlan extends AppCompatActivity
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
+                    if (result.getResultCode() == Activity.RESULT_OK)
+                    {
                         //receive the result from AddDestination activity
                         Log.i("<<Returned result>>", "NEW DESTINATION");
                         Intent intent = result.getData();
@@ -235,7 +267,7 @@ public class DetailedPlan extends AppCompatActivity
                         else if(identify.equals(CreatePlan.IDENTIFY))
                         {
                             String mode = bundle.getString("MODE");
-                            byte[] bytesArray = intent.getByteArrayExtra(CreatePlan.RETURN_RESULT);
+                            byte[] bytesArray = bundle.getByteArray(CreatePlan.RETURN_RESULT);
                             specPlan = Plan.byteArrayToObject(bytesArray);
                             if(mode.equals(TripsPage.EDIT_PLAN_MODE))
                             {
@@ -258,6 +290,10 @@ public class DetailedPlan extends AppCompatActivity
                             }
 
                         }
+                    }
+                    else if(result.getResultCode() == Activity.RESULT_CANCELED)
+                    {
+                        return;
                     }
                 }
             });

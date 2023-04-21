@@ -95,12 +95,15 @@ public class DatabaseAccess{
 
     private static List<Plan> demoData = new ArrayList<Plan>();
 
+    private static boolean isInitialized = false;
+
     public static void initDatabaseAccess()
     {
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         plans = new ArrayList<Plan>();
+        isInitialized = true;
     }
 
     public static boolean load_data()
@@ -108,6 +111,8 @@ public class DatabaseAccess{
         Thread backgroundLoadDataThread = new Thread(new Runnable() {
             @Override
             public void run() {
+                while(!isInitialized)
+                {}
                 firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -413,24 +418,35 @@ public class DatabaseAccess{
                     public void onSuccess(String imageLink) {
                         if (!imageLink.equals("None"))
                         {
-                            Uri imageNeedToUpload = Uri.parse(imageLink);
-                            StorageReference plansImageReference = firebaseStorage.getReference().child(imageLink);
-//                            System.out.println("imageLocalUri" + imageNeedToUpload);
-                            StorageMetadata metadata = new StorageMetadata.Builder()
-                                    .setContentType("image/jpg").build();
 
-                            UploadTask uploadTask = (UploadTask) plansImageReference.putFile(imageNeedToUpload, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    runForegroundTask(successfulTask);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.e("<<Update image>>", e.getMessage());
-                                    runForegroundTask(failedTask);
-                                }
-                            });
+//                            StorageReference plansImageReference = firebaseStorage.getReference().child(imageLink);
+//                            plansImageReference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void unused) {
+//                                    Uri imageNeedToUpload = Uri.parse(newPlanInfo.getImageLink());
+//                                    StorageReference plansImageReference = firebaseStorage.getReference().child(newPlanInfo.getImageLink());
+//                                    StorageMetadata metadata = new StorageMetadata.Builder()
+//                                            .setContentType("image/jpg").build();
+//                                    UploadTask uploadTask = (UploadTask) plansImageReference.putFile(imageNeedToUpload, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                        @Override
+//                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                            runForegroundTask(successfulTask);
+//                                        }
+//                                    }).addOnFailureListener(new OnFailureListener() {
+//                                        @Override
+//                                        public void onFailure(@NonNull Exception e) {
+//                                            Log.e("<<Update image>>", e.getMessage());
+//                                            runForegroundTask(failedTask);
+//                                        }
+//                                    });
+//                                }
+//                            });
+//                            System.out.println("imageLocalUri" + imageNeedToUpload);
+
+                            if(successfulTask != null)
+                            {
+                                runForegroundTask(successfulTask);
+                            }
 
                             for(int i=0; i< plans.size(); i++)
                             {
@@ -451,5 +467,38 @@ public class DatabaseAccess{
             }
         });
         backgroundTask.start();
+    }
+
+    public static void leaveATrip(@NotNull String planId, Runnable successfulTask, Runnable failedTask)
+    {
+        Thread backgroundThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(DatabaseAccess.getCurrentUser().getUid())
+                        .update("plans", FieldValue.arrayRemove(planId))
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                mainUserInfo.getPlans().remove(planId);
+                                if(successfulTask != null)
+                                {
+                                    runForegroundTask(successfulTask);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("Leave trip", e.getMessage());
+                                if(failedTask != null)
+                                {
+                                    runForegroundTask(failedTask);
+                                }
+                            }
+                        });
+            }
+        });
+
+        backgroundThread.start();
     }
 }

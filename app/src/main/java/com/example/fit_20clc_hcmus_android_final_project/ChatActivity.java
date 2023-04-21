@@ -23,7 +23,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ChatActivity extends FragmentActivity {
-    static boolean active = false;
+    static boolean active;
     private static FirebaseAuth mAuth = null;
     private Fragment currentScreen;
     private NavigationBarView bottomNavigation;
@@ -40,6 +40,8 @@ public class ChatActivity extends FragmentActivity {
     private String currentTripId;
     private ChatActivity.ChatCallbacks listener;
 
+    private  FragmentTransaction transaction;
+
     public void setListener(ChatActivity.ChatCallbacks listener) {
         this.listener = listener;
     }
@@ -53,13 +55,14 @@ public class ChatActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction = getSupportFragmentManager().beginTransaction();
         mAuth = FirebaseAuth.getInstance();
 
         Bundle bundle = getIntent().getBundleExtra("CHAT");
         currentTripId = bundle.get("PlanId").toString();
         Log.e("PlanId", currentTripId);
 
+        active = true;
         bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -84,7 +87,10 @@ public class ChatActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        active = false; //?
+        if(active == false)
+        {
+            transaction.detach(currentScreen);
+        }
     }
 
     @Override
@@ -171,6 +177,8 @@ public class ChatActivity extends FragmentActivity {
             case RETURN:
             {
 //                getParent().onBackPressed();
+                active = false;
+                finish();
                 break;
             }
         }
@@ -179,6 +187,7 @@ public class ChatActivity extends FragmentActivity {
         transaction.replace(R.id.main_frame, currentScreen);
         transaction.commit();
     }
+
 
     public User getMainUserInfo()
     {

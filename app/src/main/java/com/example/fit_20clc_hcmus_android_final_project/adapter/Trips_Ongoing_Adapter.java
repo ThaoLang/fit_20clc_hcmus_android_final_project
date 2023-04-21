@@ -34,11 +34,15 @@ public class Trips_Ongoing_Adapter extends RecyclerView.Adapter<Ongoing_view_hol
     @DrawableRes
     private int DEMO_IMAGE = R.drawable.hoi_an_ancient_town_hoi_an_private_taxi_2;
     private Context _context;
-    private List<Plan> _data;
+    private List<Plan> _data = null;
 
     public Trips_Ongoing_Adapter(Context context, List<Plan> data)
     {
         _context = context;
+        if(_data != null)
+        {
+            _data.clear();
+        }
         _data = data;
     }
 
