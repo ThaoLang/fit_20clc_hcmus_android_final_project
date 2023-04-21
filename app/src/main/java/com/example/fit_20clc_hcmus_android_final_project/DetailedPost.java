@@ -192,8 +192,10 @@ public class DetailedPost extends AppCompatActivity {
                                 DatabaseAccess.leaveATrip(planId,successRunnable,failRunnable);
                                 // Xử lý khi click item about
                                 return true;
+
                             default:
                                 return false;
+
                         }
                     }
                 });
@@ -220,7 +222,7 @@ public class DetailedPost extends AppCompatActivity {
             }
         });
 
-        //Like
+        //Like haha
         binding.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
