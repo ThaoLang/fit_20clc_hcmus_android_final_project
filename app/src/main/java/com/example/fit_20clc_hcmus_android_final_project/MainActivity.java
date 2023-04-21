@@ -52,6 +52,7 @@ public class MainActivity extends FragmentActivity {
     public static final int TRIPS = 1;
     public static final int NOTIFICATION = 2;
     public static final int ACCOUNT_INFO = 3;
+    public static final int CREATE_TRIP = 4;
 
 
     public static String HOME_PAGE_INIT_PARAM = "HOME_PAGE";
@@ -166,6 +167,11 @@ public class MainActivity extends FragmentActivity {
             screenType = 3;
             System.out.println("MANAGE ACCOUNT");
         }
+        else if(idItemSelected == R.id.bottom_nav_create_trip)
+        {
+            screenType = 4;
+            System.out.println("CREATE TRIP");
+        }
         else
         {
             System.out.println("NOTHING BE CHOSEN");
@@ -187,6 +193,20 @@ public class MainActivity extends FragmentActivity {
             case TRIPS:
             {
                 currentScreen = TripsPage.newInstance(TRIPS_INIT_PARAM);
+                break;
+            }
+            case CREATE_TRIP:
+            {
+                Intent intent = new Intent(MainActivity.this, CreatePlan.class);
+                intent.putExtra("SETTING_MODE", TripsPage.CREATE_PLAN_MODE);
+                //intent.putExtra(DetailedPlan.DETAILED_PLAN_ID, planId);
+                switchScreenByScreenType(1);
+//                bottomNavigation.getMenu().getItem(2).setChecked(false);
+//                bottomNavigation.getMenu().getItem(1).setChecked(true);
+                bottomNavigation.setSelectedItemId(R.id.bottom_nav_trips);
+                startActivity(intent);
+//                currentScreen = TripsPage.newInstance(TRIPS_INIT_PARAM);
+
                 break;
             }
             case NOTIFICATION:
