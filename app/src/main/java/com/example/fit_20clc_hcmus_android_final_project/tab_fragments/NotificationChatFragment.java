@@ -1,6 +1,5 @@
 package com.example.fit_20clc_hcmus_android_final_project.tab_fragments;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -110,16 +109,14 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
                                 String senderEmail = String.valueOf(document.get("senderEmail"));
                                 if (!senderEmail.equals(currentUser.getEmail())) {
                                     String id = String.valueOf(document.get("tripId"));
-
                                     Log.e("tripId", id);
 
                                     if (!id.equals("0") && planIdList.contains(id)){
                                         Notification notification;
                                         String message = String.valueOf(document.get("message"));
                                         String senderName = String.valueOf(document.get("senderName"));
-                                        String planId = String.valueOf(document.get("planId"));
 
-                                        notification = new Notification(senderName, message, planId);
+                                        notification = new Notification(senderName, message, id);
                                         notificationChatList.add(notification);
 
                                         Log.e("message", message);
@@ -132,16 +129,19 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
                             binding.listItem.setAdapter(chatAdapter);
                             binding.listItem.smoothScrollToPosition(0);
 
-                            // TODO: Revise intent to send to the right activity / plan when click on notification
                             Intent intent = new Intent(context, ChatActivity.class); //supposedly from notification to plan detail?
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.putExtra("DETAILED_PLAN_ID", notificationChatList.get(notificationChatList.size() - 1).getTripId());
-                            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+                            String tripId = notificationChatList.get(notificationChatList.size() - 1).getTripId();
+                            Bundle bundle = new Bundle();
+                            bundle.putString("PlanId", tripId);
+                            intent.putExtra("CHAT", bundle);
+//                            Log.e("Notification Chat Trip ID", String.valueOf(notificationChatList.get(notificationChatList.size() - 1).getTripId()));
 
                             if (notificationChatList.size()>0) {
                                 String latestTitle = notificationChatList.get(notificationChatList.size() - 1).getTitle();
                                 String latestContent = notificationChatList.get(notificationChatList.size() - 1).getContent();
-                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent, main_activity);
+                                notificationService.sendNotification(latestTitle, latestContent, intent, main_activity);
                             }
                         } else {
                             Log.d("TAG", "Current data: null");
@@ -171,7 +171,6 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
 
     public void swapToChat(String tripId){
         Intent intent = new Intent(context, ChatActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
         Bundle bundle = new Bundle();
         bundle.putString("PlanId", tripId);

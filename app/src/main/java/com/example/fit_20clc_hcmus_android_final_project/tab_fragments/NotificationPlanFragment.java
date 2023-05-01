@@ -1,6 +1,5 @@
 package com.example.fit_20clc_hcmus_android_final_project.tab_fragments;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,7 +68,6 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
 
         FirebaseFirestore fb = DatabaseAccess.getFirestore();
 
-        //TODO: show upcoming plans in notification
         fb.collection("plans")
                 .whereEqualTo("status", "Upcoming")
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -107,16 +105,16 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             binding.listItem.setAdapter(planAdapter);
                             binding.listItem.smoothScrollToPosition(0);
 
-                            // TODO: Revise intent to send to the right activity / plan when click on notification
                             Intent intent = new Intent(context, DetailedPlan.class); //supposedly from notification to plan detail?
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
                             intent.putExtra("DETAILED_PLAN_ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
-                            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+//                            Log.e("Notification Plan Trip ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
 
                             if (notificationPlanList.size()>0) {
                                 String latestTitle = notificationPlanList.get(notificationPlanList.size() - 1).getTitle();
                                 String latestContent = notificationPlanList.get(notificationPlanList.size() - 1).getContent();
-                                notificationService.sendNotification(latestTitle, latestContent, pendingIntent, main_activity);
+                                notificationService.sendNotification(latestTitle, latestContent, intent, main_activity);
                             }
                         } else {
                             Log.d("TAG_PLAN", "Current plan data: null");
@@ -146,10 +144,7 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
 
     public void swapToChat(String tripId){
         Intent intent = new Intent(context, DetailedPlan.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
         intent.putExtra("DETAILED_PLAN_ID", tripId);
-
         main_activity.startActivity(intent);
     }
 }
