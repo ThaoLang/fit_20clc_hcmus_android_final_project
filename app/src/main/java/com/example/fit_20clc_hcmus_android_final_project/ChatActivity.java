@@ -74,10 +74,7 @@ public class ChatActivity extends FragmentActivity {
         });
 
         //Default: currentScreen is homepage-screen at the beginning
-        if(screenType == 0)
-        {
-            currentScreen = ChatFragment.newInstance(currentTripId);
-        }
+        currentScreen = ChatFragment.newInstance(currentTripId);
 
         transaction.replace(R.id.main_frame,currentScreen);
         transaction.commit();
@@ -87,7 +84,7 @@ public class ChatActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(active == false)
+        if(!active)
         {
             transaction.detach(currentScreen);
         }
@@ -176,7 +173,6 @@ public class ChatActivity extends FragmentActivity {
             }
             case RETURN:
             {
-//                getParent().onBackPressed();
                 active = false;
                 finish();
                 break;
@@ -188,7 +184,6 @@ public class ChatActivity extends FragmentActivity {
         transaction.commit();
     }
 
-
     public User getMainUserInfo()
     {
         return mainUserInfo;
@@ -197,5 +192,4 @@ public class ChatActivity extends FragmentActivity {
     {
         return FirebaseFirestore.getInstance();
     }
-
 }
