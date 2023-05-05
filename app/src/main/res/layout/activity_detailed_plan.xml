@@ -90,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:contentDescription="Add a new plan"
+                android:baselineAlignBottom="true"
                 app:srcCompat="@drawable/add_48px"
                 app:backgroundTint="@color/CustomColor3"
                 android:layout_marginTop="10dp"

@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -32,7 +34,9 @@ import com.example.fit_20clc_hcmus_android_final_project.custom_view_holder.Inco
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.internal.TextWatcherAdapter;
 import com.google.android.material.search.SearchBar;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 
 import java.time.LocalDate;
@@ -49,7 +53,7 @@ public class TripsPage extends Fragment {
     private Context context;
     private String InitParam;
 
-    private SearchBar searchBar;
+    private TextInputEditText searchField;
     private MaterialButton IncomingButton, OngoingButton, HistoryButton;
 
     private FloatingActionButton fab;
@@ -100,6 +104,7 @@ public class TripsPage extends Fragment {
     }
 
 
+    @SuppressLint("RestrictedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -107,7 +112,7 @@ public class TripsPage extends Fragment {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.activity_trips, null);
 
-        searchBar = (SearchBar) view.findViewById(R.id.trips_search_bar);
+        searchField = (TextInputEditText) view.findViewById(R.id.trips_search_field);
         IncomingButton = (MaterialButton) view.findViewById(R.id.trips_incoming_button);
         OngoingButton = (MaterialButton) view.findViewById(R.id.trips_ongoing_button);
         HistoryButton = (MaterialButton) view.findViewById(R.id.trips_history_button);
@@ -187,6 +192,7 @@ public class TripsPage extends Fragment {
             }
         });
 
+//        searchField.addTextChangedListener();
 
         return view;
     }
@@ -264,5 +270,21 @@ public class TripsPage extends Fragment {
         }
     });
 
+//    private TextWatcher searchTextWatcher = new TextWatcher() {
+//        @Override
+//        public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
+//
+//        }
+//
+//        @Override
+//        public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
+//
+//        }
+//
+//        @Override
+//        public void afterTextChanged(Editable editable) {
+//            View anchor =
+//        }
+//    };
 
 }

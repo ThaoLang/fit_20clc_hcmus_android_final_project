@@ -10,9 +10,4 @@
         android:title="Leave the trip"
         android:enabled="true"
         android:contentDescription="leave the trip"/>
-    <item
-        android:id="@+id/detailed_plan_toolbar_popup_menu_delete"
-        android:title="Delete the trip"
-        android:enabled="true"
-        android:contentDescription="delete the trip"/>
 </menu>

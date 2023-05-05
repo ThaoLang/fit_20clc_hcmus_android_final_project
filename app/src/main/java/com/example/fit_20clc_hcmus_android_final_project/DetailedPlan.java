@@ -115,12 +115,10 @@ public class DetailedPlan extends AppCompatActivity
                     if(isEditable == false)
                     {
                         menu.getItem(0).setVisible(false);
-                        menu.getItem(2).setVisible(false);
                     }
                     if(specPlan.getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail())==true)
                     {
                         menu.getItem(0).setVisible(true);
-                        menu.getItem(2).setVisible(true);
                         menu.getItem(1).setVisible(false);
                     }
 
@@ -134,15 +132,17 @@ public class DetailedPlan extends AppCompatActivity
                                 intent.putExtra(DetailedPlan.DETAILED_PLAN_ID, specPlanId);
                                 launcher.launch(intent);
                             }
-                            else if(menuItem.getItemId() == R.id.detailed_plan_toolbar_popup_menu_delete)
-                            {
-
-                            }
                             else if(menuItem.getItemId() == R.id.detailed_plan_toolbar_popup_menu_leave)
                             {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(DetailedPlan.this);
                                 builder.setMessage("Do you want to leave the trip")
                                         .setTitle("Confirm to leave the trip");
+                                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        return;
+                                    }
+                                });
                                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -162,6 +162,8 @@ public class DetailedPlan extends AppCompatActivity
                                         DatabaseAccess.leaveATrip(specPlanId, successfulTask, failureTask);
                                     }
                                 });
+                                AlertDialog dialog = builder.create();
+                                dialog.show();
                             }
                             return false;
                         }

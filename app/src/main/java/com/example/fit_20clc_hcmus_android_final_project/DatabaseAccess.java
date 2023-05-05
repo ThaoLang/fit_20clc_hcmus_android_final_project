@@ -490,6 +490,7 @@ public class DatabaseAccess{
                                          if (mainUserInfo.getPlans().get(i).equals(planId))
                                          {
                                              mainUserInfo.getPlans().remove(i);
+                                             plans.remove(i);
                                              break;
                                          }
                                     }
