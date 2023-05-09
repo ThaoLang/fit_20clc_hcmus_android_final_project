@@ -13,16 +13,36 @@
         android:background="@color/CustomColor10"
         >
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/invite_friend_toolbar"
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:title="Invite friends"
-            app:titleTextColor="@color/cardview_light_background"
-            android:background="@color/CustomColor10"
-            app:navigationIcon="@drawable/back_icon"
-            app:menu="@menu/invite_friends_toolbar_menu"
-            />
+            android:orientation="horizontal">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/invite_friend_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:title="Invite friends"
+                app:titleTextColor="@color/cardview_light_background"
+                android:background="@color/CustomColor10"
+                app:navigationIcon="@drawable/back_icon"
+                app:menu="@menu/invite_friends_toolbar_menu"
+                />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/invite_friend_search_mode_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="-30dp"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="10dp"
+                android:background="@color/CustomColor8"
+                android:foreground="@drawable/badge_48px"
+                app:shapeAppearanceOverlay="@style/circle"
+                />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
 
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
@@ -39,7 +59,7 @@
                 >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/invite_friend_search"
-                    android:hint="find friend by their name"
+                    android:hint="find friend"
                     android:textAlignment="textStart"
                     android:layout_marginHorizontal="15dp"
                     android:layout_width="match_parent"
@@ -50,15 +70,18 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/invite_friend_search_button"
-                    android:layout_width="43dp"
+                    android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginLeft="-70dp"
                     android:layout_gravity="center_vertical"
                     app:icon="@drawable/ic_search_48px"
                     app:iconSize="30dp"
-                    android:paddingLeft="6dp"
+                    android:paddingLeft="10dp"
                     android:backgroundTint="@color/CustomColor15"
+                    android:contentDescription="search button"
                     />
+
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
 

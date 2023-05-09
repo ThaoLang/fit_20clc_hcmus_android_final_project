@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/invite_friends_toolbar_menu_filter_popup_search_by_relative_name"
+        android:enabled="true"
+        android:title="Search by name"
+        android:contentDescription="search by relative name"/>
+
+    <item
+        android:id="@+id/invite_friends_toolbar_menu_filter_popup_search_by_email"
+        android:enabled="true"
+        android:title="Search by email"
+        android:contentDescription="search by email"/>
+
+    <item
+        android:id="@+id/invite_friends_toolbar_menu_filter_popup_search_by_phone"
+        android:enabled="true"
+        android:title="Search by phone"
+        android:contentDescription="search by phone number"/>
+
+
+
+</menu>
