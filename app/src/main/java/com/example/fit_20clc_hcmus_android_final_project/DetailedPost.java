@@ -46,6 +46,7 @@ import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.Serializable;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -222,7 +223,7 @@ public class DetailedPost extends AppCompatActivity {
             }
         });
 
-        //Like haha
+        //Like
         binding.likeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -278,6 +279,19 @@ public class DetailedPost extends AppCompatActivity {
                     else{
                         binding.numberLike.setText(String.valueOf(plan.getListOfLike().size()+1));
                     }                }
+            }
+        });
+
+        //view map
+        binding.viewMapBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(DetailedPost.this,ViewMapActivity.class);
+                Bundle bundle =new Bundle();
+                bundle.putSerializable("All destinations", (Serializable) plan.getListOfLocations());
+                bundle.putInt("destination index",-1);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 

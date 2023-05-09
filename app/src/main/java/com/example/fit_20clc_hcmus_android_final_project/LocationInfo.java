@@ -1,6 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
-import android.graphics.Color;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -20,38 +20,24 @@ import com.denzcoskun.imageslider.constants.ScaleTypes;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Location;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.LocationInfoBinding;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LocationInfo extends AppCompatActivity implements OnMapReadyCallback, PostAdapter.Callbacks {
     private LocationInfoBinding binding;
@@ -145,6 +131,16 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
         binding.mapView.getMapAsync(this);
         binding.mapView.onCreate(savedInstanceState);
 
+        //create new trip
+        binding.addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LocationInfo.this, CreatePlan.class);
+                intent.putExtra("SETTING_MODE", TripsPage.CREATE_PLAN_MODE);
+                startActivity(intent);
+            }
+        });
+
         //Recent trips
         mLinearLayoutManager = new LinearLayoutManager(this, RecyclerView.HORIZONTAL,false);
         mLinearLayoutManager.setStackFromEnd(true);
@@ -165,33 +161,25 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
                             QuerySnapshot querySnapshot = task.getResult();
                             if (!querySnapshot.isEmpty()) {
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    Plan plan;
+                                    Plan plan = document.toObject(Plan.class);
+                                    AtomicBoolean checkDestionationExist= new AtomicBoolean(false);
 
-                                    String owner_email = document.get("owner_email").toString();
-                                    String name = document.get("name").toString();
-                                    String imageLink = document.get("imageLink").toString();
-                                    String planId = document.get("planId").toString();
-                                    String sDate = document.get("departure_date").toString();
-                                    String eDate = document.get("return_date").toString();
-                                    String status = document.get("status").toString();
+                                    if (plan.getListOfLocations().size()==0){
+                                        continue;
+                                    }
 
-                                    List<String> listOfComments = (List<String>) document.get("listOfComments");
+                                    plan.getListOfLocations().forEach(destination ->{
+                                        if (destination.getFormalName().equals(locationName)){
+                                            checkDestionationExist.set(true);
+                                        }
+                                    });
 
-                                    Log.e("COMMENT SIZE",String.valueOf(listOfComments.size()));
-                                    List<Destination> listOfLocations = (List<Destination>) document.get("listOfLocations");
-                                    List<String> passengers = (List<String>) document.get("passengers");
-                                    List<String> listOfLike = (List<String>) document.get("listOfLike");
+                                    if (checkDestionationExist.get()==false){
+                                        continue;
+                                    }
 
-                                    plan=new Plan(planId,name,owner_email,sDate,eDate,true,0F,imageLink,status);
-                                    plan.setListOfLocations(listOfLocations);
-                                    plan.setListOfComments(listOfComments);
-                                    plan.setListOfLike(listOfLike);
-                                    plan.setPassengers(passengers);
                                     plans.add(plan);
-                                    Log.e("MANY POST",String.valueOf(plans.size()));
                                 }
-
-                                Log.e("Last POST",String.valueOf(plans.size()));
 
                                 postAdapter = new PostAdapter(LocationInfo.this,plans);
                                 postAdapter.setListener(LocationInfo.this);
@@ -283,7 +271,12 @@ public class LocationInfo extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void swapToPost(Plan plan) {
-
+    public void swapToPost(Plan plan){
+        Intent intent=new Intent(getApplicationContext(), DetailedPost.class);
+        Bundle bundle=new Bundle();
+        bundle.putString("plan id", plan.getPlanId());
+        intent.putExtra("plan post",bundle);
+        startActivity(intent);
     }
+
 }

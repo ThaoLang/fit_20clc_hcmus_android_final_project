@@ -5,6 +5,7 @@ import com.example.fit_20clc_hcmus_android_final_project.databinding.ActivitySig
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -70,6 +71,8 @@ public class SignIn extends AppCompatActivity{
                                 Ed.commit();
 
                                 // Continue
+                                Log.e("EMAIL",InputEmail);
+                                Log.e("Pass",InputPassword);
                                 Intent intent = new Intent(SignIn.this, MainActivity.class);
                                 startActivity(intent);
                                 finish();

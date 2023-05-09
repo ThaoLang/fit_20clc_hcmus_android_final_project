@@ -3,6 +3,7 @@ package com.example.fit_20clc_hcmus_android_final_project.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,27 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.CommentActivity;
+import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.List;
 
 public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapter.ViewHolder>{
-    
+
 //    private Destination[] destinations={
 //            new Destination("Dam Sen Park",
 //                            "123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City",
@@ -152,7 +163,7 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(TripLocationAdapter.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(TripLocationAdapter.ViewHolder viewHolder, int position) {
 
         // Get element from your Destinations at this position and replace the
         // contents of the view with that element
@@ -164,6 +175,24 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
         viewHolder.destination.setText(destinations.get(position).getFormalName());
         viewHolder.location_name.setText(destinations.get(position).getAliasName());
 
+        DatabaseAccess.getFirestore().collection("account")
+                .whereEqualTo("userEmail",DatabaseAccess.getMainUserInfo().getUserEmail())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    // Xử lí khi có kết quả trả về
+                                    String accountId=document.getId();
+                                    List<String> listOfFavoriteDestionations=(List<String>) document.get("favorite_locations");
+
+                                    if (listOfFavoriteDestionations.contains(destinations.get(position).getFormalName())) {
+                                        viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_heart_icon, 0, 0, 0);
+                                    }
+                                }}}}});
 
         viewHolder.arrow_expand.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,17 +215,160 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
         viewHolder.add_favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isFavorite){
-                    //viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_icon, 0, 0, 0);
-                    viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_icon, 0, 0, 0);
-                    isFavorite=!isFavorite;
-                }
-                else{
-                    //viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.calendar_icon, 0, 0, 0);
-                    //viewHolder.add_Favorite.setDra
-                    viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_heart_icon, 0, 0, 0);
-                    isFavorite=!isFavorite;
-                }
+//                if(viewHolder.add_favorite.getBackground().getConstantState().equals(context.getResources().getDrawable(R.drawable.red_heart_icon).getConstantState())){
+//                    Log.e("CHECK FAVORITE", "GET IN SUCCESSFULLY");
+//                    DatabaseAccess.getFirestore().collection("account")
+//                            .whereEqualTo("userEmail",DatabaseAccess.getMainUserInfo().getUserEmail())
+//                            .get()
+//                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                    if (task.isSuccessful()) {
+//                                        QuerySnapshot querySnapshot = task.getResult();
+//                                        if (!querySnapshot.isEmpty()) {
+//                                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+//                                                // Xử lí khi có kết quả trả về
+//                                               String accountId=document.getId();
+//                                                DatabaseAccess.getFirestore().collection("account")
+//                                                        .document(accountId)
+//                                                        .update("favorite_locations",FieldValue.arrayRemove(destinations.get(position).getFormalName()))
+//                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                            @Override
+//                                                            public void onSuccess(Void aVoid) {
+//                                                                Log.d("REMOVE FAVORITE", "Xóa giá trị khỏi mảng thành công!");
+//                                                            }
+//                                                        })
+//                                                        .addOnFailureListener(new OnFailureListener() {
+//                                                            @Override
+//                                                            public void onFailure(@NonNull Exception e) {
+//                                                                Log.w("DELETE LTT", "Lỗi khi xóa giá trị khỏi mảng", e);
+//                                                            }
+//                                                        });
+//                                            }
+//                                        } else {
+//                                        }
+//
+//                                    } else {
+//                                    }
+//                                }
+//                            });
+//
+//                    //viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_icon, 0, 0, 0);
+//                    viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_icon, 0, 0, 0);
+//                    //isFavorite=!isFavorite;
+//                }
+//                else{
+//                    DatabaseAccess.getFirestore().collection("account")
+//                            .whereEqualTo("userEmail",DatabaseAccess.getMainUserInfo().getUserEmail())
+//                            .get()
+//                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                                    if (task.isSuccessful()) {
+//                                        QuerySnapshot querySnapshot = task.getResult();
+//                                        if (!querySnapshot.isEmpty()) {
+//                                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+//                                                // Xử lí khi có kết quả trả về
+//                                                String accountId=document.getId();
+//                                                List<String> listOfFavoriteDestionations=(List<String>) document.get("favorite_locations");
+//
+//                                                //if (!listOfFavoriteDestionations.contains(destinations.get(position).getFormalName())){
+//                                                    DatabaseAccess.getFirestore().collection("account")
+//                                                            .document(accountId)
+//                                                            .update("favorite_locations",FieldValue.arrayUnion(destinations.get(position).getFormalName()))
+//                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                                                @Override
+//                                                                public void onSuccess(Void aVoid) {
+//                                                                    Log.d("REMOVE FAVORITE", "Xóa giá trị khỏi mảng thành công!");
+//                                                                }
+//                                                            })
+//                                                            .addOnFailureListener(new OnFailureListener() {
+//                                                                @Override
+//                                                                public void onFailure(@NonNull Exception e) {
+//                                                                    Log.w("DELETE LTT", "Lỗi khi xóa giá trị khỏi mảng", e);
+//                                                                }
+//                                                            });
+//                                                //}
+//                                            }
+//                                        } else {
+//                                        }
+//
+//                                    } else {
+//                                    }
+//                                }
+//                            });
+//                    //viewHolder.add_Favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.calendar_icon, 0, 0, 0);
+//                    //viewHolder.add_Favorite.setDra
+//                    viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_heart_icon, 0, 0, 0);
+//                    //isFavorite=!isFavorite;
+//                }
+
+                DatabaseAccess.getFirestore().collection("account")
+                        .whereEqualTo("userEmail",DatabaseAccess.getMainUserInfo().getUserEmail())
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    QuerySnapshot querySnapshot = task.getResult();
+                                    if (!querySnapshot.isEmpty()) {
+                                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                            // Xử lí khi có kết quả trả về
+                                            String accountId=document.getId();
+                                            List<String> listOfFavoriteDestionations=(List<String>) document.get("favorite_locations");
+
+                                            //remove favorite location
+                                            if (listOfFavoriteDestionations.contains(destinations.get(position).getFormalName())) {
+                                                DatabaseAccess.getFirestore().collection("account")
+                                                        .document(accountId)
+                                                        .update("favorite_locations",FieldValue.arrayRemove(destinations.get(position).getFormalName()))
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d("REMOVE FAVORITE", "Xóa giá trị khỏi mảng thành công!");
+                                                                DatabaseAccess.getMainUserInfo().getFavorite_locations().remove(destinations.get(position).getFormalName());
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w("DELETE LTT", "Lỗi khi xóa giá trị khỏi mảng", e);
+                                                            }
+                                                        });
+
+                                                viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.heart_icon, 0, 0, 0);
+
+                                            }
+                                            // add to favorite location
+                                            else {
+                                                DatabaseAccess.getFirestore().collection("account")
+                                                        .document(accountId)
+                                                        .update("favorite_locations", FieldValue.arrayUnion(destinations.get(position).getFormalName()))
+                                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void aVoid) {
+                                                                Log.d("REMOVE FAVORITE", "Xóa giá trị khỏi mảng thành công!");
+                                                                DatabaseAccess.getMainUserInfo().getFavorite_locations().add(destinations.get(position).getFormalName());
+
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w("DELETE LTT", "Lỗi khi xóa giá trị khỏi mảng", e);
+                                                            }
+                                                        });
+
+                                                viewHolder.add_favorite.setCompoundDrawablesWithIntrinsicBounds(R.drawable.red_heart_icon, 0, 0, 0);
+                                            }
+                                        }
+                                    } else {
+                                    }
+
+                                } else {
+                                }
+                            }
+                        });
             }
         });
 

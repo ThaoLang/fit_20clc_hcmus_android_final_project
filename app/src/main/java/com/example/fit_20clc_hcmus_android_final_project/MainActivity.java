@@ -69,6 +69,7 @@ public class MainActivity extends FragmentActivity {
         setContentView(R.layout.activity_main);
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
         transaction = getSupportFragmentManager().beginTransaction();
+        progressBar = (ContentLoadingProgressBar) findViewById(R.id.loading_progressbar);
 
         isRunning  = true;
 
@@ -87,19 +88,22 @@ public class MainActivity extends FragmentActivity {
         DatabaseAccess.initDatabaseAccess();
         if(DatabaseAccess.getCurrentUser() != null)
         {
+            DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
             DatabaseAccess.load_data();
+            if(screenType == 0)
+            {
+                currentScreen = HomePage.newInstance(HOME_PAGE_INIT_PARAM);
+            }
+//            if (DatabaseAccess.getMainUserInfo()!=null){
+//
+//            }
+
+            transaction.replace(R.id.main_frame,currentScreen);
+            transaction.commit();
+
         }
-
-        progressBar = (ContentLoadingProgressBar) findViewById(R.id.loading_progressbar);
-
         //Default: currentScreen is homepage-screen at the beginning
-        if(screenType == 0)
-        {
-            currentScreen = HomePage.newInstance(HOME_PAGE_INIT_PARAM);
-        }
-        DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
-        transaction.replace(R.id.main_frame,currentScreen);
-        transaction.commit();
+
     }
 
     @Override
@@ -128,6 +132,20 @@ public class MainActivity extends FragmentActivity {
                     }
                 }
             });*/
+
+//            else if(screenType == 1)
+//            {
+//                currentScreen = TripsPage.newInstance(TRIPS_INIT_PARAM);
+//            }
+//            else if(screenType == 2)
+//            {
+//                currentScreen = NotificationPage.newInstance(NOTIFICATION_PAGE_INIT_PARAM);
+//            }
+//            else if(screenType == 3)
+//            {
+//                currentScreen = AccountInfoPage.newInstance(ACCOUNT_INFO_INIT_PARAM);
+//            }
+//
         }
     }
 
@@ -199,13 +217,9 @@ public class MainActivity extends FragmentActivity {
             {
                 Intent intent = new Intent(MainActivity.this, CreatePlan.class);
                 intent.putExtra("SETTING_MODE", TripsPage.CREATE_PLAN_MODE);
-                //intent.putExtra(DetailedPlan.DETAILED_PLAN_ID, planId);
                 switchScreenByScreenType(1);
-//                bottomNavigation.getMenu().getItem(2).setChecked(false);
-//                bottomNavigation.getMenu().getItem(1).setChecked(true);
                 bottomNavigation.setSelectedItemId(R.id.bottom_nav_trips);
                 startActivity(intent);
-//                currentScreen = TripsPage.newInstance(TRIPS_INIT_PARAM);
 
                 break;
             }

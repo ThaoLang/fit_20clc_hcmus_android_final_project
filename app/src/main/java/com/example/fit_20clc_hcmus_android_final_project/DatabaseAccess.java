@@ -96,6 +96,7 @@ public class DatabaseAccess{
     private static List<Plan> demoData = new ArrayList<Plan>();
 
     private static boolean isInitialized = false;
+    private static boolean isUserInfoReady = false;
 
     public static void initDatabaseAccess()
     {
@@ -110,11 +111,8 @@ public class DatabaseAccess{
     {
         Thread backgroundLoadDataThread = new Thread(new Runnable() {
             @Override
-            public void run() {
-                while (isInitialized == false)
-                {
-                    //wait for initialization be done
-                }
+            public void run()
+            {
                 firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -122,6 +120,7 @@ public class DatabaseAccess{
                         {
                             mainUserInfo = task.getResult().toObject(User.class);
                             handler.post(MainActivity.increaseProgress());
+                            isUserInfoReady = true;
                         }
                         else
                         {
@@ -192,6 +191,15 @@ public class DatabaseAccess{
         return true;
     }
 
+    synchronized public static boolean getInitStatus()
+    {
+        return isInitialized;
+    }
+
+    public static boolean getUserInfoStatus()
+    {
+        return isUserInfoReady;
+    }
     public static List<Plan> getDemoData()
     {
         return demoData;
@@ -557,3 +565,5 @@ public class DatabaseAccess{
         backgroundThread.start();
     }
 }
+
+
