@@ -2,6 +2,7 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
