@@ -341,6 +341,24 @@ public class DatabaseAccess{
         }
         return specPlan;
     }
+
+    public static Plan getClonePlanById(@NotNull String planId)
+    {
+        Plan specPlan = null;
+        Plan clone = new Plan();
+        for(int i=0;i < plans.size(); i++)
+        {
+            if(plans.get(i).getPlanId().equals(planId))
+            {
+                specPlan = plans.get(i);
+                break;
+            }
+        }
+
+        byte[] bytes = Plan.planToByteArray(specPlan);
+        clone = Plan.byteArrayToObject(bytes);
+        return clone;
+    }
     public static FirebaseFirestore getFirestore() {
         return firestore;
     }
@@ -381,21 +399,42 @@ public class DatabaseAccess{
         backgroundTask.start();
     }
 
-//    public void static updateDestinationListTo(@NotNull List<Destination> newList,@NotNull String planId)
-//    {
-//        Thread backgroundTask = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                firestore.collection(ACCESS_PLANS_COLLECTION).document(planId).update("listOfLocations", newList)
-//                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                            @Override
-//                            public void onSuccess(Void unused) {
-//
-//                            }
-//                        });
-//            }
-//        })
-//    }
+    public static void updateDestinationListTo(@NotNull List<Destination> newList,@NotNull String planId, Runnable successfulTask, Runnable failureTask)
+    {
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firestore.collection(ACCESS_PLANS_COLLECTION).document(planId).update("listOfLocations", newList)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                for(int i=0; i< plans.size(); i++)
+                                {
+                                    if(plans.get(i).getPlanId().equals(planId))
+                                    {
+                                        plans.get(i).setListOfLocations(newList);
+                                        break;
+                                    }
+                                }
+                                if(successfulTask != null)
+                                {
+                                    handler.post(successfulTask);
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                if(failureTask != null)
+                                {
+                                    handler.post(failureTask);
+                                }
+                            }
+                        });
+            }
+        });
+
+        backgroundTask.start();
+    }
 
     public static void updatePlanInfo(@NotNull Plan newPlanInfo, Runnable successfulTask, Runnable failedTask)
     {
@@ -464,11 +503,15 @@ public class DatabaseAccess{
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e("<<Update Plan>>", e.getMessage());
-                        runForegroundTask(failedTask);
+                        if(failedTask != null)
+                        {
+                            runForegroundTask(failedTask);
+                        }
                     }
                 });
             }
         });
+
         backgroundTask.start();
     }
 
@@ -483,17 +526,16 @@ public class DatabaseAccess{
                             @Override
                             public void onSuccess(Void unused) {
                                 mainUserInfo.getPlans().remove(planId);
+                                for (int i=0;i<plans.size();i++){
+                                    if (mainUserInfo.getPlans().get(i).equals(planId))
+                                    {
+                                        mainUserInfo.getPlans().remove(i);
+                                        plans.remove(i);
+                                        break;
+                                    }
+                                }
                                 if(successfulTask != null)
                                 {
-
-                                    for (int i=0;i<plans.size();i++){
-                                         if (mainUserInfo.getPlans().get(i).equals(planId))
-                                         {
-                                             mainUserInfo.getPlans().remove(i);
-                                             plans.remove(i);
-                                             break;
-                                         }
-                                    }
                                     runForegroundTask(successfulTask);
                                 }
 

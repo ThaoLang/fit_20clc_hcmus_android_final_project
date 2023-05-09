@@ -30,17 +30,33 @@
 
 
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/trips_search_field"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@drawable/medium_pill_shape"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
-                android:layout_marginVertical="25dp"
-                android:drawableLeft="@drawable/ic_search_48px"
-                android:paddingHorizontal="10dp"
-                android:hint="search by name"
-                />
+                android:layout_marginVertical="25dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/trips_search_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@drawable/medium_pill_shape"
+                    android:paddingHorizontal="15dp"
+                    android:hint="search by name"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/trips_search_button"
+                    android:layout_width="45dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="-50dp"
+                    android:backgroundTint="@color/CustomColor15"
+                    app:icon="@drawable/ic_search_48px"
+                    app:iconSize="30dp"
+                    android:paddingLeft="8dp"
+                    android:layout_gravity="center_vertical"/>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 
 

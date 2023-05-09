@@ -28,4 +28,23 @@
         android:iconTint="@color/cardview_light_background"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/detailed_plan_toolbar_refresh"
+        android:title="refresh"
+        android:enabled="true"
+        android:icon="@drawable/refresh_48px"
+        android:iconTint="@color/cardview_light_background"
+        android:contentDescription="refresh data"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/detailed_plan_toolbar_confirm_changes"
+        android:title="confirm changes"
+        android:icon="@drawable/done_48px"
+        android:contentDescription="confirm changes"
+        android:visible="false"
+        android:iconTint="@color/cardview_light_background"
+        android:enabled="true"
+        app:showAsAction="ifRoom"/>
+
 </menu>

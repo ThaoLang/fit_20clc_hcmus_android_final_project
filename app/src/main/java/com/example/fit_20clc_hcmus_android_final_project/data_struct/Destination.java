@@ -100,6 +100,18 @@ public class Destination implements Serializable {
         commentInfoList = newList;
     }
 
+    public void setDestination(Destination destination)
+    {
+        formalName = destination.formalName;
+        aliasName = destination.aliasName;
+        description = destination.description;
+        startTime = destination.startTime;
+        endTime = destination.endTime;
+        startDate = destination.startDate;
+        endDate = destination.endDate;
+        commentInfoList = destination.commentInfoList;
+    }
+
 
     public String getStartTime()
     {
@@ -125,7 +137,6 @@ public class Destination implements Serializable {
     {
         return commentInfoList;
     }
-
 
     public static byte[] toByteArray(@NotNull Destination destination)
     {

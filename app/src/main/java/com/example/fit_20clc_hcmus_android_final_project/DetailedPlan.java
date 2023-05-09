@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -64,6 +65,8 @@ public class DetailedPlan extends AppCompatActivity
 
     private final static String SETTING_MODE = "SETTING_MODE";
 
+    private boolean isEditing;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +74,7 @@ public class DetailedPlan extends AppCompatActivity
         context = this;
 
         isEditable = false;
+        isEditing = false;
         toolbar = findViewById(R.id.detailed_plan_toolbar);
         destinations = findViewById(R.id.detailed_plan_recyclerview_destinations);
         travelers = findViewById(R.id.detailed_plan_recyclerview_travelers);
@@ -82,7 +86,33 @@ public class DetailedPlan extends AppCompatActivity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                if(isEditing)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DetailedPlan.this);
+                    builder.setMessage("Do you want to continue?")
+                            .setTitle("Editing is interrupted");
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            isEditing = false;
+                            finish();
+                        }
+                    });
+
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            return;
+                        }
+                    });
+
+                    Dialog dialog = builder.create();
+                    dialog.show();
+                }
+                else
+                {
+                    finish();
+                }
             }
         });
 
@@ -170,7 +200,54 @@ public class DetailedPlan extends AppCompatActivity
                     });
                     popupMenu.show();
                 }
+                else if(item.getItemId() == R.id.detailed_plan_toolbar_confirm_changes)
+                {
+                    //TODO: update the list of destination
+                    Runnable successfulTask = new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "Update destinations successfully!", Toast.LENGTH_LONG).show();
+                            isEditing = false;
+                            onStart();
+                        }
+                    };
 
+                    Runnable failureTask = new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(context, "Update destinations failed!", Toast.LENGTH_LONG).show();
+                            isEditing = false;
+                            onStart();
+                        }
+                    };
+
+                    DatabaseAccess.updateDestinationListTo(destinationList, specPlanId, successfulTask, failureTask);
+                }
+                else if(item.getItemId() == R.id.detailed_plan_toolbar_refresh)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DetailedPlan.this);
+                    builder.setMessage("Do you want to refresh all changes? This process can't be undone");
+                    builder.setTitle("Refresh changes");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            specPlan = DatabaseAccess.getClonePlanById(specPlanId);
+                            onStart();
+                        }
+                    });
+
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i)
+                        {
+                            return;
+                        }
+                    });
+
+                    Dialog dialog = builder.create();
+                    dialog.show();
+                }
                 return true;
             }
         });
@@ -189,13 +266,49 @@ public class DetailedPlan extends AppCompatActivity
 
         Intent planIntent = getIntent();
         specPlanId = planIntent.getStringExtra(DETAILED_PLAN_ID);
-        specPlan = DatabaseAccess.getPlanById(specPlanId);
-
+        specPlan = DatabaseAccess.getClonePlanById(specPlanId);
+        destinationList = specPlan.getListOfLocations();
         if(specPlan.getSet_of_editors().contains(DatabaseAccess.getMainUserInfo().getUserEmail()) ||
                 specPlan.getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail()))
         {
             isEditable = true;
         }
+
+        OnBackPressedCallback overrideBackPressCallback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed()
+            {
+                if(isEditing)
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DetailedPlan.this);
+                    builder.setMessage("Do you want to continue?")
+                            .setTitle("Editing is interrupted");
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            isEditing = false;
+                            finish();
+                        }
+                    });
+
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            return;
+                        }
+                    });
+
+                    Dialog dialog = builder.create();
+                    dialog.show();
+                }
+                else
+                {
+                    finish();
+                }
+            }
+        };
+
+        getOnBackPressedDispatcher().addCallback(this, overrideBackPressCallback);
     }
 
     @Override
@@ -204,15 +317,20 @@ public class DetailedPlan extends AppCompatActivity
 
         destinations.setVisibility(View.VISIBLE);
         travelers.setVisibility(View.VISIBLE);
-        no_plan.setVisibility(View.GONE);
-        no_invited_friends.setVisibility(View.GONE);
+        no_plan.setVisibility(View.INVISIBLE);
+        no_invited_friends.setVisibility(View.INVISIBLE);
+        toolbar.getMenu().getItem(0).setVisible(true);
+        toolbar.getMenu().getItem(1).setVisible(true);
+        toolbar.getMenu().getItem(2).setVisible(true);
+        toolbar.getMenu().getItem(3).setVisible(false);
+        toolbar.getMenu().getItem(4).setVisible(false);
         if(isEditable == false)
         {
             toolbar.getMenu().getItem(1).setVisible(false);
         }
         if(specPlan == null)
         {
-            destinations.setVisibility(View.GONE);
+            destinations.setVisibility(View.INVISIBLE);
             no_plan.setVisibility(View.VISIBLE);
             no_invited_friends.setVisibility(View.VISIBLE);
         }
@@ -222,6 +340,15 @@ public class DetailedPlan extends AppCompatActivity
             destinationList = specPlan.getListOfLocations();
             Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(context, destinationList, launcher, specPlan.getPlanId());
             destinations.setAdapter(adapter);
+        }
+
+        if(isEditing == true) //set toolbar to wait for confirm changes
+        {
+            toolbar.getMenu().getItem(0).setVisible(false);
+            toolbar.getMenu().getItem(1).setVisible(false);
+            toolbar.getMenu().getItem(2).setVisible(false);
+            toolbar.getMenu().getItem(3).setVisible(true);
+            toolbar.getMenu().getItem(4).setVisible(true);
         }
     }
 
@@ -248,6 +375,10 @@ public class DetailedPlan extends AppCompatActivity
                             else if (mode.equals(AddDestination.EDIT_DESTINATION))
                             {
                                 //TODO: edit destination
+                                isEditing = true;
+                                int index = bundle.getInt("INDEX");
+                                destinationList.get(index).setDestination(destination);
+                                onStart();
                             }
                             else //mode == AddDestination.ADD_DESTINATION
                             {
@@ -305,6 +436,5 @@ public class DetailedPlan extends AppCompatActivity
     public void onPause()
     {
         super.onPause();
-
     }
 }

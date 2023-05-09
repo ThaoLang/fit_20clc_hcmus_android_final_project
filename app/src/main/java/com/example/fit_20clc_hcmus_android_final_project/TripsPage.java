@@ -54,7 +54,7 @@ public class TripsPage extends Fragment {
     private String InitParam;
 
     private TextInputEditText searchField;
-    private MaterialButton IncomingButton, OngoingButton, HistoryButton;
+    private MaterialButton IncomingButton, OngoingButton, HistoryButton, searchButton;
 
     private FloatingActionButton fab;
 
@@ -117,6 +117,7 @@ public class TripsPage extends Fragment {
         OngoingButton = (MaterialButton) view.findViewById(R.id.trips_ongoing_button);
         HistoryButton = (MaterialButton) view.findViewById(R.id.trips_history_button);
         fab = (FloatingActionButton) view.findViewById(R.id.trips_fab);
+        searchButton = (MaterialButton) view.findViewById(R.id.trips_search_button);
         recyclerViewPosition = (RecyclerView) view.findViewById(R.id.trips_recyclerview_holder);
 
 
@@ -192,7 +193,47 @@ public class TripsPage extends Fragment {
             }
         });
 
-//        searchField.addTextChangedListener();
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String inputSearch = searchField.getText().toString();
+                if(inputSearch.isEmpty())
+                {
+                    Toast.makeText(context, "Please provide some keywords for searching!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                String status = UPCOMING;
+                if(currentMode == 1)
+                {
+                    status = ONGOING;
+                }
+                else if(currentMode == 2)
+                {
+                    status = HISTORY;
+                }
+
+                List<Plan> plans= DatabaseAccess.getPlansByStatus(status);
+                List<Plan> searchedResult = new ArrayList<Plan>();
+                for(int i=0; i< plans.size();i++)
+                {
+                    Plan planAtIndex = plans.get(i);
+                    if(planAtIndex.getName().contains(inputSearch))
+                    {
+                        searchedResult.add(planAtIndex);
+                    }
+                }
+                if(currentMode == 0)
+                {
+                    Trips_Incoming_Adapter adapter = new Trips_Incoming_Adapter(context, searchedResult);
+                    recyclerViewPosition.setAdapter(adapter);
+                }
+                else if(currentMode == 1 || currentMode == 2)
+                {
+                    Trips_Ongoing_Adapter adapter = new Trips_Ongoing_Adapter(context, searchedResult);
+                    recyclerViewPosition.setAdapter(adapter);
+                }
+            }
+        });
 
         return view;
     }

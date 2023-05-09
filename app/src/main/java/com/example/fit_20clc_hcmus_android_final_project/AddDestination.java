@@ -40,6 +40,8 @@ public class AddDestination extends AppCompatActivity {
     private Destination _destination;
     private String _planId;
 
+    private int _index;
+
     private boolean isPermittedToEdit = false;
 
     private final static String SETTING_MODE = "SETTING_MODE";
@@ -65,6 +67,7 @@ public class AddDestination extends AppCompatActivity {
 
 
     private boolean isTransacted;
+//    private boolean isRunning;
     private int typeOfSelectedDatePicker;
     private int typeOfSelectedTimePicker;
     private Calendar calendar;
@@ -91,12 +94,14 @@ public class AddDestination extends AppCompatActivity {
         toolbar = findViewById(R.id.destination_toolbar);
 
         isTransacted = false;
+//        isRunning = true;
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
+//                Intent intent = new Intent();
 //                intent.putExtra(SETTING_MODE, _currentMode);
 //                setResult(Activity.RESULT_CANCELED, intent);
+//                isRunning = false;
                 isTransacted = false;
                 finish();
             }
@@ -111,12 +116,14 @@ public class AddDestination extends AppCompatActivity {
 
         _destination = null;
         _planId = "";
+        _index = -1;
         Intent initIntent = getIntent();
         //this bundle always exists
         Bundle initBundle = initIntent.getBundleExtra(DetailedPlan.SPEC_DESTINATION);
         _currentMode = initBundle.getString(SETTING_MODE);
         _planId = initBundle.getString("PLAN_ID");
         if (!_currentMode.equals(ADD_DESTINATION)) {
+            _index = initBundle.getInt("INDEX");
             byte[] bytesArrayOfSpecPlan = initBundle.getByteArray(DetailedPlan.SPEC_DESTINATION);
             _destination = Destination.toObject(bytesArrayOfSpecPlan);
         }
@@ -246,10 +253,15 @@ public class AddDestination extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putByteArray(RETURN_RESULT, Destination.toByteArray(newDest));
                 bundle.putString("MODE", _currentMode);
+                if(_currentMode.equals(EDIT_DESTINATION))
+                {
+                    bundle.putInt("INDEX", _index);
+                }
                 Intent intent = new Intent();
                 intent.putExtra(RETURN_BUNDLE, bundle);
                 intent.putExtra("IDENTIFY", IDENTIFY);
                 isTransacted = true;
+                //isRunning = false;
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }
@@ -260,7 +272,7 @@ public class AddDestination extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        isTransacted = true;
+        isTransacted = false;
         if(DatabaseAccess.getPlanById(_planId).getSet_of_editors().contains(DatabaseAccess.getMainUserInfo().getUserEmail()) ||
                 DatabaseAccess.getPlanById(_planId).getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail()))
         {
@@ -341,14 +353,19 @@ public class AddDestination extends AppCompatActivity {
         }
     }
 
+
+
     @Override
     protected void onPause()
     {
         super.onPause();
-        if(isTransacted == false)
+        /*if(isRunning)
+        {
+            return;
+        }*/
+        if(isTransacted == false && isFinishing()== true)
         {
             setResult(Activity.RESULT_CANCELED);
-            finish();
         }
     }
 

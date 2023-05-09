@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/invite_friend_toolbar_menu_confirm_invitation"
-        android:title="start inviting"
-        android:icon="@drawable/forward_to_inbox_48px"
-        android:iconTint="@color/cardview_light_background"/>
+        android:id="@+id/detailed_plan_toolbar_confirm_changes"
+        android:title="confirm changes"
+        android:icon="@drawable/filter_alt_48px"
+        android:contentDescription="confirm changes"
+        android:iconTint="@color/cardview_light_background"
+        android:enabled="true"
+        app:showAsAction="ifRoom"
+        />
 
 </menu>

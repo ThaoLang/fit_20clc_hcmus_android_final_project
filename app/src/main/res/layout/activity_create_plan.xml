@@ -21,6 +21,12 @@
             android:background="@drawable/detailed_planner_pill_shape_row"
             android:orientation="vertical"
             >
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Plan's name:"
+                android:paddingHorizontal="10sp"
+                android:layout_marginTop="20dp"/>
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/create_plan_name"
                 android:layout_width="match_parent"
@@ -28,15 +34,21 @@
                 android:hint="@string/default_plan_name"
                 android:gravity="center_vertical"
                 android:paddingHorizontal="10sp"
-                android:layout_marginVertical="20dp"
+
                 android:background="@drawable/detailed_planner_pill_shape_row"
                 />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Departure date:"
+                android:paddingHorizontal="10sp"
+                android:layout_marginTop="20dp"/>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginVertical="20dp">
+                >
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/create_plan_depature_date"
@@ -60,11 +72,16 @@
             </androidx.appcompat.widget.LinearLayoutCompat>
 
 
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Return date:"
+                android:paddingHorizontal="10sp"
+                android:layout_marginTop="20dp"/>
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginVertical="20dp">
+                android:orientation="horizontal">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/create_plan_return_date"
@@ -171,7 +188,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/create_plan_continue_button"
-                    android:layout_width="170dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="CREATE"

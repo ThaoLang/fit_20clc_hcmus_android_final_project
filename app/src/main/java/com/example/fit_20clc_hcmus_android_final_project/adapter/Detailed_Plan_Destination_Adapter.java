@@ -100,6 +100,7 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
                 bundle.putByteArray(DetailedPlan.SPEC_DESTINATION, Destination.toByteArray(_data.get(position)));
                 bundle.putString("SETTING_MODE", AddDestination.VIEW_DESTINATION);
                 bundle.putString("PLAN_ID", _planId);
+                bundle.putInt("INDEX", position);
                 intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
                 _launcher.launch(intent);
             }

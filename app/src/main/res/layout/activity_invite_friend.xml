@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -31,18 +32,36 @@
 
 
 
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                >
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/invite_friend_search"
-                    android:layout_marginTop="15dp"
                     android:hint="find friend by their name"
                     android:textAlignment="textStart"
                     android:layout_marginHorizontal="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:background="@drawable/detailed_planner_pill_shape_row"
-                    android:drawableLeft="@drawable/ic_search_48px"
-                    android:paddingHorizontal="5sp"
+                    android:background="@drawable/medium_pill_shape"
+                    android:paddingHorizontal="20sp"
                     />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/invite_friend_search_button"
+                    android:layout_width="43dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="-70dp"
+                    android:layout_gravity="center_vertical"
+                    app:icon="@drawable/ic_search_48px"
+                    app:iconSize="30dp"
+                    android:paddingLeft="6dp"
+                    android:backgroundTint="@color/CustomColor15"
+                    />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -59,6 +78,19 @@
                 android:layout_marginHorizontal="10dp"
                 />
 
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/invite_friend_no_searched_results"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Searched result"
+                android:gravity="center_vertical|center_horizontal"
+                android:textSize="20sp"
+                android:textColor="@color/CustomColor12"
+                android:visibility="gone"
+                />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/invite_friend_suggestions"
                 android:layout_marginTop="10dp"
@@ -68,16 +100,6 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:padding="10dp"
                 android:scrollbarSize="10dp"/>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/detailed_plan_no_plan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="...Empty plan..."
-                android:textColor="@color/md_theme_light_outline"
-                android:gravity="center_horizontal"
-                android:textSize="20sp"
-                android:visibility="gone"/>
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="match_parent"
@@ -94,6 +116,20 @@
                 android:layout_marginHorizontal="10dp"
                 />
 
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/invite_friend_no_selected"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginHorizontal="10dp"
+                android:text="Selected friends to be invited"
+                android:gravity="center_vertical|center_horizontal"
+                android:textSize="20sp"
+                android:textColor="@color/CustomColor12"
+                android:visibility="gone"
+                />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/invite_friend_invited"
                 android:layout_width="match_parent"
@@ -104,15 +140,19 @@
                 android:padding="10dp"
                 />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/detailed_plan_no_invited_friends"
-                android:layout_width="match_parent"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/detailed_plans_fab"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="...No invited friends..."
-                android:textColor="@color/md_theme_light_outline"
-                android:gravity="center_horizontal"
-                android:textSize="20sp"
-                android:visibility="gone"/>
+                android:layout_gravity="end"
+                android:contentDescription="Send invitation"
+                android:baselineAlignBottom="true"
+                app:srcCompat="@drawable/forward_to_inbox_48px"
+                app:backgroundTint="@color/CustomColor3"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="15dp"
+                />
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
