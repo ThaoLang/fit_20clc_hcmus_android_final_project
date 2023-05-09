@@ -2,12 +2,10 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,31 +18,40 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.Detailed_Plan_Destination_Adapter;
+import com.example.fit_20clc_hcmus_android_final_project.adapter.FriendAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
-import com.google.firebase.database.annotations.NotNull;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 public class DetailedPlan extends AppCompatActivity
 {
     private MaterialToolbar toolbar;
     private RecyclerView destinations, travelers;
+    private LinearLayoutManager travelerLinearLayoutManager;
     private MaterialTextView no_plan, no_invited_friends;
     private FloatingActionButton addButton;
     private Context context;
     private MainActivity main;
+    private FirebaseFirestore db;
 
     private List<Destination> destinationList;
 
@@ -340,6 +347,45 @@ public class DetailedPlan extends AppCompatActivity
             destinationList = specPlan.getListOfLocations();
             Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(context, destinationList, launcher, specPlan.getPlanId());
             destinations.setAdapter(adapter);
+
+            //traveler
+            db = FirebaseFirestore.getInstance();
+            int number_member = specPlan.getPassengers().size();
+
+            if(number_member>0) {
+                travelerLinearLayoutManager = new LinearLayoutManager(DetailedPlan.this, RecyclerView.VERTICAL, false);
+                travelerLinearLayoutManager.setStackFromEnd(true);
+                travelers.setLayoutManager(travelerLinearLayoutManager);
+
+                ArrayList<User> members= new ArrayList<User>();
+                for (int i = 0; i < number_member; i++) {
+                    db.collection("account")
+                            .whereEqualTo("userEmail", specPlan.getPassengers().get(i))
+                            .get()
+                            .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        QuerySnapshot querySnapshot = task.getResult();
+                                        if (!querySnapshot.isEmpty()) {
+                                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                                User member=document.toObject(User.class);
+                                                members.add(member);
+                                            }
+                                        } else {
+
+                                        }
+
+                                    } else {
+
+                                    }
+                                    travelers.setAdapter(new FriendAdapter(DetailedPlan.this, members));
+                                    travelers.smoothScrollToPosition(0);
+                                }
+                            });
+                }
+
+            }
         }
 
         if(isEditing == true) //set toolbar to wait for confirm changes

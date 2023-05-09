@@ -41,27 +41,39 @@
                 android:textColor="@color/CustomColor1"
                 />
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/mac_avatar"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/ic_home_48px"
-                android:scaleType="centerCrop"
-                app:shapeAppearanceOverlay="@style/circle"
-                />
-
-<!--            <com.google.android.material.imageview.ShapeableImageView-->
-<!--                android:id="@+id/mac_avatar"-->
-<!--                android:layout_width="120dp"-->
-<!--                android:layout_height="120dp"-->
-<!--                android:layout_gravity="center_horizontal"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:background="@drawable/ic_home_48px"-->
-<!--                android:scaleType="centerCrop"-->
-<!--                app:shapeAppearanceOverlay="@style/circle"-->
-<!--                />-->
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:layout_marginVertical="20dp"
+                >
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/mac_avatar"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/ic_home_48px"
+                    android:scaleType="centerCrop"
+                    app:shapeAppearanceOverlay="@style/circle"
+                    android:layout_marginRight="-30dp"
+                    />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/mac_edit_avatar_button"
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:contentDescription="pick an image"
+                    app:strokeWidth="2dp"
+                    app:icon="@drawable/edit_48px"
+                    app:iconGravity="textTop"
+                    app:iconSize="30dp"
+                    app:iconPadding="-1dp"
+                    android:foregroundTint="@color/cardview_light_background"
+                    android:backgroundTint="@color/CustomColor2"
+                    android:enabled="false"
+                    android:visibility="invisible"
+                    />
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 

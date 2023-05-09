@@ -77,17 +77,12 @@ public class DetailedPost extends AppCompatActivity {
 
         }
 
-
-
-
-
         binding.backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
-
 
         binding.popupMenuBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -355,8 +350,7 @@ public class DetailedPost extends AppCompatActivity {
 
                                     binding.tripTitle.setText(plan.getName());
                                     binding.tripDate.setText(plan.getDeparture_date() + " - " + plan.getReturn_date());
-                                    String account_name;
-                                    String account_avatar = "";
+
                                     //get account
                                     db = FirebaseFirestore.getInstance();
                                     db.collection("account")
@@ -369,11 +363,26 @@ public class DetailedPost extends AppCompatActivity {
                                                         QuerySnapshot querySnapshot = task.getResult();
                                                         if (!querySnapshot.isEmpty()) {
                                                             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                                                // Xử lí khi có kết quả trả về
-                                                                binding.profileName.setText(document.get("name").toString());
-                                                                Glide.with(DetailedPost.this)
-                                                                        .load(document.get("avatarUrl").toString())
-                                                                        .into(binding.profileImage);
+                                                                binding.profileName.setText(String.valueOf(document.get("name")));
+
+                                                                if (String.valueOf(document.get("avatarUrl")) != null){
+                                                                    final long MAX_BYTE = 1024 * 2 * 1024;
+                                                                    StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(String.valueOf(document.get("avatarUrl")));
+                                                                    storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                                                        @Override
+                                                                        public void onSuccess(byte[] bytes) {
+                                                                            Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                                            binding.profileImage.setImageBitmap(image);
+                                                                        }
+                                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Glide.with(DetailedPost.this)
+                                                                                    .load(String.valueOf(document.get("avatarUrl")))
+                                                                                    .into(binding.profileImage);
+                                                                        }
+                                                                    });
+                                                                }
                                                             }
                                                         } else {
 

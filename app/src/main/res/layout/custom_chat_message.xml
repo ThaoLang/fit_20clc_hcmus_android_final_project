@@ -23,7 +23,7 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_margin="10dp"
-                android:src="@drawable/bali" />
+                android:src="@drawable/image_48px" />
 
             <TextView
                 android:id="@+id/chat_username"

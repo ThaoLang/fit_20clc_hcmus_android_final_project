@@ -83,6 +83,7 @@ public class DatabaseAccess{
 
     public static String ACCESS_PLANS_STORAGE = "plans/";
     public static String ACCESS_COMMENTS_STORAGE = "comments/";
+    public static String ACCESS_AVATARS_STORAGE = "account/";
 
     private static FirebaseAuth auth;
     private static User mainUserInfo;

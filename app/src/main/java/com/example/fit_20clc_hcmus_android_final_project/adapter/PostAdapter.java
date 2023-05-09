@@ -166,11 +166,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
                             QuerySnapshot querySnapshot = task.getResult();
                             if (!querySnapshot.isEmpty()) {
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    // Xử lí khi có kết quả trả về
                                     viewHolder.name.setText(document.get("name").toString());
-                                    Glide.with(context.getApplicationContext())
-                                            .load(document.get("avatarUrl").toString())
-                                            .into(viewHolder.avatar);
+
+                                    final long MAX_BYTE = 1024 * 2 * 1024;
+                                    StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(String.valueOf(document.get("avatarUrl")));
+                                    storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                        @Override
+                                        public void onSuccess(byte[] bytes) {
+                                            Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                            viewHolder.avatar.setImageBitmap(image);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Glide.with(context.getApplicationContext())
+                                                    .load(String.valueOf(document.get("avatarUrl")))
+                                                    .into(viewHolder.avatar);
+                                        }
+                                    });
                                 }
                             } else {
                             }

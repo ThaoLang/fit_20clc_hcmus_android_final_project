@@ -1,18 +1,25 @@
 package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -88,10 +95,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         viewHolder.message.setText(dataSet.get(position).getMessage());
 //        viewHolder.sendTime.setText(dataSet.get(position).getSendTime());
         viewHolder.senderName.setText(dataSet.get(position).getSenderName());
-        if (dataSet.get(position).getSenderAvatarURL()!=null) {
-            Glide.with(context.getApplicationContext())
-                    .load(dataSet.get(position).getSenderAvatarURL())
-                    .into(viewHolder.avatar);
+
+        String avatarUrl = dataSet.get(position).getSenderAvatarURL();
+        if (avatarUrl!=null){
+            final long MAX_BYTE = 1024 * 2 * 1024;
+            StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(avatarUrl);
+            storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    viewHolder.avatar.setImageBitmap(image);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Glide.with(context.getApplicationContext())
+                            .load(avatarUrl)
+                            .into(viewHolder.avatar);
+                }
+            });
         }
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override

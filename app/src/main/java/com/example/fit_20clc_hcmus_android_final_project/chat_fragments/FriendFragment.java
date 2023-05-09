@@ -159,7 +159,7 @@ public class FriendFragment extends Fragment implements FriendAdapter.Callbacks 
                 });
     }
 
-    public void swapToChat(String email){
-        chat_activity.switchScreenByScreenType(0, email);
-    }
+//    public void swapToChat(String email){
+//        chat_activity.switchScreenByScreenType(0, email);
+//    }
 }

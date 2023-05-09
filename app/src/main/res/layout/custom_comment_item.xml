@@ -15,7 +15,7 @@
             android:id="@+id/profile_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@drawable/bali"
+            android:src="@drawable/image_48px"
             android:layout_margin="10dp"
             />
 

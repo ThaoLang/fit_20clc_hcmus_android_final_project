@@ -1,24 +1,45 @@
 package com.example.fit_20clc_hcmus_android_final_project;
+import static com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess.ACCESS_AVATARS_STORAGE;
+import static com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess.runForegroundTask;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Transaction;
+import com.google.firebase.storage.StorageMetadata;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.IOException;
 
 public class AccountInfoPage extends Fragment {
 
@@ -27,8 +48,9 @@ public class AccountInfoPage extends Fragment {
     private static final String INIT_PARAM = "initParam";
 
     private TextInputEditText username, userbio, useremail, userphone, useraddress;
-    private MaterialButton edit_save_button, logout_button;
-    private ImageView avatar;
+    private MaterialButton edit_save_button, logout_button, editImageButton;
+    private Uri selectedImageUri = null;
+    private ShapeableImageView avatar;
 
     private String initParam;
 
@@ -82,6 +104,7 @@ public class AccountInfoPage extends Fragment {
         useraddress = accountScreen.findViewById(R.id.mac_text_input_edittext_useraddress);
         edit_save_button = accountScreen.findViewById(R.id.mac_edit_save_button);
         logout_button = accountScreen.findViewById(R.id.mac_logout_button);
+        editImageButton = accountScreen.findViewById(R.id.mac_edit_avatar_button);
 
         edit_save_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,6 +121,9 @@ public class AccountInfoPage extends Fragment {
                     //change edit_save_button to save_button
                     edit_save_button.setText(R.string.save_account);
                     edit_save_button.setIconResource(R.drawable.save_48px);
+                    editImageButton.setEnabled(true);
+                    editImageButton.setCursorVisible(false);
+                    editImageButton.setVisibility(View.VISIBLE);
                     EDIT_OR_SAVE = true;
                 } else {
                     String inputusername = String.valueOf(username.getText());
@@ -128,6 +154,8 @@ public class AccountInfoPage extends Fragment {
                     useraddress.setEnabled(false);
                     edit_save_button.setText(R.string.edit_account);
                     edit_save_button.setIconResource(R.drawable.edit_48px);
+                    editImageButton.setEnabled(false);
+                    editImageButton.setVisibility(View.INVISIBLE);
                     EDIT_OR_SAVE = false;
 
                     User mainUserInfo = DatabaseAccess.getMainUserInfo();
@@ -137,7 +165,17 @@ public class AccountInfoPage extends Fragment {
                     mainUserInfo.setAddress(inputuseraddress);
                     mainUserInfo.setBio(inputuserbio);
 
-                    DatabaseAccess.updateUserInfo_In_Database(mainUserInfo, toast(UpdateSucessfully), toast(UpdateFailed));
+                    if(selectedImageUri == null)
+                    {
+                        mainUserInfo.setAvatarUrl("None");
+                    }
+                    else
+                    {
+                        mainUserInfo.setAvatarUrl(String.valueOf(selectedImageUri));
+                    }
+
+                    addNewAvatar();
+
 //                    fb.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).set(mainUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
 //                        @Override
 //                        public void onComplete(@NonNull Task<Void> task) {
@@ -164,6 +202,19 @@ public class AccountInfoPage extends Fragment {
             }
         });
 
+        editImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false);
+//                intent.setAction(Intent.ACTION_GET_CONTENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                selectImageLauncher.launch(intent);
+            }
+        });
+
         return accountScreen;
     }
 
@@ -179,9 +230,25 @@ public class AccountInfoPage extends Fragment {
             useremail.setText(user.getEmail());
             useraddress.setText(mainUserInfo.getAddress());
             userphone.setText(mainUserInfo.getPhone());
-            Glide.with(this)
-                    .load(mainUserInfo.getAvatarUrl())
-                    .into(avatar);
+
+            if (mainUserInfo.getAvatarUrl() != null){
+                final long MAX_BYTE = 1024 * 2 * 1024;
+                StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(mainUserInfo.getAvatarUrl());
+                storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                    @Override
+                    public void onSuccess(byte[] bytes) {
+                        Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        avatar.setImageBitmap(image);
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Glide.with(context.getApplicationContext())
+                                .load(mainUserInfo.getAvatarUrl())
+                                .into(avatar);
+                    }
+                });
+            }
         }
     }
 
@@ -196,4 +263,91 @@ public class AccountInfoPage extends Fragment {
         return  foregroundToastAction;
     }
 
+    private ActivityResultLauncher<Intent> selectImageLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if(result.getResultCode() == Activity.RESULT_OK)
+            {
+                Intent imageData = result.getData();
+                if(imageData != null && imageData.getData() != null)
+                {
+                    selectedImageUri = imageData.getData();
+                    Bitmap selectedImage;
+                    System.out.println("ImageUri: " + selectedImageUri);
+                    try {
+                        main.getContentResolver().takePersistableUriPermission(selectedImageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        selectedImage = MediaStore.Images.Media.getBitmap(main.getContentResolver(), selectedImageUri);
+//                        selectedImage.setHeight(image.getHeight());
+//                        selectedImage.setWidth(image.getWidth());
+                        avatar.setImageBitmap(selectedImage);
+//                        editImageButton.setCursorVisible(true);
+                    } catch (IOException e) {
+                        //throw new RuntimeException(e);
+                        selectedImageUri = null;
+                        avatar.setImageResource(R.drawable.image_48px);
+                    }
+                }
+                else
+                {
+                    selectedImageUri = null;
+                }
+            }
+        }
+    });
+
+    public void addNewAvatar() //wip
+    {
+        User mainUserInfo = DatabaseAccess.getMainUserInfo();
+        Runnable successfulTask = null, failureTask = null;
+
+        Thread backgroundAddition = new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                add and update data in the cloud database
+                DatabaseAccess.getFirestore().runTransaction(new Transaction.Function<String>() {
+                    @Nullable
+                    @Override
+                    public String apply(@NonNull Transaction transaction) throws FirebaseFirestoreException { return mainUserInfo.getPhone();}
+                }).addOnSuccessListener(new OnSuccessListener<String>() {
+                    @Override
+                    public void onSuccess(String userTargetId) {
+                        String imageLink = mainUserInfo.getAvatarUrl();
+                        if (!imageLink.equals("None")) {
+                            Uri imageNeedToUpload = Uri.parse(imageLink);
+                            String childName = userTargetId + ".jpg";
+                            StorageReference plansImageReference = DatabaseAccess.getFirebaseStorage().getReference().child(ACCESS_AVATARS_STORAGE + childName);
+                            System.out.println("imageLocalUri" + imageNeedToUpload);
+                            StorageMetadata metadata = new StorageMetadata.Builder()
+                                    .setContentType("image/jpg").build();
+
+                            UploadTask uploadTask = (UploadTask) plansImageReference.putFile(imageNeedToUpload, metadata).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    String downloadUrl = ACCESS_AVATARS_STORAGE + childName;
+                                    DatabaseAccess.getFirestore().collection("account").document(userTargetId)
+                                            .update("avatarUrl", downloadUrl);
+                                    mainUserInfo.setAvatarUrl(downloadUrl);
+                                    DatabaseAccess.updateUserInfo_In_Database(mainUserInfo, toast(UpdateSucessfully), toast(UpdateFailed));
+
+                                }
+                            });
+                        }
+
+//                        onStart();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        System.out.println("Exception: " + e);
+                        if(failureTask != null)
+                        {
+                            runForegroundTask(failureTask);
+                        }
+                    }
+                });
+
+            }
+        });
+        backgroundAddition.start();
+    }
 }

@@ -15,11 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
-import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Comment;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Post;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,25 +30,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHolder>{
-   // private Comment[] comments_1={
-//            new Comment("None","None", Comment.commentType.Plan,"None","amazing","None"),
-//            new Comment("None","None",Comment.commentType.Plan,"None","interesting","None"),
-//            new Comment("None","None",Comment.commentType.Plan,"None","bad trip","None"),
-//            new Comment("None","None",Comment.commentType.Plan,"None","rich kid","None"),
-//            };
-
     private ArrayList<Comment> comments;
     Context context;
-
-    private CommentAdapter.Callbacks listener;
-    public void setListener(CommentAdapter.Callbacks listener) {
-        this.listener = listener;
-    }
-    // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
-    // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
-    public interface Callbacks {
-        void swapToPost();
-    }
 
     /**
      * Initialize the posts of the Adapter.
@@ -75,34 +55,18 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
      * (custom ViewHolder).
      */
 
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ImageView image_comment;
         private final ImageView profile_image;
         private  final TextView name_account;
         private final TextView text_comment;
 
-        private ItemClickListener itemClickListener;
-
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
-
             name_account = (TextView) view.findViewById(R.id.profile_name);
             text_comment = (TextView) view.findViewById(R.id.text_comment);
             image_comment = (ImageView) view.findViewById(R.id.image_comment);
             profile_image = (ImageView) view.findViewById(R.id.profile_image);
-
-            view.setOnClickListener(this);
-        }
-
-        public void setItemClickListener(ItemClickListener itemClickListener)
-        {
-            this.itemClickListener = itemClickListener;
-        }
-
-        @Override
-        public void onClick(View v) {
-            itemClickListener.onClick(v,getAdapterPosition(),false);
         }
 
     }
@@ -135,11 +99,26 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                             QuerySnapshot querySnapshot = task.getResult();
                             if (!querySnapshot.isEmpty()) {
                                 for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    // Xử lí khi có kết quả trả về
-                                    viewHolder.name_account.setText(document.get("name").toString());
-                                    Glide.with(context.getApplicationContext())
-                                            .load(document.get("avatarUrl").toString())
-                                            .into(viewHolder.profile_image);
+                                    viewHolder.name_account.setText(String.valueOf(document.get("name")));
+
+                                    if (String.valueOf(document.get("avatarUrl")) != null){
+                                        final long MAX_BYTE = 1024 * 2 * 1024;
+                                        StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(String.valueOf(document.get("avatarUrl")));
+                                        storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                            @Override
+                                            public void onSuccess(byte[] bytes) {
+                                                Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                                viewHolder.profile_image.setImageBitmap(image);
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Glide.with(context.getApplicationContext())
+                                                        .load(String.valueOf(document.get("avatarUrl")))
+                                                        .into(viewHolder.profile_image);
+                                            }
+                                        });
+                                    }
                                 }
                             } else {
                             }
@@ -186,13 +165,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
         //viewHolder.profile_image.setImageResource(comments[position].getAvatar_url());
         //viewHolder.image_comment.setImageResource(comments[position].getMain_image());
 
-        viewHolder.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onClick(View view, int position, boolean isLongClick) {
-                //can swap to another activity using this method
-                listener.swapToPost();
-            }
-        });
     }
 
     // Return the size of your posts (invoked by the layout manager)

@@ -1,18 +1,25 @@
 package com.example.fit_20clc_hcmus_android_final_project.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -30,7 +37,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void swapToChat(String phone);
+//        void swapToChat(String phone);
     }
 
     public FriendAdapter(Context _context, ArrayList<User> _dataset) {
@@ -84,16 +91,31 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.ViewHolder
         // Get element from your posts at this position and replace the
         // contents of the view with that element
         viewHolder.name.setText(dataSet.get(position).getName());
-        if (dataSet.get(position).getAvatarUrl()!=null) {
-            Glide.with(context.getApplicationContext())
-                    .load(dataSet.get(position).getAvatarUrl())
-                    .into(viewHolder.avatar);
+
+        String avatarUrl = dataSet.get(position).getAvatarUrl();
+        if (avatarUrl!=null) {
+            final long MAX_BYTE = 1024 * 2 * 1024;
+            StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(avatarUrl);
+            storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    viewHolder.avatar.setImageBitmap(image);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Glide.with(context.getApplicationContext())
+                            .load(avatarUrl)
+                            .into(viewHolder.avatar);
+                }
+            });
         }
         viewHolder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                String email = dataSet.get(position).getUserEmail();
-                listener.swapToChat(email);
+//                String email = dataSet.get(position).getUserEmail();
+//                listener.swapToChat(email);
             }
         });
     }
