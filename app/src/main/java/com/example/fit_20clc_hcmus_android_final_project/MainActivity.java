@@ -2,20 +2,6 @@ package com.example.fit_20clc_hcmus_android_final_project;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-
-//public class MainActivity extends AppCompatActivity {
-//
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//
-//    }
-//}
-
 import androidx.annotation.NonNull;
 import androidx.core.widget.ContentLoadingProgressBar;
 import androidx.fragment.app.Fragment;
@@ -23,15 +9,11 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -94,16 +76,11 @@ public class MainActivity extends FragmentActivity {
             {
                 currentScreen = HomePage.newInstance(HOME_PAGE_INIT_PARAM);
             }
-//            if (DatabaseAccess.getMainUserInfo()!=null){
-//
-//            }
 
             transaction.replace(R.id.main_frame,currentScreen);
             transaction.commit();
 
         }
-        //Default: currentScreen is homepage-screen at the beginning
-
     }
 
     @Override
@@ -116,43 +93,12 @@ public class MainActivity extends FragmentActivity {
             startActivity(new Intent(MainActivity.this, SignIn.class));
             finish();
         }
-        else
-        {
-            /*FirebaseFirestore fb = FirebaseFirestore.getInstance();
-            fb.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful())
-                    {
-                        mainUserInfo =  task.getResult().toObject(User.class);
-                    }
-                    else
-                    {
-                        mainUserInfo = null;
-                    }
-                }
-            });*/
-
-//            else if(screenType == 1)
-//            {
-//                currentScreen = TripsPage.newInstance(TRIPS_INIT_PARAM);
-//            }
-//            else if(screenType == 2)
-//            {
-//                currentScreen = NotificationPage.newInstance(NOTIFICATION_PAGE_INIT_PARAM);
-//            }
-//            else if(screenType == 3)
-//            {
-//                currentScreen = AccountInfoPage.newInstance(ACCOUNT_INFO_INIT_PARAM);
-//            }
-//
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(isRunning == false || DatabaseAccess.getCurrentUser() == null)
+        if(!isRunning || DatabaseAccess.getCurrentUser() == null)
         {
             transaction.detach(currentScreen);
         }

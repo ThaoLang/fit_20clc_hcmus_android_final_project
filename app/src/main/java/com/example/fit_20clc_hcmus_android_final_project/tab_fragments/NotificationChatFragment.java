@@ -29,6 +29,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NotificationChatFragment extends Fragment implements CustomNotificationAdapter.Callbacks {
     private MainActivity main_activity;
@@ -38,10 +39,11 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
     private FragmentNotificationChatBinding binding;
     private CustomNotificationAdapter chatAdapter;
     private ArrayList<Notification> notificationChatList;
-    private ArrayList<String> planIdList;
+    private HashMap<String, String> planIdList;
     LinearLayoutManager mLinearLayoutManager;
     NotificationChatFragment notificationPage;
     NotificationService notificationService;
+    private final int CHAT_TAB_ID = 0;
 
     public NotificationChatFragment() {
         notificationPage = this;
@@ -68,84 +70,79 @@ public class NotificationChatFragment extends Fragment implements CustomNotifica
         notificationChatList = new ArrayList<>();
 
         FirebaseFirestore fb = DatabaseAccess.getFirestore();
-        planIdList = new ArrayList<>();
+        planIdList = new HashMap<>();
 
         fb.collection("plans")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            Log.w("TAG_PLAN", "Listen failed.", error);
-                            return;
-                        }
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.w("TAG_PLAN", "Listen failed.", error);
+                        return;
+                    }
 
-                        if (!querySnapshot.isEmpty()) {
-                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                ArrayList<String> passengers = (ArrayList<String>) document.get("passengers");
-                                passengers.add(String.valueOf(document.get("owner_email")));
+                    if (!querySnapshot.isEmpty()) {
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            ArrayList<String> passengers = (ArrayList<String>) document.get("passengers");
+                            passengers.add(String.valueOf(document.get("owner_email")));
 
-                                if(passengers.contains(currentUser.getEmail())){
-                                    planIdList.add(String.valueOf(document.get("planId")));
-                                }
+                            if(passengers.contains(currentUser.getEmail())){
+                                String planId = String.valueOf(document.get("planId"));
+                                String planName = String.valueOf(document.get("name"));
+                                planIdList.put(planId, planName);
                             }
                         }
                     }
-                    });
+                });
 
         fb.collection("chatHistory")
                 .orderBy("sendTime", Query.Direction.ASCENDING)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            Log.w("TAG", "Listen failed.", error);
-                            return;
-                        }
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.w("TAG", "Listen failed.", error);
+                        return;
+                    }
 
-                        if (!querySnapshot.isEmpty()) {
-                            notificationChatList.clear();
+                    if (!querySnapshot.isEmpty()) {
+                        notificationChatList.clear();
 
-                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                String senderEmail = String.valueOf(document.get("senderEmail"));
-                                if (!senderEmail.equals(currentUser.getEmail())) {
-                                    String id = String.valueOf(document.get("tripId"));
-                                    Log.e("tripId", id);
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            String senderEmail = String.valueOf(document.get("senderEmail"));
+                            if (!senderEmail.equals(currentUser.getEmail())) {
+                                String id = String.valueOf(document.get("tripId"));
+                                Log.e("tripId", id);
 
-                                    if (!id.equals("0") && planIdList.contains(id)){
-                                        Notification notification;
-                                        String message = String.valueOf(document.get("message"));
-                                        String senderName = String.valueOf(document.get("senderName"));
+                                if (!id.equals("0") && planIdList.containsKey(id)){
+                                    Notification notification;
+                                    String message = document.get("senderName") + ": " + document.get("message");
+                                    String name = planIdList.get(id);
 
-                                        notification = new Notification(senderName, message, id);
-                                        notificationChatList.add(notification);
+                                    notification = new Notification(name, message, id);
+                                    notificationChatList.add(notification);
 
-                                        Log.e("message", message);
-                                    }
+                                    Log.e("message", message);
                                 }
                             }
-
-                            chatAdapter = new CustomNotificationAdapter(context, notificationChatList);
-                            chatAdapter.setListener(notificationPage);
-                            binding.listItem.setAdapter(chatAdapter);
-                            binding.listItem.smoothScrollToPosition(0);
-
-                            Intent intent = new Intent(context, ChatActivity.class); //supposedly from notification to plan detail?
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                            String tripId = notificationChatList.get(notificationChatList.size() - 1).getTripId();
-                            Bundle bundle = new Bundle();
-                            bundle.putString("PlanId", tripId);
-                            intent.putExtra("CHAT", bundle);
-//                            Log.e("Notification Chat Trip ID", String.valueOf(notificationChatList.get(notificationChatList.size() - 1).getTripId()));
-
-                            if (notificationChatList.size()>0) {
-                                String latestTitle = notificationChatList.get(notificationChatList.size() - 1).getTitle();
-                                String latestContent = notificationChatList.get(notificationChatList.size() - 1).getContent();
-                                notificationService.sendNotification(latestTitle, latestContent, intent, main_activity);
-                            }
-                        } else {
-                            Log.d("TAG", "Current data: null");
                         }
+
+                        chatAdapter = new CustomNotificationAdapter(context, notificationChatList);
+                        chatAdapter.setListener(notificationPage);
+                        binding.listItem.setAdapter(chatAdapter);
+                        binding.listItem.smoothScrollToPosition(0);
+
+                        Intent intent = new Intent(context, ChatActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                        String tripId = notificationChatList.get(notificationChatList.size() - 1).getTripId();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("PlanId", tripId);
+                        intent.putExtra("CHAT", bundle);
+
+                        if (notificationChatList.size()>0) {
+                            String latestTitle = notificationChatList.get(notificationChatList.size() - 1).getTitle();
+                            String latestContent = notificationChatList.get(notificationChatList.size() - 1).getContent();
+                            notificationService.sendNotification(latestTitle, latestContent, intent, main_activity, CHAT_TAB_ID);
+                        }
+                    } else {
+                        Log.d("TAG", "Current data: null");
                     }
                 });
         chatAdapter = new CustomNotificationAdapter(context, notificationChatList);

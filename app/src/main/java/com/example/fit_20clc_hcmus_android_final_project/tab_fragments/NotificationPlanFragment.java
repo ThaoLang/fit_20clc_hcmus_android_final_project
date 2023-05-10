@@ -41,6 +41,8 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
     LinearLayoutManager mLinearLayoutManager;
     NotificationPlanFragment notificationPage;
     NotificationService notificationService;
+    private final int PLAN_TAB_ID = 1;
+
 
     public NotificationPlanFragment() {
         notificationPage = this;
@@ -70,55 +72,50 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
 
         fb.collection("plans")
                 .whereEqualTo("status", "Upcoming")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
-                        if (error != null) {
-                            Log.w("TAG_PLAN", "Listen failed.", error);
-                            return;
+                .addSnapshotListener((querySnapshot, error) -> {
+                    if (error != null) {
+                        Log.w("TAG_PLAN", "Listen failed.", error);
+                        return;
+                    }
+
+                    if (!querySnapshot.isEmpty()) {
+                        notificationPlanList.clear();
+
+                        for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                            ArrayList<String> passengers = (ArrayList<String>) document.get("passengers");
+                            passengers.add(String.valueOf(document.get("owner_email")));
+
+                            if (passengers.contains(currentUser.getEmail())){
+                                Notification notification;
+
+                                String name = String.valueOf(document.get("name"));
+                                String message = String.valueOf(document.get("departure_date"));
+                                String planId = String.valueOf(document.get("planId"));
+
+                                notification = new Notification(name, message, planId);
+                                notificationPlanList.add(notification);
+
+                                Log.e("plan_message", message);
+                            }
                         }
 
-                        if (!querySnapshot.isEmpty()) {
-                            notificationPlanList.clear();
+                        planAdapter = new CustomNotificationAdapter(context, notificationPlanList);
+                        planAdapter.setListener(notificationPage);
+                        binding.listItem.setLayoutManager(mLinearLayoutManager);
+                        binding.listItem.setAdapter(planAdapter);
+                        binding.listItem.smoothScrollToPosition(0);
 
-                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                ArrayList<String> passengers = (ArrayList<String>) document.get("passengers");
-                                passengers.add(String.valueOf(document.get("owner_email")));
+                        Intent intent = new Intent(context, DetailedPlan.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.putExtra("DETAILED_PLAN_ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
 
-                                if (passengers.contains(currentUser.getEmail())){
-                                    Notification notification;
-
-                                    String name = String.valueOf(document.get("name"));
-                                    String message = String.valueOf(document.get("departure_date"));
-                                    String planId = String.valueOf(document.get("planId"));
-
-                                    notification = new Notification(name, message, planId);
-                                    notificationPlanList.add(notification);
-
-                                    Log.e("plan_message", message);
-                                }
-                            }
-
-                            planAdapter = new CustomNotificationAdapter(context, notificationPlanList);
-                            planAdapter.setListener(notificationPage);
-                            binding.listItem.setLayoutManager(mLinearLayoutManager);
-                            binding.listItem.setAdapter(planAdapter);
-                            binding.listItem.smoothScrollToPosition(0);
-
-                            Intent intent = new Intent(context, DetailedPlan.class); //supposedly from notification to plan detail?
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                            intent.putExtra("DETAILED_PLAN_ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
-//                            Log.e("Notification Plan Trip ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
-
-                            if (notificationPlanList.size()>0) {
-                                String latestTitle = notificationPlanList.get(notificationPlanList.size() - 1).getTitle();
-                                String latestContent = notificationPlanList.get(notificationPlanList.size() - 1).getContent();
-                                notificationService.sendNotification(latestTitle, latestContent, intent, main_activity);
-                            }
-                        } else {
-                            Log.d("TAG_PLAN", "Current plan data: null");
+                        if (notificationPlanList.size()>0) {
+                            String latestTitle = notificationPlanList.get(notificationPlanList.size() - 1).getTitle();
+                            String latestContent = notificationPlanList.get(notificationPlanList.size() - 1).getContent();
+                            notificationService.sendNotification(latestTitle, latestContent, intent, main_activity, PLAN_TAB_ID);
                         }
+                    } else {
+                        Log.d("TAG_PLAN", "Current plan data: null");
                     }
                 });
         planAdapter = new CustomNotificationAdapter(context, notificationPlanList);

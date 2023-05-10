@@ -1,6 +1,5 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
@@ -8,18 +7,13 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 
 import com.example.fit_20clc_hcmus_android_final_project.chat_fragments.ChatFragment;
 import com.example.fit_20clc_hcmus_android_final_project.chat_fragments.FriendFragment;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class ChatActivity extends FragmentActivity {
@@ -54,7 +48,7 @@ public class ChatActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+        bottomNavigation = findViewById(R.id.bottom_navigation);
         transaction = getSupportFragmentManager().beginTransaction();
         mAuth = FirebaseAuth.getInstance();
 
@@ -63,17 +57,13 @@ public class ChatActivity extends FragmentActivity {
         Log.e("PlanId", currentTripId);
 
         active = true;
-        bottomNavigation.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int idItemSelected = item.getItemId();
-                switchScreenBySelectMenuItem(idItemSelected);
-                //return true if we want to the item be selected (be colored). Else, return false
-                return true;
-            }
+        bottomNavigation.setOnItemSelectedListener(item -> {
+            int idItemSelected = item.getItemId();
+            switchScreenBySelectMenuItem(idItemSelected);
+            //return true if we want to the item be selected (be colored). Else, return false
+            return true;
         });
 
-        //Default: currentScreen is homepage-screen at the beginning
         currentScreen = ChatFragment.newInstance(currentTripId);
 
         transaction.replace(R.id.main_frame,currentScreen);
@@ -104,23 +94,19 @@ public class ChatActivity extends FragmentActivity {
         else
         {
             FirebaseFirestore fb = FirebaseFirestore.getInstance();
-            fb.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                    if(task.isSuccessful())
-                    {
-                        mainUserInfo =  task.getResult().toObject(User.class);
-                    }
-                    else
-                    {
-                        mainUserInfo = null;
-                    }
+            fb.collection(DatabaseAccess.ACCESS_ACCOUNT_COLLECTION).document(user.getUid()).get().addOnCompleteListener(task -> {
+                if(task.isSuccessful())
+                {
+                    mainUserInfo =  task.getResult().toObject(User.class);
+                }
+                else
+                {
+                    mainUserInfo = null;
                 }
             });
         }
     }
 
-    //change Fragment (screen)
     private void switchScreenBySelectMenuItem(int idItemSelected)
     {
         if(idItemSelected == CURRENT_SELECTED_ID)
@@ -149,7 +135,6 @@ public class ChatActivity extends FragmentActivity {
         switchScreenByScreenType(screenType, null);
     }
 
-    //execute to switch the screen (fragment)
     public void switchScreenByScreenType(int inputScreenType, String email)
     {
         switch (inputScreenType)
