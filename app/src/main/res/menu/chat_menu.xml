@@ -12,6 +12,12 @@
         android:title="@string/friend_tab"
         />
     <item
+        android:id="@+id/bottom_nav_map"
+        android:enabled="true"
+        android:icon="@drawable/map_icon"
+        android:title="@string/map_tab"
+        />
+    <item
         android:id="@+id/bottom_nav_return"
         android:enabled="true"
         android:icon="@drawable/ic_home_48px"

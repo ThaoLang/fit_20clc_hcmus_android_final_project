@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.example.fit_20clc_hcmus_android_final_project.chat_fragments.ChatFragment;
 import com.example.fit_20clc_hcmus_android_final_project.chat_fragments.FriendFragment;
+import com.example.fit_20clc_hcmus_android_final_project.chat_fragments.MapFragment;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,20 +30,11 @@ public class ChatActivity extends FragmentActivity {
     public static final int CHAT = 0;
     public static final int FRIEND = 1;
     public static final int RETURN = 2;
+    public static final int MAP = 3;
 
     private User mainUserInfo;
     private String currentTripId;
-    private ChatActivity.ChatCallbacks listener;
-
     private  FragmentTransaction transaction;
-
-    public void setListener(ChatActivity.ChatCallbacks listener) {
-        this.listener = listener;
-    }
-
-    public interface ChatCallbacks {
-        void setFriendEmail(String email);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +115,11 @@ public class ChatActivity extends FragmentActivity {
             screenType = 1;
             System.out.println("FRIEND");
         }
+        else if(idItemSelected == R.id.bottom_nav_map)
+        {
+            screenType = 3;
+            System.out.println("FRIEND");
+        }
         else if(idItemSelected == R.id.bottom_nav_return)
         {
             screenType = 2;
@@ -142,11 +139,6 @@ public class ChatActivity extends FragmentActivity {
             case CHAT:
             {
                 currentScreen = ChatFragment.newInstance(currentTripId);
-                if (email!=null){
-                    Log.e("email", email);
-                    listener.setFriendEmail(email);
-                }
-
                 bottomNavigation.setSelectedItemId(R.id.bottom_nav_chat);
                 break;
             }
@@ -160,6 +152,12 @@ public class ChatActivity extends FragmentActivity {
             {
                 active = false;
                 finish();
+                break;
+            }
+            case MAP:
+            {
+                currentScreen = MapFragment.newInstance(currentTripId);
+                bottomNavigation.setSelectedItemId(R.id.bottom_nav_map);
                 break;
             }
         }
