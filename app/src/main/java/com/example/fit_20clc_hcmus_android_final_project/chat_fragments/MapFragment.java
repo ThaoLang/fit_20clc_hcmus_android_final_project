@@ -1,7 +1,11 @@
 package com.example.fit_20clc_hcmus_android_final_project.chat_fragments;
 
+import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,12 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.example.fit_20clc_hcmus_android_final_project.ChatActivity;
 import com.example.fit_20clc_hcmus_android_final_project.R;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Location;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentChatMapBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -34,6 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
@@ -44,12 +49,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private String currentTripId;
 
     private FragmentChatMapBinding binding;
-    private LocalBroadcastManager localBroadcastManager;
+    private static LocalBroadcastManager localBroadcastManager;
 
     private GoogleMap mMap;
 //    private int locationFocusIndex=-1;
     private List<Location> listOfFriendLocations;
     private IconGenerator iconGenerator;
+
+    BroadcastReceiver locationReceiver;
 
     public MapFragment() {
         // Required empty public constructor
@@ -73,6 +80,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         try {
             context = getActivity();
             chat_activity = (ChatActivity) getActivity();
+            if (localBroadcastManager == null) {
+                localBroadcastManager = LocalBroadcastManager.getInstance(context.getApplicationContext());
+            }
         } catch (IllegalStateException e) {
             throw new IllegalStateException("ChatActivity must implement callbacks");
         }
@@ -83,12 +93,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                              Bundle savedInstanceState) {
         binding = FragmentChatMapBinding.inflate(inflater, container, false);
 
-        Intent intent = chat_activity.getIntent();
-        Bundle bundle = intent.getExtras();
-//        if (bundle != null) {
-//            listOfFriendLocations = (List<Destination>) bundle.getSerializable("All destinations");
-//            locationFocusIndex=bundle.getInt("destination index");
-//        }
+        listOfFriendLocations = getFriendsLocation();
 
         iconGenerator= new IconGenerator(context);
 
@@ -141,47 +146,72 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         binding.mapView.onLowMemory();
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // Register the BroadcastReceiver with the correct action string
+        localBroadcastManager.registerReceiver(locationReceiver, new IntentFilter("com.example.ACTION_UPDATE_CAMERA_CENTER"));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        // Unregister the BroadcastReceiver when the fragment is stopped
+        localBroadcastManager.unregisterReceiver(locationReceiver);
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//
-//        // Thiết lập giới hạn tọa độ hiển thị của bản đồ
-//        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-//        for (int i=0;i<listOfDestinations.size();i++) {
-//            double latitude=0;
-//            double longitude=0;
-//            Geocoder geocoder = new Geocoder(getApplicationContext());
+        if (listOfFriendLocations.size()==0) return;
+
+        mMap = googleMap;
+        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setMyLocationButtonEnabled(true);
+        if(ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(chat_activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 44);
+            ActivityCompat.requestPermissions(chat_activity, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 44);
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        mMap.getUiSettings().isCompassEnabled();
+        mMap.getUiSettings().isMapToolbarEnabled();
+
+        // Thiết lập giới hạn tọa độ hiển thị của bản đồ
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (int i=0; i<listOfFriendLocations.size(); i++) {
+            double latitude = Double.parseDouble(listOfFriendLocations.get(i).getLatitude());
+            double longitude = Double.parseDouble(listOfFriendLocations.get(i).getLongitude());
+//            Geocoder geocoder = new Geocoder(chat_activity.getApplicationContext());
 //
 //            try {
-//                List<Address> addresses = geocoder.getFromLocationName(listOfDestinations.get(i).getFormalName(), 1);
+//                List<Address> addresses = geocoder.getFromLocationName(listOfFriendLocations.get(i).getFormalName(), 1);
 //                if (addresses != null && !addresses.isEmpty()) {
 //                    Address addressResult = addresses.get(0);
-//                    latitude = addressResult.getLatitude();
-//                    longitude = addressResult.getLongitude();
+//                    latitude = Double.valueOf(addressResult.getLatitude());
+//                    longitude = Double.valueOf(addressResult.getLongitude());
 //                }
 //            } catch (IOException e) {
 //                throw new RuntimeException(e);
 //            }
-//
-//            Bitmap bitmap = iconGenerator.makeIcon(String.valueOf(i+1)); // Tạo Bitmap với số bên trong
-//            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(addWhiteBorder(bitmap, 0)); // Thêm viền trắng cho Bitmap và chuyển thành BitmapDescriptor
-//
-//            LatLng latLng = new LatLng(latitude, longitude);
-//            builder.include(latLng);
-//            mMap.addMarker(new MarkerOptions()
-//                    .position(latLng)
-//                    .title(listOfDestinations.get(i).getAliasName())
-//                    .snippet(listOfDestinations.get(i).getDescription())
-//                    .icon(descriptor));
-//
-//            //BitmapDescriptorFactory.defaultMarker(getMarkerColor(i)))
-//        }
-//        LatLngBounds bounds = builder.build();
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
-//
-//        // Đăng ký sự kiện OnMarkerClickListener
-//        mMap.setOnMarkerClickListener(this);
+
+            Bitmap bitmap = iconGenerator.makeIcon(String.valueOf(i+1)); // Tạo Bitmap với số bên trong
+            BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(addWhiteBorder(bitmap, 0)); // Thêm viền trắng cho Bitmap và chuyển thành BitmapDescriptor
+
+            LatLng latLng = new LatLng(latitude, longitude);
+            builder.include(latLng);
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(listOfFriendLocations.get(i).getName())
+                    .snippet(listOfFriendLocations.get(i).getFormalName())
+                    .icon(descriptor));
+
+            //BitmapDescriptorFactory.defaultMarker(getMarkerColor(i)))
+        }
+        LatLngBounds bounds = builder.build();
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
+
+        // Đăng ký sự kiện OnMarkerClickListener
+        mMap.setOnMarkerClickListener(this);
     }
 
     private float getMarkerColor(int index) {
@@ -208,5 +238,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             default:
                 return BitmapDescriptorFactory.HUE_YELLOW;
         }
+    }
+
+    private List<Location> getFriendsLocation(){
+        List<Location> list = new ArrayList<>();
+        locationReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // Get the updated camera center data from the intent
+                double lat = Double.parseDouble(intent.getStringExtra("latitude"));
+                double lng = Double.parseDouble(intent.getStringExtra("longitude"));
+                String provider = String.valueOf(intent.getStringExtra("longitude"));
+                String locationDetail = String.valueOf(lat) + String.valueOf(lng);
+
+                Location location = new Location();
+                location.setLatitude(String.valueOf(lat));
+                location.setLongitude(String.valueOf(lng));
+
+                location.setName(provider);
+                location.setFormalName(locationDetail);
+
+                list.add(location);
+            }
+        };
+        return list;
     }
 }
