@@ -27,7 +27,6 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:text="@string/bottom_nav_notification"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="17sp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

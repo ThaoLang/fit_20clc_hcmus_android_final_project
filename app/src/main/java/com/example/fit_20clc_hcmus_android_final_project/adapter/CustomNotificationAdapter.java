@@ -5,7 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.google.android.material.snackbar.Snackbar;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,16 +85,11 @@ public class CustomNotificationAdapter extends RecyclerView.Adapter<CustomNotifi
         viewHolder.title.setText(dataSet.get(position).getTitle());
         viewHolder.content.setText(dataSet.get(position).getContent());
 
-        viewHolder.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onClick(View view, int position, boolean isLongClick) {
-                if(isLongClick)
-                    Toast.makeText(context, "Long Click: "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(context, " "+ dataSet.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-
-                listener.swapToChat(dataSet.get(position).getTripId());
-            }
+        viewHolder.setItemClickListener((view, position1, isLongClick) -> {
+            if(isLongClick)
+                Snackbar.make(view, "Click to move to "+ dataSet.get(position1).getTitle()+"'s chat room! ", Snackbar.LENGTH_SHORT).show();
+            else
+                listener.swapToChat(dataSet.get(position1).getTripId());
         });
     }
 
