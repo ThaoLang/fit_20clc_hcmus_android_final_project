@@ -74,7 +74,7 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
     // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
     // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
     public interface Callbacks {
-        void swapToDestination();
+        void swapToViewMap(int position);
     }
 
     /**
@@ -89,10 +89,6 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
         this.destinations=_destinations;
     }
 
-//    public DestinationAdapter(Context _context, ArrayList<String> Destinations) {
-//        this.context = _context;
-//        this.Destinations = Destinations;
-//    }
 
     /**
      * Provide a reference to the type of views that you are using
@@ -209,6 +205,14 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
                     viewHolder.expand_comtent.setVisibility(View.VISIBLE);
                     isExpand=!isExpand;
                 }
+            }
+        });
+
+        //view on map
+        viewHolder.view_on_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.swapToViewMap(position);
             }
         });
 
@@ -376,7 +380,7 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 //can swap to another activity using this method
-                listener.swapToDestination();
+                //listener.swapToDestination();
             }
         });
 
@@ -390,8 +394,6 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
 
                 intent.putExtra("plan comment",bundle);
                 context.startActivity(intent);
-
-
             }
         });
     }
@@ -401,7 +403,5 @@ public class TripLocationAdapter extends RecyclerView.Adapter<TripLocationAdapte
     public int getItemCount() {
         return destinations.size();
     }
-
-
 }
 

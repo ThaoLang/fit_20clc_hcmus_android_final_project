@@ -34,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -52,13 +53,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DetailedPost extends AppCompatActivity {
+public class DetailedPost extends AppCompatActivity implements TripLocationAdapter.Callbacks{
     private ActivityDetailedPostBinding binding;
     private Plan plan;
     private String planId="";
 
     LinearLayoutManager placeLinearLayoutManager;
     LinearLayoutManager memberLinearLayoutManager;
+    TripLocationAdapter tripLocationAdapter;
     private boolean isLiked = false;
     private FirebaseFirestore db;
     private boolean prevLiked=false;
@@ -281,12 +283,14 @@ public class DetailedPost extends AppCompatActivity {
         binding.viewMapBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(DetailedPost.this,ViewMapActivity.class);
-                Bundle bundle =new Bundle();
-                bundle.putSerializable("All destinations", (Serializable) plan.getListOfLocations());
-                bundle.putInt("destination index",-1);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                if (plan.getListOfLocations().size()==0){
+//                    Toast.makeText(getApplicationContext(),"")
+                    Snackbar.make(binding.containerView,"The trip has no locations to view on map",Snackbar.LENGTH_SHORT).show();
+                    return;
+
+                }
+                swapToViewMap(-1);
+
             }
         });
 
@@ -402,8 +406,9 @@ public class DetailedPost extends AppCompatActivity {
                                     placeLinearLayoutManager = new LinearLayoutManager(DetailedPost.this, RecyclerView.VERTICAL,false);
                                     placeLinearLayoutManager.setStackFromEnd(true);
                                     binding.listTripDay.setLayoutManager(placeLinearLayoutManager);
-
-                                    binding.listTripDay.setAdapter(new TripLocationAdapter(DetailedPost.this,plan.getListOfLocations()));
+                                    tripLocationAdapter=new TripLocationAdapter(DetailedPost.this,plan.getListOfLocations());
+                                    binding.listTripDay.setAdapter(tripLocationAdapter);
+                                    tripLocationAdapter.setListener(DetailedPost.this);
                                     binding.listTripDay.smoothScrollToPosition(0);
 
                                     binding.emptyPlaceText.setVisibility(View.GONE);
@@ -476,14 +481,20 @@ public class DetailedPost extends AppCompatActivity {
                                     }
                                 }
                                 binding.numberLike.setText(String.valueOf(number_like));
-
-
                             }
                         } else {
                             // no notification
                         }
                     }
                 });
+    }
 
+    public void swapToViewMap(int position){
+        Intent intent=new Intent(getApplicationContext(),ViewMapActivity.class);
+        Bundle bundle =new Bundle();
+        bundle.putSerializable("All destinations", (Serializable) plan.getListOfLocations());
+        bundle.putInt("destination index",position);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 }

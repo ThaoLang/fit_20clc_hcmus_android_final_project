@@ -1,12 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.gms.maps.MapView
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+<!--    <FrameLayout-->
+<!--        android:id="@+id/card_container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="8dp"-->
+<!--        android:elevation="8dp"-->
+<!--        android:visibility="visible"-->
+<!--        android:padding="16dp"-->
+<!--        android:foregroundGravity="bottom">-->
 
-</LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="vertical"
+        app:cardCornerRadius="10dp"
+        android:layout_margin="10dp"
+        android:layout_gravity="end|bottom"
+        android:elevation="8dp"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/top_area"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    >
+
+                    <ImageView
+                        android:id="@+id/location_icon"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/location_icon"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true"
+                         />
+
+                    <Button
+                        android:id="@+id/location_name"
+                        android:layout_width="185dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textAlignment="textStart"
+                        android:text="Dam Sen Park"
+                        android:textStyle="bold"
+                        android:textSize="16dp"
+                        android:textColor="@color/md_theme_light_shadow"
+                        android:backgroundTint="@color/md_theme_light_onPrimary"
+                        android:layout_toRightOf="@+id/location_icon"
+                        />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/close_btn"
+                        android:layout_width="30dp"
+                        android:layout_height="35dp"
+                        android:backgroundTint="@color/md_theme_light_onPrimary"
+                        app:icon="@drawable/close_icon"
+                        app:iconTint="@color/md_theme_light_shadow"
+                        app:iconSize="15dp"
+                        android:padding="8dp"
+                        android:layout_gravity="right"
+                        android:layout_margin="8dp"
+                        android:layout_alignParentRight="true"/>
+
+
+                </RelativeLayout>
+
+
+
+
+            </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/content_location_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/location_trip_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:drawableLeft="@drawable/calendar_icon"
+                    android:drawablePadding="10dp"
+                    android:text="10am 03/04/2023 - 11pm 05/04/2023"
+                    android:layout_gravity="center_vertical"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:orientation="horizontal"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="10dp"
+                        android:text="Address:"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:id="@+id/destination"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="123 An Duong Vuong Street, Ward 5, District 1, Ho Chi Minh City"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="30dp"
+                    android:layout_marginBottom="20dp"
+                    android:textColor="@color/md_theme_light_outline"
+                    android:text="Ride roller coasters, ride ferris wheel, try 5D movies, play thrilling games "
+                    android:layout_gravity="center_vertical"/>
+
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+<!--    </FrameLayout>-->
+
+</RelativeLayout>
