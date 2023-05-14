@@ -27,7 +27,6 @@ import com.example.fit_20clc_hcmus_android_final_project.data_struct.Location;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentChatMapBinding;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -37,7 +36,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.ui.IconGenerator;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,17 +44,38 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private ChatActivity chat_activity;
     private Context context;
-    private String currentTripId;
+    private String currentTripId;  //TODO: only get friends from same trip
 
     private FragmentChatMapBinding binding;
     private static LocalBroadcastManager localBroadcastManager;
 
     private GoogleMap mMap;
-//    private int locationFocusIndex=-1;
-    private List<Location> listOfFriendLocations;
+    private int locationFocusIndex=-1;
+    private static List<Location> listOfFriendLocations = new ArrayList<>();
     private IconGenerator iconGenerator;
+    private int defaultMarkerSize;
+    private Marker selectedMarker=null;
+    private LatLngBounds.Builder builder;
 
-    BroadcastReceiver locationReceiver;
+    BroadcastReceiver locationReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Get the updated camera center data from the intent
+            double lat = Double.parseDouble(intent.getStringExtra("latitude"));
+            double lng = Double.parseDouble(intent.getStringExtra("longitude"));
+            String provider = String.valueOf(intent.getStringExtra("provider"));
+            String locationDetail = String.valueOf(lat) + String.valueOf(lng);
+
+            Location location = new Location();
+            location.setLatitude(String.valueOf(lat));
+            location.setLongitude(String.valueOf(lng));
+
+            location.setName(provider);
+            location.setFormalName(locationDetail);
+
+            listOfFriendLocations.add(location);
+        }
+    };
 
     public MapFragment() {
         // Required empty public constructor
@@ -93,11 +112,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                              Bundle savedInstanceState) {
         binding = FragmentChatMapBinding.inflate(inflater, container, false);
 
-        listOfFriendLocations = getFriendsLocation();
-
         iconGenerator= new IconGenerator(context);
 
-        iconGenerator.setColor(Color.parseColor("#FF4081")); // Thiết lập màu nền
         iconGenerator.setTextAppearance(R.style.MarkerText); // Thiết lập kiểu chữ
         iconGenerator.setContentPadding(8, 8, 8, 0); // Thiết lập khoảng cách nội dung và biên
 
@@ -162,8 +178,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if (listOfFriendLocations.size()==0) return;
-
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
@@ -176,8 +190,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.getUiSettings().isCompassEnabled();
         mMap.getUiSettings().isMapToolbarEnabled();
 
+        if (listOfFriendLocations.size()==0) return;
+
         // Thiết lập giới hạn tọa độ hiển thị của bản đồ
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder = new LatLngBounds.Builder();
         for (int i=0; i<listOfFriendLocations.size(); i++) {
             double latitude = Double.parseDouble(listOfFriendLocations.get(i).getLatitude());
             double longitude = Double.parseDouble(listOfFriendLocations.get(i).getLongitude());
@@ -194,19 +210,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 //                throw new RuntimeException(e);
 //            }
 
+            iconGenerator.setColor(Color.parseColor(getMarkerColor(i)));
             Bitmap bitmap = iconGenerator.makeIcon(String.valueOf(i+1)); // Tạo Bitmap với số bên trong
             BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(addWhiteBorder(bitmap, 0)); // Thêm viền trắng cho Bitmap và chuyển thành BitmapDescriptor
 
             LatLng latLng = new LatLng(latitude, longitude);
             builder.include(latLng);
-            mMap.addMarker(new MarkerOptions()
+            Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(latLng)
                     .title(listOfFriendLocations.get(i).getName())
                     .snippet(listOfFriendLocations.get(i).getFormalName())
                     .icon(descriptor));
 
-            //BitmapDescriptorFactory.defaultMarker(getMarkerColor(i)))
-        }
+            if (locationFocusIndex==i){
+                selectedMarker=marker;
+            }
+
+            defaultMarkerSize = bitmap.getWidth();
+            marker.setTag(defaultMarkerSize);        }
         LatLngBounds bounds = builder.build();
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 50));
 
@@ -214,53 +235,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.setOnMarkerClickListener(this);
     }
 
-    private float getMarkerColor(int index) {
+    private String getMarkerColor(int index) {
         // Thiết lập màu sắc cho từng Marker dựa trên số thứ tự của địa điểm
         switch (index) {
             case 0:
-                return BitmapDescriptorFactory.HUE_RED;
+                return "#FF4081";
             case 1:
-                return BitmapDescriptorFactory.HUE_BLUE;
+                return "#4fb355";
             case 2:
-                return BitmapDescriptorFactory.HUE_GREEN;
+                return "#2292d4";
             case 3:
-                return BitmapDescriptorFactory.HUE_ORANGE;
+                return "#048781";
             case 4:
-                return BitmapDescriptorFactory.HUE_AZURE;
+                return "#e86417";
             case 5:
-                return BitmapDescriptorFactory.HUE_CYAN;
+                return "#5EAC8B";
             case 6:
-                return BitmapDescriptorFactory.HUE_VIOLET;
+                return "#1294ab";
             case 7:
-                return BitmapDescriptorFactory.HUE_ROSE;
+                return "#6750A4";
             case 8:
-                return BitmapDescriptorFactory.HUE_MAGENTA;
+                return "#34acc7";
+            case 9:
+                return "#4463ad";
             default:
-                return BitmapDescriptorFactory.HUE_YELLOW;
+                return "#6c73e0";
         }
     }
 
-    private List<Location> getFriendsLocation(){
-        List<Location> list = new ArrayList<>();
-        locationReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // Get the updated camera center data from the intent
-                double lat = Double.parseDouble(intent.getStringExtra("latitude"));
-                double lng = Double.parseDouble(intent.getStringExtra("longitude"));
-                String provider = String.valueOf(intent.getStringExtra("longitude"));
-                String locationDetail = String.valueOf(lat) + String.valueOf(lng);
-
-                Location location = new Location();
-                location.setLatitude(String.valueOf(lat));
-                location.setLongitude(String.valueOf(lng));
-
-                location.setName(provider);
-                location.setFormalName(locationDetail);
-
-                list.add(location);
-            }
-        };
-        return list;
-    }
 }

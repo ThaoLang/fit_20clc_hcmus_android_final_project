@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -37,7 +38,7 @@ public class GPSService extends Service{
             myLocationListener = new GPSListener();
             // define update frequency for GPS readings
             long minTime = 2000; // 2 seconds
-            float minDistance = 0; // 0 meter
+            float minDistance = 10; // 10 meters
             // request GPS updates
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //                ActivityCompat.requestPermissions(new Activity(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -48,6 +49,16 @@ public class GPSService extends Service{
         }
         catch (Exception e) { e.printStackTrace(); }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e("<<MyGpsService-onDestroy>>", "I am dead-GPS");
+        try {
+            lm.removeUpdates(myLocationListener);
+        }
+        catch (Exception e) { Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show(); }
+    }// onDestroy
 
     @Nullable
     @Override
