@@ -133,6 +133,7 @@ public class DetailedPlan extends AppCompatActivity
                 {
                     Log.i("<<Invite FRIEND>>", "invite new friend");
                     Intent intent = new Intent(DetailedPlan.this, InviteFriends.class);
+                    intent.putExtra("PLAN_ID", specPlanId);
                     startActivity(intent);
                 }
                 else if(item.getItemId() == R.id.detailed_plan_toolbar_menu_chat)

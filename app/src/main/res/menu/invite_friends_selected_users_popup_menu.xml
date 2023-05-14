@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="view only"
+        android:enabled="true"
+        android:id="@+id/invite_friends_selected_users_popup_menu_viewonly"
+        android:contentDescription="view only role"/>
+
+    <item
+        android:title="editor"
+        android:enabled="true"
+        android:id="@+id/invite_friends_selected_users_popup_menu_editor"
+        android:contentDescription="editor role"/>
+
+    <item
+        android:title="remove"
+        android:enabled="true"
+        android:id="@+id/invite_friends_selected_users_popup_menu_remove"
+        android:contentDescription="remove"/>
+
+</menu>

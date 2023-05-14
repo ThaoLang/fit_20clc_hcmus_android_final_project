@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.arch.core.executor.TaskExecutor;
 
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
@@ -14,6 +15,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskExecutors;
+import com.google.common.collect.Lists;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,7 +36,18 @@ import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.RunnableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class DatabaseAccess {
     public static String[] default_avatar_url = {
@@ -81,6 +96,10 @@ public class DatabaseAccess {
     private static boolean isInitialized = false;
     private static boolean isUserInfoReady = false;
 
+    private static List<User> SearchedUserResultBuffer;
+
+    public static void initDatabaseAccess()
+    {
     public static void initDatabaseAccess() {
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
@@ -89,52 +108,62 @@ public class DatabaseAccess {
         isInitialized = true;
     }
 
-    public static boolean load_data() {
+    public static boolean load_data()
+    {
         Thread backgroundLoadDataThread = new Thread(new Runnable() {
             @Override
-            public void run() {
+            public void run()
+            {
                 firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getCurrentUser().getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful()) {
+                        if(task.isSuccessful())
+                        {
                             mainUserInfo = task.getResult().toObject(User.class);
                             handler.post(MainActivity.increaseProgress());
                             isUserInfoReady = true;
-                        } else {
+                        }
+                        else
+                        {
                             handler.post(MainActivity.hideProgressBar());
                         }
                     }
                 });
 
                 //load plans from database
-                while (MainActivity.getCurrentProgressStepOfProgressBar() < 1) {
+                while(MainActivity.getCurrentProgressStepOfProgressBar() < 1)
+                {
 //                    Log.i("Wait", "run: I'm stuck 1");
                 }
-                if (MainActivity.getCurrentProgressStepOfProgressBar() == MainActivity.getProgressMax()) {
+                if(MainActivity.getCurrentProgressStepOfProgressBar() == MainActivity.getProgressMax())
+                {
                     runForegroundTask(MainActivity.hideProgressBar());
                     return;
                 }
 
                 List<String> setOfPlanId = mainUserInfo.getPlans();
-                if (setOfPlanId.isEmpty()) {
+                if(setOfPlanId.isEmpty())
+                {
                     System.out.println("<<Loaddata>>: empty data");
                     return;
                 }
-                for (int i = 0; i < setOfPlanId.size(); i++) {
-                    System.out.println(i + ": " + setOfPlanId.get(i));
+                for(int i=0; i< setOfPlanId.size(); i++)
+                {
+                    System.out.println(i+ ": "+ setOfPlanId.get(i));
                 }
 
                 Query getSetPlansQuery = firestore.collection(ACCESS_PLANS_COLLECTION).whereIn("planId", setOfPlanId);
                 getSetPlansQuery.get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots.isEmpty()) {
+                        if(queryDocumentSnapshots.isEmpty())
+                        {
                             System.out.println("queryDoc is empty");
 
                             return;
                         }
                         List<DocumentSnapshot> docs = queryDocumentSnapshots.getDocuments();
-                        for (DocumentSnapshot doc : docs) {
+                        for (DocumentSnapshot doc: docs) {
                             Plan convertedDoc = doc.toObject(Plan.class);
                             Log.i("<<LoadData>>", "Plan " + convertedDoc.getPlanId() + " " + convertedDoc.getName());
                             plans.add(convertedDoc);
@@ -149,10 +178,12 @@ public class DatabaseAccess {
                     }
                 });
 
-                while (MainActivity.getCurrentProgressStepOfProgressBar() < 2) {
+                while(MainActivity.getCurrentProgressStepOfProgressBar() < 2)
+                {
 //                    Log.i("Wait", "run: I'm stuck 2");
                 }
-                for (int i = 0; i < plans.size(); i++) {
+                for(int i = 0; i< plans.size(); i++)
+                {
                     System.out.println(i + ": " + plans.get(i).getDeparture_date());
                 }
             }
@@ -161,43 +192,54 @@ public class DatabaseAccess {
         return true;
     }
 
-    synchronized public static boolean getInitStatus() {
+    synchronized public static boolean getInitStatus()
+    {
         return isInitialized;
     }
 
-    public static boolean getUserInfoStatus() {
+    public static boolean getUserInfoStatus()
+    {
         return isUserInfoReady;
     }
-
-    public static List<Plan> getDemoData() {
+    public static List<Plan> getDemoData()
+    {
         return demoData;
     }
 
-    public static FirebaseUser getCurrentUser() {
+    public static FirebaseUser getCurrentUser()
+    {
         return auth.getCurrentUser();
     }
 
-    public static User getMainUserInfo() {
+    public static User getMainUserInfo()
+    {
         return mainUserInfo;
     }
 
-    public static boolean setMainUserInfo(User newUserInfo) {
+    public static boolean setMainUserInfo(User newUserInfo)
+    {
         mainUserInfo = newUserInfo;
         return true;
     }
 
-    public static void updateUserInfo_In_Database(User newUserInfo, Runnable successfulForegroundAction, Runnable failedForegroundAction) {
-        if (auth == null || firestore == null) {
+    public static void updateUserInfo_In_Database(User newUserInfo, Runnable successfulForegroundAction, Runnable failedForegroundAction)
+    {
+        if(auth == null || firestore == null)
+        {
             return;
         }
 
         firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getUid()).set(newUserInfo).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful() && successfulForegroundAction != null) {
+                if(task.isSuccessful() && successfulForegroundAction != null)
+                {
                     handler.post(successfulForegroundAction);
-                } else {
-                    if (failedForegroundAction != null) {
+                }
+                else
+                {
+                    if(failedForegroundAction != null)
+                    {
                         handler.post(failedForegroundAction);
                     }
                 }
@@ -205,11 +247,13 @@ public class DatabaseAccess {
         });
     }
 
-    public static void runForegroundTask(@NotNull Runnable task) {
+    public static void runForegroundTask(@NotNull Runnable task)
+    {
         handler.post(task);
     }
 
-    public static void addNewPlan(@NotNull Plan newPlan, Runnable successfulTask, Runnable failureTask) {
+    public static void addNewPlan(@NotNull Plan newPlan, Runnable successfulTask, Runnable failureTask)
+    {
         Thread backgroundAddition = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -218,7 +262,6 @@ public class DatabaseAccess {
                     final DocumentReference accountDoc = firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getCurrentUser().getUid());
                     final DocumentReference plansDoc = firestore.collection(ACCESS_PLANS_COLLECTION).document();
                     final DocumentReference commentSetDoc = firestore.collection(ACCESS_COMMENT_SET_COLLECTION).document();
-
                     @Nullable
                     @Override
                     public String apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
@@ -259,7 +302,8 @@ public class DatabaseAccess {
                         //update the local list of plans
                         plans.add(newPlan);
 
-                        if (successfulTask != null) {
+                        if(successfulTask != null)
+                        {
                             runForegroundTask(successfulTask);
                         }
                     }
@@ -267,7 +311,8 @@ public class DatabaseAccess {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         System.out.println("Exception: " + e);
-                        if (failureTask != null) {
+                        if(failureTask != null)
+                        {
                             runForegroundTask(failureTask);
                         }
                     }
@@ -278,21 +323,27 @@ public class DatabaseAccess {
         backgroundAddition.start();
     }
 
-    public static List<Plan> getPlansByStatus(@NotNull String inputStatus) {
+    public static List<Plan> getPlansByStatus(@NotNull String inputStatus)
+    {
         List<Plan> suitablePlans = new ArrayList<Plan>();
-        for (int i = 0; i < plans.size(); i++) {
+        for(int i=0; i<plans.size(); i++)
+        {
             Plan planAtIndexI = plans.get(i);
-            if (planAtIndexI.getStatus().equals(inputStatus)) {
+            if(planAtIndexI.getStatus().equals(inputStatus))
+            {
                 suitablePlans.add(planAtIndexI);
             }
         }
         return suitablePlans;
     }
 
-    public static Plan getPlanById(@NotNull String planId) {
+    public static Plan getPlanById(@NotNull String planId)
+    {
         Plan specPlan = null;
-        for (int i = 0; i < plans.size(); i++) {
-            if (plans.get(i).getPlanId().equals(planId)) {
+        for(int i=0;i < plans.size(); i++)
+        {
+            if(plans.get(i).getPlanId().equals(planId))
+            {
                 specPlan = plans.get(i);
                 break;
             }
@@ -300,11 +351,14 @@ public class DatabaseAccess {
         return specPlan;
     }
 
-    public static Plan getClonePlanById(@NotNull String planId) {
+    public static Plan getClonePlanById(@NotNull String planId)
+    {
         Plan specPlan = null;
         Plan clone = new Plan();
-        for (int i = 0; i < plans.size(); i++) {
-            if (plans.get(i).getPlanId().equals(planId)) {
+        for(int i=0;i < plans.size(); i++)
+        {
+            if(plans.get(i).getPlanId().equals(planId))
+            {
                 specPlan = plans.get(i);
                 break;
             }
@@ -314,15 +368,35 @@ public class DatabaseAccess {
         clone = Plan.byteArrayToObject(bytes);
         return clone;
     }
-
     public static FirebaseFirestore getFirestore() {
         return firestore;
     }
 
-    public static FirebaseStorage getFirebaseStorage() {
+    public static FirebaseStorage getFirebaseStorage()
+    {
         return firebaseStorage;
     }
 
+    public static List<User> getSearchedUserBuffer()
+    {
+        return SearchedUserResultBuffer;
+    }
+
+    public static List<User> getCloneSearchedUserBuffer()
+    {
+        List<User> newBuffer = new ArrayList<User>();
+
+        for(int i = 0; i < SearchedUserResultBuffer.size(); i++)
+        {
+            byte[] bytes = User.fromObjectToBytes(SearchedUserResultBuffer.get(i));
+            User newItem = User.fromBytesToObject(bytes);
+            newBuffer.add(newItem);
+        }
+        return newBuffer;
+    }
+
+    public static void addNewDestinationTo(@NotNull Destination newDestination, @NotNull String planId, Runnable successfulTask, Runnable failedTask)
+    {
     public static void addNewDestinationTo(@NotNull Destination newDestination, @NotNull String planId, Runnable successfulTask, Runnable failedTask) {
         Thread backgroundTask = new Thread(new Runnable() {
             @Override
@@ -333,7 +407,8 @@ public class DatabaseAccess {
                             @Override
                             public void onSuccess(Void unused) {
                                 getPlanById(planId).addNewLocation(newDestination);
-                                if (successfulTask != null) {
+                                if(successfulTask != null)
+                                {
                                     runForegroundTask(successfulTask);
                                 }
                             }
@@ -341,7 +416,8 @@ public class DatabaseAccess {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.e("<<Add destination exception>> ", e.getMessage());
-                                if (failedTask != null) {
+                                if(failedTask != null)
+                                {
                                     runForegroundTask(failedTask);
                                 }
                             }
@@ -351,7 +427,8 @@ public class DatabaseAccess {
         backgroundTask.start();
     }
 
-    public static void updateDestinationListTo(@NotNull List<Destination> newList, @NotNull String planId, Runnable successfulTask, Runnable failureTask) {
+    public static void updateDestinationListTo(@NotNull List<Destination> newList,@NotNull String planId, Runnable successfulTask, Runnable failureTask)
+    {
         Thread backgroundTask = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -359,20 +436,24 @@ public class DatabaseAccess {
                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
-                                for (int i = 0; i < plans.size(); i++) {
-                                    if (plans.get(i).getPlanId().equals(planId)) {
+                                for(int i=0; i< plans.size(); i++)
+                                {
+                                    if(plans.get(i).getPlanId().equals(planId))
+                                    {
                                         plans.get(i).setListOfLocations(newList);
                                         break;
                                     }
                                 }
-                                if (successfulTask != null) {
+                                if(successfulTask != null)
+                                {
                                     handler.post(successfulTask);
                                 }
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
-                                if (failureTask != null) {
+                                if(failureTask != null)
+                                {
                                     handler.post(failureTask);
                                 }
                             }
@@ -383,11 +464,12 @@ public class DatabaseAccess {
         backgroundTask.start();
     }
 
-    public static void updatePlanInfo(@NotNull Plan newPlanInfo, Runnable successfulTask, Runnable failedTask) {
+    public static void updatePlanInfo(@NotNull Plan newPlanInfo, Runnable successfulTask, Runnable failedTask)
+    {
         Thread backgroundTask = new Thread(new Runnable() {
             @Override
             public void run() {
-                DocumentReference planDoc = firestore.collection(ACCESS_PLANS_COLLECTION).document(newPlanInfo.getPlanId());
+                DocumentReference planDoc =  firestore.collection(ACCESS_PLANS_COLLECTION).document(newPlanInfo.getPlanId());
 
                 firestore.runTransaction(new Transaction.Function<String>() {
                     @Nullable
@@ -458,14 +540,16 @@ public class DatabaseAccess {
                             @Override
                             public void onSuccess(Void unused) {
                                 mainUserInfo.getPlans().remove(planId);
-                                for (int i = 0; i < plans.size(); i++) {
-                                    if (mainUserInfo.getPlans().get(i).equals(planId)) {
+                                for (int i=0;i<plans.size();i++){
+                                    if (mainUserInfo.getPlans().get(i).equals(planId))
+                                    {
                                         mainUserInfo.getPlans().remove(i);
                                         plans.remove(i);
                                         break;
                                     }
                                 }
-                                if (successfulTask != null) {
+                                if(successfulTask != null)
+                                {
                                     runForegroundTask(successfulTask);
                                 }
 
@@ -475,7 +559,8 @@ public class DatabaseAccess {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.e("Leave trip", e.getMessage());
-                                if (failedTask != null) {
+                                if(failedTask != null)
+                                {
                                     runForegroundTask(failedTask);
                                 }
                             }
@@ -484,6 +569,239 @@ public class DatabaseAccess {
         });
 
         backgroundThread.start();
+    }
+
+
+    public static void getUserByRelativeName(@NotNull String keyword, Runnable successfulTask, Runnable failureTask)
+    {
+        synchronized (SearchedUserResultBuffer)
+        {
+            SearchedUserResultBuffer.clear();
+        }
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Log.i("search background task", "yes");
+                //List<String> keywordsAsList = Arrays.asList(keywords);
+                //System.out.println(keywordsAsList);
+                firestore.collection(ACCESS_ACCOUNT_COLLECTION)
+                        .whereGreaterThanOrEqualTo("name", keyword)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                Log.i("onSuccess","yes, size= " + queryDocumentSnapshots.size());
+                                if(!queryDocumentSnapshots.isEmpty())
+                                {
+                                    for(DocumentSnapshot document : queryDocumentSnapshots)
+                                    {
+                                        User relevantUser = document.toObject(User.class);
+                                        SearchedUserResultBuffer.add(relevantUser);
+                                    }
+                                    if(successfulTask != null)
+                                    {
+                                        runForegroundTask(successfulTask);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("SEARCH_BY_RELATIVE_NAME ERROR", e.getMessage());
+                                if(failureTask != null)
+                                {
+                                    runForegroundTask(failureTask);
+                                }
+                            }
+                        });
+            }
+        });
+        backgroundTask.start();
+    }
+
+    public static void getUserByRelativeEmail(@NotNull String keyword, Runnable successfulTask, Runnable failureTask)
+    {
+        synchronized(SearchedUserResultBuffer)
+        {
+            SearchedUserResultBuffer.clear();
+        }
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firestore.collection(ACCESS_ACCOUNT_COLLECTION)
+                        .whereGreaterThanOrEqualTo("email", keyword)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                Log.i("onSuccess","yes, size= " + queryDocumentSnapshots.size());
+                                if(!queryDocumentSnapshots.isEmpty())
+                                {
+                                    for(DocumentSnapshot document : queryDocumentSnapshots)
+                                    {
+                                        User relevantUser = document.toObject(User.class);
+                                        SearchedUserResultBuffer.add(relevantUser);
+                                    }
+                                    if(successfulTask != null)
+                                    {
+                                        runForegroundTask(successfulTask);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("SEARCH_BY_RELATIVE_EMAIL ERROR", e.getMessage());
+                                if(failureTask != null)
+                                {
+                                    runForegroundTask(failureTask);
+                                }
+                            }
+                        });
+            }
+        });
+        backgroundTask.start();
+    }
+
+    public static void getUserByEmail(@NotNull String keyword, Runnable successfulTask, Runnable failureTask)
+    {
+        synchronized (SearchedUserResultBuffer)
+        {
+            SearchedUserResultBuffer.clear();
+        }
+
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firestore.collection(ACCESS_ACCOUNT_COLLECTION)
+                        .whereEqualTo("email", keyword)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                Log.i("onSuccess","yes, size= " + queryDocumentSnapshots.size());
+                                if(!queryDocumentSnapshots.isEmpty())
+                                {
+                                    for(DocumentSnapshot document : queryDocumentSnapshots)
+                                    {
+                                        User relevantUser = document.toObject(User.class);
+                                        SearchedUserResultBuffer.add(relevantUser);
+                                    }
+                                    if(successfulTask != null)
+                                    {
+                                        runForegroundTask(successfulTask);
+                                    }
+                                }
+
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("SEARCH_BY_EMAIL ERROR", e.getMessage());
+                                if(failureTask != null)
+                                {
+                                    runForegroundTask(failureTask);
+                                }
+                            }
+                        });
+            }
+        });
+        backgroundTask.start();
+    }
+
+    public static void getUserByRelativePhoneNumber(@NotNull String keyword, Runnable successfulTask, Runnable failureTask)
+    {
+        synchronized (SearchedUserResultBuffer)
+        {
+            SearchedUserResultBuffer.clear();
+        }
+
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firestore.collection(ACCESS_ACCOUNT_COLLECTION)
+                        .whereGreaterThanOrEqualTo("phone", keyword)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                Log.i("onSuccess","yes, size= " + queryDocumentSnapshots.size());
+                                if(!queryDocumentSnapshots.isEmpty())
+                                {
+                                    for(DocumentSnapshot document : queryDocumentSnapshots)
+                                    {
+                                        User relevantUser = document.toObject(User.class);
+                                        SearchedUserResultBuffer.add(relevantUser);
+                                    }
+                                    if(successfulTask != null)
+                                    {
+                                        runForegroundTask(successfulTask);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("SEARCH_BY_RELATIVE_PHONE ERROR", e.getMessage());
+                                if(failureTask != null)
+                                {
+                                    runForegroundTask(failureTask);
+                                }
+                            }
+                        });
+            }
+        });
+        backgroundTask.start();
+    }
+
+    public static void getUserByPhoneNumber(@NotNull String keyword, Runnable successfulTask, Runnable failureTask)
+    {
+        synchronized(SearchedUserResultBuffer)
+        {
+            SearchedUserResultBuffer.clear();
+        }
+
+        Thread backgroundTask = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                firestore.collection(ACCESS_ACCOUNT_COLLECTION)
+                        .whereEqualTo("phone", keyword)
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                Log.i("onSuccess","yes, size= " + queryDocumentSnapshots.size());
+                                if(!queryDocumentSnapshots.isEmpty())
+                                {
+                                    for(DocumentSnapshot document: queryDocumentSnapshots)
+                                    {
+                                        User relevantUser = document.toObject(User.class);
+                                        SearchedUserResultBuffer.add(relevantUser);
+                                    }
+                                    if(successfulTask != null)
+                                    {
+                                        runForegroundTask(successfulTask);
+                                    }
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("SEARCH_BY_PHONE", e.getMessage());
+                                if(failureTask != null)
+                                {
+                                    runForegroundTask(failureTask);
+                                }
+                            }
+                        });
+            }
+        });
+        backgroundTask.start();
     }
 }
 

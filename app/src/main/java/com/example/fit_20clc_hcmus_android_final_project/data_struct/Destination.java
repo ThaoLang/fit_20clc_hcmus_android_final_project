@@ -145,6 +145,8 @@ public class Destination implements Serializable {
         {
             ObjectOutputStream oos = new ObjectOutputStream(baos);
             oos.writeObject(destination);
+            baos.close();
+            oos.close();
             return baos.toByteArray();
 
         } catch (IOException e) {
@@ -160,6 +162,8 @@ public class Destination implements Serializable {
         {
             ObjectInputStream ois = new ObjectInputStream(bais);
             Destination dest = (Destination) ois.readObject();
+            bais.close();
+            ois.close();
             return dest;
         }
         catch(IOException | ClassNotFoundException e)

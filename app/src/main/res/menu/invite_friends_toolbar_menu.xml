@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/invite_friend_toolbar_search_filter"
-        android:title="confirm changes"
+        android:title="search filter"
         android:icon="@drawable/filter_alt_48px"
         android:contentDescription="Search filter"
         android:iconTint="@color/cardview_light_background"

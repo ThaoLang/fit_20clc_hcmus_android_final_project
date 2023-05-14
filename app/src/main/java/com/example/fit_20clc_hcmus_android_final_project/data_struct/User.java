@@ -1,16 +1,25 @@
 package com.example.fit_20clc_hcmus_android_final_project.data_struct;
 
+import android.util.Log;
+
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.DataAccessBufferItem;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 
 @IgnoreExtraProperties
-public class User {
+public class User implements Serializable {
     private String _username;
     private String _useremail;
     private String _userphone;
@@ -212,5 +221,42 @@ public class User {
             return;
         }
         _plans.remove(index);
+    }
+
+
+    public static byte[] fromObjectToBytes(User user) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try
+        {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(user);
+            baos.close();
+            oos.close();
+            return baos.toByteArray();
+        } catch (IOException e) {
+            Log.e("<<Serializable error>>", e.getMessage());
+            return null;
+        }
+    }
+
+    public static User fromBytesToObject(byte[] bytes)
+    {
+        try
+        {
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            User user = (User) ois.readObject();
+            bais.close();
+            ois.close();
+            return user;
+        }
+        catch (IOException ioe)
+        {
+            return null;
+        }
+        catch (ClassNotFoundException cnfe)
+        {
+            return null;
+        }
     }
 }

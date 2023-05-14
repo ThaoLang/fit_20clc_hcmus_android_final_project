@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
+    android:layout_marginVertical="10dp"
+    android:layout_marginHorizontal="5dp"
     android:paddingHorizontal="15dp"
     android:paddingVertical="10dp">
 
@@ -12,17 +14,29 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:shapeAppearanceOverlay="@style/circle"
+        android:layout_gravity="center_vertical"
         app:strokeWidth="2dp"
         />
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/detailed_plan_traveler_custom_row_travelername"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
+        android:maxWidth="250dp"
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:text="Traveler's name"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="15dp"
         app:fontFamily="sans-serif-condensed-medium"
+        android:textColor="@color/cardview_dark_background"
+        />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/detailed_plan_traveler_custom_row_main_button"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:text="Invite"
+        android:layout_marginLeft="-20dp"
+        android:backgroundTint="@color/CustomColor10"
         />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

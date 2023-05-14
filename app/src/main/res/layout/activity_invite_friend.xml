@@ -121,7 +121,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:padding="10dp"
                 android:scrollbarSize="10dp"/>
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -160,7 +159,6 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:padding="10dp"
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
