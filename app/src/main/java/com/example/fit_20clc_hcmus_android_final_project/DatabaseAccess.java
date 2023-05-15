@@ -6,8 +6,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.arch.core.executor.TaskExecutor;
 
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.StringFunctionStringParam;
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFunction_StringParam;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.CloudNotification;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
@@ -15,9 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskExecutors;
-import com.google.common.collect.Lists;
-import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -36,18 +35,10 @@ import com.google.firebase.storage.UploadTask;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.RunnableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.Map;
+
 
 public class DatabaseAccess {
     public static String[] default_avatar_url = {
@@ -82,12 +73,17 @@ public class DatabaseAccess {
     public static String ACCESS_COMMENTS_STORAGE = "comments/";
     public static String ACCESS_AVATARS_STORAGE = "account/";
 
+    public static String ACCESS_NOTIFICATION_COLLECTION = "notification";
+
+    public static String ACCESS_ALARM_COLLECTION = "alarm";
+
     private static FirebaseAuth auth;
     private static User mainUserInfo;
 
     private static List<Plan> plans;
     private static FirebaseFirestore firestore;
     private static FirebaseStorage firebaseStorage;
+
 
     private static Handler handler = new Handler();
 
@@ -96,10 +92,9 @@ public class DatabaseAccess {
     private static boolean isInitialized = false;
     private static boolean isUserInfoReady = false;
 
-    private static List<User> SearchedUserResultBuffer;
+    private static List<User> SearchedUserResultBuffer = new ArrayList<>();
 
-    public static void initDatabaseAccess()
-    {
+
     public static void initDatabaseAccess() {
         auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
@@ -140,6 +135,7 @@ public class DatabaseAccess {
                     runForegroundTask(MainActivity.hideProgressBar());
                     return;
                 }
+
 
                 List<String> setOfPlanId = mainUserInfo.getPlans();
                 if(setOfPlanId.isEmpty())
@@ -351,6 +347,7 @@ public class DatabaseAccess {
         return specPlan;
     }
 
+
     public static Plan getClonePlanById(@NotNull String planId)
     {
         Plan specPlan = null;
@@ -395,8 +392,7 @@ public class DatabaseAccess {
         return newBuffer;
     }
 
-    public static void addNewDestinationTo(@NotNull Destination newDestination, @NotNull String planId, Runnable successfulTask, Runnable failedTask)
-    {
+
     public static void addNewDestinationTo(@NotNull Destination newDestination, @NotNull String planId, Runnable successfulTask, Runnable failedTask) {
         Thread backgroundTask = new Thread(new Runnable() {
             @Override
@@ -803,6 +799,37 @@ public class DatabaseAccess {
         });
         backgroundTask.start();
     }
+
+    //invite friends
+    public static void pushCloudNotification(@NotNull CloudNotification notification, @NotNull List<String> list_email_to_alarm, Runnable successfulTask, Runnable failureTask)
+    {
+//        if(firestore == null)
+//        {
+//            return;
+//        }
+//
+//        String newNotificationId = firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document().getId();
+//
+//        firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document(newNotificationId)
+//                .set(notification)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void unused) {
+//
+//                    }
+//                });
+    }
+
+/*    public static void pushCloudNotification()
+    {
+        if(firestore == null)
+        {
+            return;
+        }
+
+        String newNotificationId = firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document().getId();
+        System.out.println(newNotificationId);
+    }*/
 }
 
 

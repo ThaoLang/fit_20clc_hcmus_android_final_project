@@ -162,7 +162,7 @@
                 />
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/detailed_plans_fab"
+                android:id="@+id/invite_friends_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"

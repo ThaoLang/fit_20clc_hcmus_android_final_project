@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import com.example.fit_20clc_hcmus_android_final_project.R;
+import com.google.firebase.firestore.remote.FirestoreChannel;
 
 public class NotificationService extends ContextWrapper {
     final private String CHANNEL_ID = "NOTIFICATION_CH_ID";

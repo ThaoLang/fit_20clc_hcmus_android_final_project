@@ -1,5 +1,6 @@
 package com.example.fit_20clc_hcmus_android_final_project;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -23,6 +24,7 @@ import com.example.fit_20clc_hcmus_android_final_project.adapter.InviteFriendAda
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
@@ -36,6 +38,8 @@ public class InviteFriends extends AppCompatActivity
     private TextInputEditText search;
     private RecyclerView suggestions, selected;
     private MaterialTextView no_searched_result, no_selected_friends;
+
+    private FloatingActionButton sendInviteButton;
 
     private ShapeableImageView searchModeIcon;
 
@@ -106,6 +110,7 @@ public class InviteFriends extends AppCompatActivity
         no_searched_result = findViewById(R.id.invite_friend_no_searched_results);
         no_selected_friends = findViewById(R.id.invite_friend_no_selected);
         searchModeIcon = findViewById(R.id.invite_friend_search_mode_icon);
+        sendInviteButton = findViewById(R.id.invite_friends_fab);
 
         search_mode = 0;
         Intent initIntent = getIntent();
@@ -265,6 +270,19 @@ public class InviteFriends extends AppCompatActivity
                 }
             }
         };
+
+        sendInviteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                if(selected_result.isEmpty())
+//                {
+//                    finish();
+//                    return;
+//                }
+
+                /*DatabaseAccess.pushCloudNotification();*/
+            }
+        });
 
         getOnBackPressedDispatcher().addCallback(backPressedCallback);
 

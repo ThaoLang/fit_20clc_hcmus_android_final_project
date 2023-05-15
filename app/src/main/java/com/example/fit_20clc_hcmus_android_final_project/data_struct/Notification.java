@@ -34,4 +34,5 @@ public class Notification {
     private String title;
     private String content;
     private String tripId;
+
 }

@@ -22,7 +22,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,7 +133,10 @@ public class Registration extends AppCompatActivity {
                                 @Override
                                 public void onSuccess(Void unused) {
                                     Toast.makeText(Registration.this,"Create account successfully",Toast.LENGTH_SHORT).show();
-
+                                    Map<String, List<String>> field = new HashMap<String, List<String>>();
+                                    field.put("changes", new ArrayList<String>());
+                                    DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_ALARM_COLLECTION)
+                                            .document(email).set(field);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
