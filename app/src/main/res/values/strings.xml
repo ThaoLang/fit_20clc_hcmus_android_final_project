@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">fit_20clc_hcmus_android_final_project</string>
+    <string name="app_name">Tripuddy</string>
     <string name="bottom_nav_search">Search</string>
     <string name="bottom_nav_trips">Trips</string>
     <string name="bottom_nav_notification">Notification</string>
