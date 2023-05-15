@@ -11,29 +11,16 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.denzcoskun.imageslider.constants.ScaleTypes;
-import com.denzcoskun.imageslider.models.SlideModel;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
-import com.example.fit_20clc_hcmus_android_final_project.DetailedPost;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Chat;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Location;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
-import com.example.fit_20clc_hcmus_android_final_project.data_struct.Post;
 import com.example.fit_20clc_hcmus_android_final_project.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.StorageReference;
 
@@ -41,20 +28,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
-    private Post[] posts={
-        new Post(R.drawable.bali,"Lang Thao",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,11),
-        new Post(R.drawable.bali,"Khanh Nguyen",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,12),
-        new Post(R.drawable.bali,"Hoai Phuong",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,13),
-        new Post(R.drawable.bali,"Minh Quang",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,1),
-        new Post(R.drawable.bali,"Toan Hao",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,2),
-        new Post(R.drawable.bali,"Minh Tri",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,3),
-        new Post(R.drawable.bali,"Minh Thong",R.drawable.bali,"Bali 5N4D hot Instagram from HCM",5,5000000,4)
-    };
 
     private ArrayList<Plan> plans;
     Context context;
@@ -63,18 +40,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     public void setListener(PostAdapter.Callbacks listener) {
         this.listener = listener;
     }
-    // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
-    // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
+
     public interface Callbacks {
         void swapToPost(Plan plan);
     }
-
-    /**
-     * Initialize the posts of the Adapter.
-     * <p>
-     * param posts String[] containing the data to populate views to be used
-     * by RecyclerView.
-     */
 
     public PostAdapter(Context _context,ArrayList<Plan> _plans) {
         this.context = _context;
@@ -82,16 +51,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
         Log.e("HOW MANY POST",String.valueOf(this.plans.size()));
     }
-
-//    public PostAdapter(Context _context, ArrayList<String> posts) {
-//        this.context = _context;
-//        this.posts = posts;
-//    }
-
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
-     */
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private final ImageView avatar;
@@ -107,16 +66,15 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
 
-            name = (TextView) view.findViewById(R.id.profile_name);
-            number_comment = (TextView) view.findViewById(R.id.number_comment);
-            description = (TextView) view.findViewById(R.id.post_title);
-            travel_period = (TextView) view.findViewById(R.id.trip_time);
-            number_like = (TextView) view.findViewById(R.id.number_like);
-            status = (TextView) view.findViewById(R.id.status);
-            avatar = (ImageView) view.findViewById(R.id.profile_image);
-            main_image = (ImageView) view.findViewById(R.id.trip_image);
+            name = view.findViewById(R.id.profile_name);
+            number_comment = view.findViewById(R.id.number_comment);
+            description = view.findViewById(R.id.post_title);
+            travel_period = view.findViewById(R.id.trip_time);
+            number_like = view.findViewById(R.id.number_like);
+            status = view.findViewById(R.id.status);
+            avatar = view.findViewById(R.id.profile_image);
+            main_image = view.findViewById(R.id.trip_image);
 
             view.setOnClickListener(this);
         }
@@ -134,61 +92,40 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
     }
 
 
-    // Create new views (invoked by the layout manager)
     @Override
     public PostAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
 
-        // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.fragment_post_small_item, viewGroup, false);
 
         return new PostAdapter.ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(PostAdapter.ViewHolder viewHolder, final int position) {
 
-        // Get element from your posts at this position and replace the
-        // contents of the view with that element
-        String account_name;
-        String account_avatar="";
         //get account
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("account")
                 .whereEqualTo("userEmail", plans.get(position).getOwner_email())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (!querySnapshot.isEmpty()) {
-                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    viewHolder.name.setText(document.get("name").toString());
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (!querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                viewHolder.name.setText(String.valueOf(document.get("name")));
 
-                                    final long MAX_BYTE = 1024 * 2 * 1024;
-                                    StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(String.valueOf(document.get("avatarUrl")));
-                                    storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                        @Override
-                                        public void onSuccess(byte[] bytes) {
-                                            Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                            viewHolder.avatar.setImageBitmap(image);
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Glide.with(context.getApplicationContext())
-                                                    .load(String.valueOf(document.get("avatarUrl")))
-                                                    .into(viewHolder.avatar);
-                                        }
-                                    });
-                                }
-                            } else {
+                                final long MAX_BYTE = 1024 * 2 * 1024;
+                                StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(String.valueOf(document.get("avatarUrl")));
+                                storageReference.getBytes(MAX_BYTE).addOnSuccessListener(bytes -> {
+                                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    viewHolder.avatar.setImageBitmap(image);
+                                }).addOnFailureListener(e -> Glide.with(context.getApplicationContext())
+                                        .load(String.valueOf(document.get("avatarUrl")))
+                                        .into(viewHolder.avatar));
                             }
-
-                        } else {
                         }
                     }
                 });
@@ -201,20 +138,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         } else {
             final long MAX_BYTE = 1024 * 2 * 1024;
             StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(plans.get(position).getImageLink());
-            storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    viewHolder.main_image.setImageBitmap(image);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Random rng = new Random();
-                    Glide.with(context.getApplicationContext())
-                            .load(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)])
-                            .into(viewHolder.main_image);
-                }
+            storageReference.getBytes(MAX_BYTE).addOnSuccessListener(bytes -> {
+                Bitmap image = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                viewHolder.main_image.setImageBitmap(image);
+            }).addOnFailureListener(e -> {
+                Random rng = new Random();
+                Glide.with(context.getApplicationContext())
+                        .load(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)])
+                        .into(viewHolder.main_image);
             });
         }
 //
@@ -249,17 +180,13 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         }
 
 
-        viewHolder.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onClick(View view, int position, boolean isLongClick) {
+        viewHolder.setItemClickListener((view, position1, isLongClick) -> {
 
-                //can swap to another activity using this method
-                listener.swapToPost(plans.get(position));
-            }
+            //can swap to another activity using this method
+            listener.swapToPost(plans.get(position1));
         });
     }
 
-    // Return the size of your posts (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return plans.size();
