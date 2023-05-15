@@ -45,15 +45,6 @@ import java.util.List;
 import java.util.Random;
 
 public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocationAdapter.ViewHolder>{
-//    private FavoriteLocation[] favoriteLocations={
-//            new FavoriteLocation(R.drawable.bali,"Bali"),
-//            new FavoriteLocation(R.drawable.bali,"Bali"),
-//            new FavoriteLocation(R.drawable.bali,"Bali"),
-//            new FavoriteLocation(R.drawable.bali,"Bali"),
-//            new FavoriteLocation(R.drawable.bali,"Bali"),
-//            new FavoriteLocation(R.drawable.bali,"Bali")
-//            };
-
     private List<String> favorite_locations;
     Context context;
 
@@ -61,34 +52,16 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
     public void setListener(FavoriteLocationAdapter.Callbacks listener) {
         this.listener = listener;
     }
-    // nesting it inside MyAdapter makes the path MyAdapter.Callbacks, which makes it clear
-    // exactly what it is and what it relates to, and kinda gives the Adapter "ownership"
+
     public interface Callbacks {
         void swapToLocationInfo(String locationName);
     }
-
-    /**
-     * Initialize the posts of the Adapter.
-     * <p>
-     * param posts String[] containing the data to populate views to be used
-     * by RecyclerView.
-     */
 
     public FavoriteLocationAdapter(Context _context,List<String> _favorite_locations) {
         this.context = _context;
         this.favorite_locations=new ArrayList<String>(_favorite_locations);
         Log.e("FAVORITE SIZE", String.valueOf(this.favorite_locations.size()));
     }
-
-//    public FavoriteLocationAdapter(Context _context, ArrayList<String> posts) {
-//        this.context = _context;
-//        this.posts = posts;
-//    }
-
-    /**
-     * Provide a reference to the type of views that you are using
-     * (custom ViewHolder).
-     */
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -99,10 +72,9 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
 
         public ViewHolder(View view) {
             super(view);
-            // Define click listener for the ViewHolder's View
 
-            name = (TextView) view.findViewById(R.id.favorite_location_name);
-            main_image = (ImageView) view.findViewById(R.id.location_image);
+            name = view.findViewById(R.id.favorite_location_name);
+            main_image = view.findViewById(R.id.location_image);
 
             view.setOnClickListener(this);
         }
@@ -119,99 +91,56 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
 
     }
 
-
-    // Create new views (invoked by the layout manager)
     @Override
     public FavoriteLocationAdapter.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-        // Create a new view, which defines the UI of the list item
         View view = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.custom_favorite_location_item, viewGroup, false);
 
         return new FavoriteLocationAdapter.ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(FavoriteLocationAdapter.ViewHolder viewHolder, final int position) {
-
-        // Get element from your posts at this position and replace the
-        // contents of the view with that element
-//        if (favorite_locations==null){
-//            favorite_locations= new List<String>
-//        }
-        //viewHolder.name.setText(favoriteLocations[position].getName());
-//        viewHolder.name.setText(favorite_locations.get(position));
-//        StreetViewImageLoader imageLoader = new StreetViewImageLoader(viewHolder.main_image);
-//        Geocoder geocoder = new Geocoder(context);
-//        String latitude="";
-//        String longitude="";
-//        try {
-//            List<Address> addresses = geocoder.getFromLocationName(favorite_locations.get(position), 1);
-//            if (addresses != null && !addresses.isEmpty()) {
-//                Address addressResult = addresses.get(0);
-//                latitude = String.valueOf(addressResult.getLatitude());
-//                longitude = String.valueOf(addressResult.getLongitude());
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        imageLoader.execute(latitude+","+longitude, "640x640", BuildConfig.API_KEY);
-
-
-        //viewHolder.main_image.setImageResource(favoriteLocations[position].getImage());
-
         viewHolder.name.setText(favorite_locations.get(position));
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("location")
                 .whereEqualTo("formalName", favorite_locations.get(position))
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (!querySnapshot.isEmpty()) {
-                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    // Xử lí khi có kết quả trả về
-                                    Log.e("HIHIHI",document.get("images").toString());
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (!querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                Log.e("HIHIHI", String.valueOf(document.get("images")));
 
-                                    List<String> imagesList = (List<String>) document.get("images");
-                                    Glide.with(context.getApplicationContext())
-                                            .load(imagesList.get(0))
-                                            .into(viewHolder.main_image);
-
-                                }
-                            } else {
-                                // Xử lí khi không có kết quả trả về
-                                Random rng=new Random();
-                                Log.e("ERROR GLIDE","YES");
+                                List<String> imagesList = (List<String>) document.get("images");
                                 Glide.with(context.getApplicationContext())
-                                        .load(DatabaseAccess.default_image_url[0])
+                                        .load(imagesList.get(0))
                                         .into(viewHolder.main_image);
 
                             }
-
                         } else {
-                            // Xử lí khi có lỗi xảy ra
                             Random rng=new Random();
-                            Log.e("ERROR GLIDE","NO");
+                            Log.e("ERROR GLIDE","YES");
                             Glide.with(context.getApplicationContext())
-                                    .load(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)])
+                                    .load(DatabaseAccess.default_image_url[0])
                                     .into(viewHolder.main_image);
+
                         }
 
+                    } else {
+                        Random rng=new Random();
+                        Log.e("ERROR GLIDE","NO");
+                        Glide.with(context.getApplicationContext())
+                                .load(DatabaseAccess.default_image_url[rng.nextInt(DatabaseAccess.default_image_url.length)])
+                                .into(viewHolder.main_image);
                     }
+
                 });
 
-        viewHolder.setItemClickListener(new ItemClickListener() {
-            @Override
-            public void onClick(View view, int position, boolean isLongClick) {
-                listener.swapToLocationInfo(favorite_locations.get(position));
-            }
-        });
+        viewHolder.setItemClickListener((view, position1, isLongClick) -> listener.swapToLocationInfo(favorite_locations.get(position1)));
     }
 
-    // Return the size of your posts (invoked by the layout manager)
     @Override
     public int getItemCount() {
         return favorite_locations.size();
@@ -219,7 +148,7 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
 
     private static class StreetViewImageLoader extends AsyncTask<String, Void, Bitmap> {
 
-        private ImageView imageView; // ImageView để hiển thị ảnh
+        private ImageView imageView;
 
         public StreetViewImageLoader(ImageView imageView) {
             this.imageView = imageView;
@@ -227,7 +156,7 @@ public class FavoriteLocationAdapter extends RecyclerView.Adapter<FavoriteLocati
 
         @Override
         protected Bitmap doInBackground(String... params) {
-            String location = params[0]; // Địa điểm dưới dạng "latitude,longitude"
+            String location = params[0]; // "latitude,longitude"
             String size = params[1]; // Kích thước ảnh, ví dụ "640x640"
             String key = params[2]; // Mã API của Google Maps
 

@@ -20,26 +20,17 @@ import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.ActivityHomepageBinding;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomePage#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class HomePage extends Fragment implements FavoriteLocationAdapter.Callbacks, PostAdapter.Callbacks { //TODO: implement other adapter callbacks as well
+public class HomePage extends Fragment implements FavoriteLocationAdapter.Callbacks, PostAdapter.Callbacks {
 
     private static final String ARG_PARAM1 = "param1";
-
     private String mParam1;
 
     private MainActivity main_activity;
@@ -47,12 +38,12 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
 
     LinearLayoutManager recentPostManager;
     LinearLayoutManager favoriteLocationManager;
-    LinearLayoutManager nearbyLocationManager;
+    LinearLayoutManager popularLocationManager;
     ActivityHomepageBinding binding;
 
     private PostAdapter postAdapter;
     private FavoriteLocationAdapter favoriteLocationAdapter;
-    private FavoriteLocationAdapter nearbyLocationAdapter;
+    private FavoriteLocationAdapter popularLocationAdapter;
 
     public HomePage() {
         // Required empty public constructor
@@ -76,25 +67,23 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
         try {
             context = getActivity();
             main_activity = (MainActivity) getActivity();
-        }
-        catch (IllegalStateException e)
-        {
+        } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
 
     }
+
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-        if (DatabaseAccess.getMainUserInfo()==null){
+        if (DatabaseAccess.getMainUserInfo() == null) {
             return;
         }
-        if (DatabaseAccess.getMainUserInfo().getFavorite_locations()==null){
+        if (DatabaseAccess.getMainUserInfo().getFavorite_locations() == null) {
             binding.emptyPlaceText.setVisibility(View.VISIBLE);
-        }
-        else{
+        } else {
             binding.emptyPlaceText.setVisibility(View.GONE);
-            favoriteLocationAdapter = new FavoriteLocationAdapter(context,DatabaseAccess.getMainUserInfo().getFavorite_locations());
+            favoriteLocationAdapter = new FavoriteLocationAdapter(context, DatabaseAccess.getMainUserInfo().getFavorite_locations());
             favoriteLocationAdapter.setListener(HomePage.this);
             binding.favoriteLocations.setAdapter(favoriteLocationAdapter);
             binding.favoriteLocations.smoothScrollToPosition(0);
@@ -107,202 +96,112 @@ public class HomePage extends Fragment implements FavoriteLocationAdapter.Callba
         binding = ActivityHomepageBinding.inflate(inflater, container, false);
 
         //recent posts
-        recentPostManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL,false);
+        recentPostManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
         recentPostManager.setStackFromEnd(true);
 
         binding.listPost.setLayoutManager(recentPostManager);
 
-        ArrayList<Plan> plans= new ArrayList<Plan>();
-        FirebaseFirestore fb = FirebaseFirestore.getInstance();
-//        FirebaseFirestore fb = DatabaseAccess.getFirestore();
-
+        ArrayList<Plan> plans = new ArrayList<>();
+        FirebaseFirestore fb = DatabaseAccess.getFirestore();
 
         fb.collection("plans")
-                .whereEqualTo("publicAttribute",Boolean.valueOf("true"))
+                .whereEqualTo("publicAttribute", Boolean.valueOf("true"))
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful())
-                        {
-                            QuerySnapshot querySnapshot = task.getResult();
-                            if (!querySnapshot.isEmpty()) {
-                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    Plan plan = document.toObject(Plan.class);
-
-//                                    String owner_email = document.get("owner_email").toString();
-//                                    String name = document.get("name").toString();
-//                                    String imageLink = document.get("imageLink").toString();
-//                                    String planId = document.get("planId").toString();
-//                                    String sDate = document.get("departure_date").toString();
-//                                    String eDate = document.get("return_date").toString();
-//                                    String status = document.get("status").toString();
-
-
-//                                    List<String> listOfComments = (List<String>) document.get("listOfComments");
-//
-//                                    Log.e("COMMENT SIZE",String.valueOf(listOfComments.size()));
-//                                    List<Destination> listOfLocations = (List<Destination>) document.get("listOfLocations");
-//                                    List<String> passengers = (List<String>) document.get("passengers");
-//                                    List<String> listOfLike = (List<String>) document.get("listOfLike");
-
-//                                    plan=new Plan(planId,name,owner_email,sDate,eDate,true,0F,imageLink,listOfLocations,listOfLike,listOfComments,passengers,status);
-                                    plans.add(plan);
-                                    Log.e("MANY POST",String.valueOf(plans.size()));
-                                }
-
-                                Log.e("Last POST",String.valueOf(plans.size()));
-
-                                postAdapter = new PostAdapter(context,plans);
-                                postAdapter.setListener(HomePage.this);
-                                binding.listPost.setAdapter(postAdapter);
-                                binding.listPost.smoothScrollToPosition(0);
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (!querySnapshot.isEmpty()) {
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                Plan plan = document.toObject(Plan.class);
+                                plans.add(plan);
+                                Log.e("MANY POST", String.valueOf(plans.size()));
                             }
-                        }
-                        else
-                        {
-                            // no notification
+
+                            Log.e("Last POST", String.valueOf(plans.size()));
+
+                            postAdapter = new PostAdapter(context, plans);
+                            postAdapter.setListener(HomePage.this);
+                            binding.listPost.setAdapter(postAdapter);
+                            binding.listPost.smoothScrollToPosition(0);
                         }
                     }
                 });
 
 
-        favoriteLocationManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL,false);
+        favoriteLocationManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
         favoriteLocationManager.setStackFromEnd(true);
         binding.favoriteLocations.setLayoutManager(favoriteLocationManager);
 
         //favorite locations
-        //favorite_locations=null;
-        Thread favoriteThread= new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (!DatabaseAccess.getUserInfoStatus()){
-                    Log.e("LOADING FAVORITE","YES");
-                };
-                Runnable updateFavoriteLocation=new Runnable() {
-                    @Override
-                    public void run() {
-                        //List <String> favorite_locations=DatabaseAccess.getMainUserInfo().getFavorite_locations();
-                        if (DatabaseAccess.getMainUserInfo().getFavorite_locations()==null){
-                            binding.emptyPlaceText.setVisibility(View.VISIBLE);
-                        }
-                        else{
-                            binding.emptyPlaceText.setVisibility(View.GONE);
-                            favoriteLocationAdapter = new FavoriteLocationAdapter(context,DatabaseAccess.getMainUserInfo().getFavorite_locations());
-                            favoriteLocationAdapter.setListener(HomePage.this);
-                            binding.favoriteLocations.setAdapter(favoriteLocationAdapter);
-                            binding.favoriteLocations.smoothScrollToPosition(0);
-                        }
-                    }
-                };
-                DatabaseAccess.runForegroundTask(updateFavoriteLocation);
+        Thread favoriteThread = new Thread(() -> {
+            while (!DatabaseAccess.getUserInfoStatus()) {
+                Log.e("LOADING FAVORITE", "YES");
             }
+            Runnable updateFavoriteLocation = () -> {
+                if (DatabaseAccess.getMainUserInfo().getFavorite_locations() == null) {
+                    binding.emptyPlaceText.setVisibility(View.VISIBLE);
+                } else {
+                    binding.emptyPlaceText.setVisibility(View.GONE);
+                    favoriteLocationAdapter = new FavoriteLocationAdapter(context, DatabaseAccess.getMainUserInfo().getFavorite_locations());
+                    favoriteLocationAdapter.setListener(HomePage.this);
+                    binding.favoriteLocations.setAdapter(favoriteLocationAdapter);
+                    binding.favoriteLocations.smoothScrollToPosition(0);
+                }
+            };
+            DatabaseAccess.runForegroundTask(updateFavoriteLocation);
         });
         favoriteThread.start();
 
 
-//        DatabaseAccess.getFirestore().collection("account")
-//                .whereEqualTo("userEmail", DatabaseAccess.getMainUserInfo().getUserEmail())
-//                .get()
-//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-//                        if (task.isSuccessful()) {
-//                            Log.e("FLAG CHECK","SUCCESSFULLY");
-//                            QuerySnapshot querySnapshot = task.getResult();
-//                            if (!querySnapshot.isEmpty()) {
-//                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
-//                                    // Xử lí khi có kết quả trả về
-//                                    List<String>favorite_locations=(List<String>) document.get("favorite_locations");
-//
-//                                    Log.e("FAVORITE LENGTH",String.valueOf(favorite_locations.size()));
-//                                    if (favorite_locations==null){
-//                                        binding.emptyPlaceText.setVisibility(View.VISIBLE);
-//                                    }
-//                                    else{
-//                                        binding.emptyPlaceText.setVisibility(View.GONE);
-//                                        favoriteLocationAdapter = new FavoriteLocationAdapter(context,favorite_locations);
-//                                        favoriteLocationAdapter.setListener(HomePage.this);
-//                                        binding.favoriteLocations.setAdapter(favoriteLocationAdapter);
-//                                        binding.favoriteLocations.smoothScrollToPosition(0);
-//                                    }
-//
-//                                }
-//                            }
-//                            else
-//                            {
-//                            }
-//
-//                        }
-//                        else
-//                        {
-//                        }
-//                    }
-//                });
+        DatabaseAccess.getFirestore().collection("location")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        if (!querySnapshot.isEmpty()) {
+                            List<String> locations = new ArrayList<>();
 
-        //nearby locations
-//        nearbyLocationManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL,false);
-//        nearbyLocationManager.setStackFromEnd(true);
-//
-//        binding.nearbyLocations.setLayoutManager(nearbyLocationManager);
-//
-//        nearbyLocationAdapter = new FavoriteLocationAdapter(context,null);
-//        nearbyLocationAdapter.setListener(this);
-//        binding.nearbyLocations.setAdapter(nearbyLocationAdapter);
-//        binding.nearbyLocations.smoothScrollToPosition(0);
+                            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                locations.add(String.valueOf(document.get("formalName")));
+                            }
+
+                            popularLocationAdapter = new FavoriteLocationAdapter(context, locations);
+                            popularLocationAdapter.setListener(HomePage.this);
+                            binding.popularLocations.setAdapter(popularLocationAdapter);
+                            binding.popularLocations.smoothScrollToPosition(0);
+                        }
+                    }
+                });
+
+        //popular locations
+        popularLocationManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
+        popularLocationManager.setStackFromEnd(true);
+        binding.popularLocations.setLayoutManager(popularLocationManager);
 
         //search btn
-        binding.searchBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent =new Intent(getActivity(),Search.class);
-                intent.putExtra(Search.SEARCH_MODE,Search.SEARCH_LOCATION_INFO);
-                startActivity(intent);
-            }
+        binding.searchBtn.setOnClickListener(view -> {
+            Intent intent = new Intent(getActivity(), Search.class);
+            intent.putExtra(Search.SEARCH_MODE, Search.SEARCH_LOCATION_INFO);
+            startActivity(intent);
         });
 
         return binding.getRoot();
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        FirebaseFirestore fb = FirebaseFirestore.getInstance();
-//        FirebaseUser currentUser = main_activity.getTheCurrentUser();
-//        //user has signed in
-//        if(currentUser != null)
-//        {
-//            fb.collection(DatabaseAcess.ACCESS_ACCOUNT_COLLECTION).document(currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//                @Override
-//                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                    if(task.isSuccessful() && task.getResult() != null)
-//                    {
-//                        User user = task.getResult().toObject(User.class);
-//                        greeting.setText("Hello " + user.getName());
-//                        username.setText("Full name: " + user.getName());
-//                        userphone.setText("Phone: " + user.getPhone());
-//                        useraddress.setText("Address: " + user.getAddress());
-//                    }
-//                }
-//            });
-//        }
-  //  }
+    public void swapToLocationInfo(String locationName) {
+        Intent intent = new Intent(context, LocationInfo.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("location address", locationName);
 
-    public void swapToLocationInfo(String locationName){
-        Intent intent= new Intent(context, LocationInfo.class);
-        Bundle bundle=new Bundle();
-        bundle.putString("location address",locationName);
-
-        intent.putExtra("location search",bundle);
+        intent.putExtra("location search", bundle);
         startActivity(intent);
-        //startActivity(new Intent(context, DetailedPost.class));
     }
 
-    public void swapToPost(Plan plan){ //swap locationinfo into postdetail
-        Intent intent=new Intent(context, DetailedPost.class);
-        Bundle bundle=new Bundle();
+    public void swapToPost(Plan plan) {
+        Intent intent = new Intent(context, DetailedPost.class);
+        Bundle bundle = new Bundle();
         bundle.putString("plan id", plan.getPlanId());
-        intent.putExtra("plan post",bundle);
+        intent.putExtra("plan post", bundle);
         startActivity(intent);
     }
 
