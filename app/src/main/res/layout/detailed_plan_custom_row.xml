@@ -8,7 +8,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/detailed_plan_custom_row_destination_name"
-        android:layout_width="180dp"
+        android:layout_width="160dp"
         android:layout_height="90dp"
         android:textAlignment="center"
         android:text="@string/default_destination_name"
@@ -21,12 +21,12 @@
     <View
         android:layout_width="2dp"
         android:layout_height="match_parent"
-        android:layout_margin="5dp"
+        android:layout_marginVertical="5dp"
         android:foreground="@color/md_theme_dark_secondary"
         />
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
+        android:layout_width="160dp"
         android:layout_height="90dp"
         android:orientation="vertical">
 
@@ -34,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginLeft="8dp"
             android:gravity="center_vertical">
 
             <com.google.android.material.textview.MaterialTextView
@@ -60,10 +60,10 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <androidx.appcompat.widget.LinearLayoutCompat
-            android:layout_width="match_parent"
+            android:layout_width="160dp"
             android:layout_height="45dp"
             android:orientation="horizontal"
-            android:layout_marginHorizontal="20dp"
+            android:layout_marginHorizontal="10dp"
             android:gravity="center_vertical">
 
             <com.google.android.material.textview.MaterialTextView
@@ -88,6 +88,23 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
 
+
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/checkin_btn"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="right|center_vertical"
+        android:layout_margin="0dp"
+        android:backgroundTint="@color/md_theme_dark_outline"
+        android:padding="8dp"
+        app:icon="@drawable/tick_icon"
+        app:iconSize="20dp"
+        app:iconTint="@color/md_theme_light_shadow"
+        android:visibility="gone"
+        />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -40,6 +40,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,7 @@ public class DetailedPlan extends AppCompatActivity
     private final static String PERMISSION_CODE = "X31aLjuNNm4j1d";
 
     public final static String SPEC_DESTINATION = "SPEC_DESTINATION";
+    public final static String SPEC_PLAN = "SPEC_PLAN";
 
     public final static String DETAILED_PLAN_ID = "DETAILED_PLAN_ID";
 
@@ -263,12 +265,31 @@ public class DetailedPlan extends AppCompatActivity
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DetailedPlan.this, AddDestination.class);
-                Bundle bundle = new Bundle();
-                bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
-                bundle.putString("PLAN_ID", specPlanId);
-                intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
-                launcher.launch(intent);
+                if (specPlan.getStatus().equals(TripsPage.UPCOMING)){
+                    Intent intent = new Intent(DetailedPlan.this, AddDestination.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
+                    bundle.putString("PLAN_ID", specPlanId);
+                    intent.putExtra(DetailedPlan.SPEC_PLAN, bundle);
+                    launcher.launch(intent);
+                }
+                else if (specPlan.getStatus().equals((TripsPage.ONGOING))){
+                    Intent intent = new Intent(DetailedPlan.this, ViewProgressTripMap.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("PLAN_ID", specPlanId);
+                    bundle.putSerializable("All destinations", (Serializable) specPlan.getListOfLocations());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+//                    bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
+//                    bundle.putString("PLAN_ID", specPlanId);
+//                    intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
+//                    launcher.launch(intent);
+
+
+
+                }
+
             }
         });
 
@@ -281,6 +302,16 @@ public class DetailedPlan extends AppCompatActivity
         {
             isEditable = true;
         }
+
+        if ((specPlan.getStatus().equals(TripsPage.HISTORY)) || (destinationList.size()==0 && specPlan.getStatus().equals(TripsPage.ONGOING))){
+            addButton.setVisibility(View.GONE);
+        }
+        else if (specPlan.getStatus().equals(TripsPage.ONGOING)){
+            addButton.setImageResource(R.drawable.map_icon);
+        }
+//        else{
+//            addButton.setImageResource(R.drawable.map_icon);
+//        }
 
         OnBackPressedCallback overrideBackPressCallback = new OnBackPressedCallback(true) {
             @Override
@@ -346,7 +377,7 @@ public class DetailedPlan extends AppCompatActivity
         {
             toolbar.setTitle(specPlan.getName());
             destinationList = specPlan.getListOfLocations();
-            Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(context, destinationList, launcher, specPlan.getPlanId());
+            Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(context, destinationList, launcher, specPlan.getPlanId(),false);
             destinations.setAdapter(adapter);
 
             //traveler
@@ -399,7 +430,7 @@ public class DetailedPlan extends AppCompatActivity
         }
     }
 
-    private ActivityResultLauncher launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+    public ActivityResultLauncher launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {

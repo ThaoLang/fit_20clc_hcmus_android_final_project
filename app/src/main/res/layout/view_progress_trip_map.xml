@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <FrameLayout
+        android:id="@+id/standard_bottom_sheet"
+        style="@style/Widget.Material3.BottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="100dp"
+        app:behavior_hideable="false"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+    <!-- Drag handle for accessibility -->
+
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/detailed_plan_recyclerview_destinations"
+            android:layout_marginVertical="25dp"
+            android:layout_marginHorizontal="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:padding="10dp"
+            android:scrollbarSize="10dp"/>
+
+
+
+    </FrameLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/refresh_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/md_theme_light_onPrimary"
+            android:padding="8dp"
+            android:text="Fit all places"
+            android:textColor="@color/md_theme_light_shadow"
+            app:icon="@drawable/zoom_in_icon"
+            app:iconSize="20dp"
+            app:iconTint="@color/md_theme_light_shadow"
+            />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
