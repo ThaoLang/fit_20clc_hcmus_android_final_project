@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +49,7 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
     private ActivityResultLauncher<Intent> _launcher;
 
     private final static String PERMISSION_CODE = "X31aLjuNNm4j1d";
+    private boolean _isOngoing=false;
 
     public Detailed_Plan_Destination_Adapter(Context context, List<Destination> data, ActivityResultLauncher<Intent> inputLauncher) {
         _context = context;
@@ -55,18 +58,19 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
         _planId = "";
     }
 
-    public Detailed_Plan_Destination_Adapter(Context context, List<Destination> data, ActivityResultLauncher<Intent> inputLauncher, String planId) {
+    public Detailed_Plan_Destination_Adapter(Context context, List<Destination> data, ActivityResultLauncher<Intent> inputLauncher, String planId, boolean isOngoing) {
         _context = context;
         _data = data;
         _launcher = inputLauncher;
         _planId = planId;
+        _isOngoing=isOngoing;
     }
 
     @NonNull
     @Override
     public Detailed_plan_destination_view_holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(_context);
-        View customView = layoutInflater.inflate(R.layout.detailed_plan_custom_row, parent, false);
+        View customView = layoutInflater.inflate(R.layout.detailed_plan_custom_row, parent,false);
         Detailed_plan_destination_view_holder itemView = new Detailed_plan_destination_view_holder(customView);
         return itemView;
     }
@@ -91,18 +95,34 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
         holder.getEnddate().setText(destination.getEndDate());
         holder.getStarttime().setText(destination.getStartTime());
         holder.getEndtime().setText(destination.getEndTime());
+        holder.getCheckin_btn().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.getCheckin_btn().setBackgroundColor(Color.parseColor("#4fb355"));
+                holder.getCheckin_btn().setEnabled(false);
+            }
+        });
+        Log.e("LIST DESTINATION HERE","CHECK CHECK");
+        if (_isOngoing)
+        {
+            holder.getCheckin_btn().setVisibility(View.VISIBLE);
+        }
+
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick)
             {
-                Intent intent = new Intent(_context, AddDestination.class);
-                Bundle bundle = new Bundle();
-                bundle.putByteArray(DetailedPlan.SPEC_DESTINATION, Destination.toByteArray(_data.get(position)));
-                bundle.putString("SETTING_MODE", AddDestination.VIEW_DESTINATION);
-                bundle.putString("PLAN_ID", _planId);
-                bundle.putInt("INDEX", position);
-                intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
-                _launcher.launch(intent);
+                if (_launcher!=null){
+                    Intent intent = new Intent(_context, AddDestination.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putByteArray(DetailedPlan.SPEC_DESTINATION, Destination.toByteArray(_data.get(position)));
+                    bundle.putString("SETTING_MODE", AddDestination.VIEW_DESTINATION);
+                    bundle.putString("PLAN_ID", _planId);
+                    bundle.putInt("INDEX", position);
+                    intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
+                    _launcher.launch(intent);
+                }
+
             }
         });
     }
