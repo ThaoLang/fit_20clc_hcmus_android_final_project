@@ -26,6 +26,7 @@ import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
 import com.example.fit_20clc_hcmus_android_final_project.R;
+import com.example.fit_20clc_hcmus_android_final_project.ViewProgressTripMap;
 import com.example.fit_20clc_hcmus_android_final_project.custom_view_holder.Detailed_plan_destination_view_holder;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 
@@ -98,8 +99,9 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
         holder.getCheckin_btn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.getCheckin_btn().setBackgroundColor(Color.parseColor("#4fb355"));
-                holder.getCheckin_btn().setEnabled(false);
+//                holder.getCheckin_btn().setBackgroundColor(Color.parseColor("#4fb355"));
+//                holder.getCheckin_btn().setEnabled(false);
+
             }
         });
         Log.e("LIST DESTINATION HERE","CHECK CHECK");

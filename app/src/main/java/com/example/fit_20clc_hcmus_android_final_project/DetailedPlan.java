@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,6 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.adapter.Detailed_Plan_Destination_Adapter;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.FriendAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.adapter.PostAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
@@ -36,6 +38,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textview.MaterialTextView;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -76,6 +80,7 @@ public class DetailedPlan extends AppCompatActivity
     private final static String SETTING_MODE = "SETTING_MODE";
 
     private boolean isEditing;
+    private int currentDestinationIndex=0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -381,6 +386,59 @@ public class DetailedPlan extends AppCompatActivity
             Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(context, destinationList, launcher, specPlan.getPlanId(),false);
             destinations.setAdapter(adapter);
 
+            //binding.detailedPlanRecyclerviewDestinations.getI
+            //get current destination
+            CollectionReference roomCol=DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_ROOM_COLLECTION);
+            DocumentReference planDoc=roomCol.document(specPlan.getPlanId());
+            CollectionReference passengerCol=planDoc.collection(DatabaseAccess.ACCESS_SUB_PASSENGER_COLLECTION);
+            passengerCol.whereEqualTo("email",DatabaseAccess.getMainUserInfo().getUserEmail())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful())
+                        {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    currentDestinationIndex = Integer.parseInt(document.get("currentDestination").toString());
+                                }
+
+                                Log.e("Last POST",String.valueOf(currentDestinationIndex));
+                                for (int i=0;i<specPlan.getListOfLocations().size();i++){
+                                    View itemView = destinations.getChildAt(i);
+
+                                    if (i <currentDestinationIndex) {
+                                        itemView.setBackgroundColor(Color.parseColor("#e3dcdc"));
+                                    }
+                                    else if(i==currentDestinationIndex) {
+                                        itemView.requestFocus();
+                                        destinations.smoothScrollToPosition(currentDestinationIndex);
+                                        itemView.setBackgroundColor(Color.parseColor("#5EAC8B"));
+                                    }
+
+                                }
+
+
+                            }
+                        }
+                        else
+                        {
+                            // no notification
+                        }
+                    }
+                });
+                                           }
+        Log.e("TOI LA AI",String.valueOf(currentDestinationIndex));
+//        View itemView = destinations.getChildAt(currentDestinationIndex);
+//
+//
+//        if (itemView != null) {
+//            itemView.requestFocus();
+//            destinations.smoothScrollToPosition(currentDestinationIndex);
+//            itemView.setBackgroundColor(Color.parseColor("#0F7764"));
+//        }
+
             //traveler
             db = FirebaseFirestore.getInstance();
             int number_member = specPlan.getPassengers().size();
@@ -419,7 +477,6 @@ public class DetailedPlan extends AppCompatActivity
                 }
 
             }
-        }
 
         if(isEditing == true) //set toolbar to wait for confirm changes
         {

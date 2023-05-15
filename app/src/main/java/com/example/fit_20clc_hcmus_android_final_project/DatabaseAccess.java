@@ -68,6 +68,8 @@ public class DatabaseAccess {
     public static String ACCESS_ACCOUNT_COLLECTION = "account";
     public static String ACCESS_PLANS_COLLECTION = "plans";
     public static String ACCESS_COMMENT_SET_COLLECTION = "commentSets";
+    public static String ACCESS_ROOM_COLLECTION = "room";
+    public static String ACCESS_SUB_PASSENGER_COLLECTION = "passenger";
 
     public static String ACCESS_PLANS_STORAGE = "plans/";
     public static String ACCESS_COMMENTS_STORAGE = "comments/";

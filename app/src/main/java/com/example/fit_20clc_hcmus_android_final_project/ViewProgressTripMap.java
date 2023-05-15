@@ -30,7 +30,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.maps.android.ui.IconGenerator;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -56,6 +62,7 @@ public class ViewProgressTripMap extends AppCompatActivity implements OnMapReady
     private int markerWidthSize=0;
     private int markerHeightSize=0;
     private Bitmap lastBitmap=null;
+    private int currentDestinationIndex=0;
 
 
     @Override
@@ -199,6 +206,48 @@ public class ViewProgressTripMap extends AppCompatActivity implements OnMapReady
         Log.e("LIST DESTINATION IDDD",String.valueOf(listOfDestinations.size()));
         Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(ViewProgressTripMap.this, listOfDestinations, null, planId,true);
         binding.detailedPlanRecyclerviewDestinations.setAdapter(adapter);
+
+        //get current destination
+        CollectionReference roomCol=DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_ROOM_COLLECTION);
+        DocumentReference planDoc=roomCol.document(planId);
+        CollectionReference passengerCol=planDoc.collection(DatabaseAccess.ACCESS_SUB_PASSENGER_COLLECTION);
+        passengerCol.whereEqualTo("email",DatabaseAccess.getMainUserInfo().getUserEmail())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@androidx.annotation.NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful())
+                        {
+                            QuerySnapshot querySnapshot = task.getResult();
+                            if (!querySnapshot.isEmpty()) {
+                                for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    currentDestinationIndex = Integer.parseInt(document.get("currentDestination").toString());
+                                }
+
+                                Log.e("Last POST",String.valueOf(currentDestinationIndex));
+                                for (int i=0;i<listOfDestinations.size();i++){
+                                    View itemView = binding.detailedPlanRecyclerviewDestinations.getChildAt(i);
+
+                                    if (i <currentDestinationIndex) {
+                                        itemView.setBackgroundColor(Color.parseColor("#e3dcdc"));
+                                    }
+                                    else if(i==currentDestinationIndex) {
+                                        itemView.requestFocus();
+                                        binding.detailedPlanRecyclerviewDestinations.smoothScrollToPosition(currentDestinationIndex);
+                                        itemView.setBackgroundColor(Color.parseColor("#5EAC8B"));
+                                    }
+
+                                }
+
+
+                            }
+                        }
+                        else
+                        {
+                            // no notification
+                        }
+                    }
+                });
 
     }
 
