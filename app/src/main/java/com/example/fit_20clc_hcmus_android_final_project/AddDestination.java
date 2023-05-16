@@ -119,7 +119,7 @@ public class AddDestination extends AppCompatActivity {
         _index = -1;
         Intent initIntent = getIntent();
         //this bundle always exists
-        Bundle initBundle = initIntent.getExtras();
+        Bundle initBundle = initIntent.getBundleExtra(DetailedPlan.SPEC_DESTINATION);
         _currentMode = initBundle.getString(SETTING_MODE);
         _planId = initBundle.getString("PLAN_ID");
         if (!_currentMode.equals(ADD_DESTINATION)) {
