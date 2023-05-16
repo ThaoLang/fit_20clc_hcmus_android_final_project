@@ -71,7 +71,7 @@ public class Plan implements Serializable {
         return_date= inputEndDate;
         isPublic= inputIsPublic;
         rating= inputRating;
-        status = "Upcoming";
+        //status = "Upcoming";
         //listOfLocations = new ArrayList<Destination>(inputlistOfLocation);
         //listOfLocations = null;
 //        if (inputlistOfComment==null) {
@@ -82,7 +82,7 @@ public class Plan implements Serializable {
 //        }
         //listOfComments = new ArrayList<String>(inputlistOfComment);
         //listOfLike= new ArrayList<String>(inputlistOfLike);
-        //passengers=new ArrayList<String>(inputPassengers);
+        passengers= new ArrayList<>();
         //listOfEditors = new ArrayList<String>();
         status=inputStatus;
         //createdTime=inputCreatedTime;

@@ -104,7 +104,7 @@ public class MainActivity extends FragmentActivity {
             }
         });
 
-
+        screenType = 0;
         DatabaseAccess.initDatabaseAccess();
 
 //        notificationListener = new Thread(new Runnable() {
