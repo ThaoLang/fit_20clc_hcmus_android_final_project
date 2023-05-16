@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.List_CloudNotification_Function_List_CloudNotification;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.TabLayoutAdapter;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPageBinding;
 import com.google.android.material.tabs.TabLayout;
@@ -25,6 +27,8 @@ public class NotificationPage extends Fragment {
     private FirebaseUser currentUser;
     private FragmentManager fragmentManager;
     private TabLayoutAdapter adapter;
+
+    List_CloudNotification_Function_List_CloudNotification watingNotifications;
 
     public NotificationPage() {
         // Required empty public constructor
@@ -86,5 +90,10 @@ public class NotificationPage extends Fragment {
             }
         });
         return binding.getRoot();
+    }
+
+    public void setWatingNotifications(List_CloudNotification_Function_List_CloudNotification function)
+    {
+        watingNotifications = function;
     }
 }

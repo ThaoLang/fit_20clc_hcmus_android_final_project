@@ -11,11 +11,20 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.CloudNotificationFunction_Int_Param;
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.List_CloudNotification_Function_List_CloudNotification;
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFunctionIntParam;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.CloudNotification;
+import com.example.fit_20clc_hcmus_android_final_project.service.MyFirebaseNotificationService;
+import com.example.fit_20clc_hcmus_android_final_project.service.NotificationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity {
     private Fragment currentScreen;
@@ -30,6 +39,10 @@ public class MainActivity extends FragmentActivity {
 
     private static Integer screenType = 0;
 
+    private NotificationService notificationService;
+
+//    private Thread notificationListener;
+
     public static final int HOME_PAGE = 0;
     public static final int TRIPS = 1;
     public static final int NOTIFICATION = 2;
@@ -41,8 +54,28 @@ public class MainActivity extends FragmentActivity {
     public static String TRIPS_INIT_PARAM = "TRIPS";
     public static String NOTIFICATION_PAGE_INIT_PARAM = "NOTIFICATION_PAGE";
     public static String ACCOUNT_INFO_INIT_PARAM = "ACCOUNT_INFO";
-
     private FragmentTransaction transaction;
+
+//    private List<CloudNotification> InvitationQueue;
+//    private List<CloudNotification> PlanChangesQueue;
+
+
+    private VoidFunctionIntParam NotificationCallback = (int number_of_notification) ->
+    {
+        for(int i=0; i< number_of_notification; i++)
+        {
+            if(DatabaseAccess.getNotifications().get(i).getTopic().equals(CloudNotification.TOPIC_INVITE_FRIENDS))
+            {
+                String title = DatabaseAccess.getNotifications().get(i).getTitle();
+                String content = DatabaseAccess.getNotifications().get(i).getContent();
+                System.out.println("Noti " + title);
+                Intent intent = new Intent(MainActivity.this, DetailedPlan.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.putExtra("DETAILED_PLAN_ID", DatabaseAccess.getNotifications().get(i).getTargets().get(0));
+                notificationService.sendNotification(title, content, intent, this, 1);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -54,6 +87,9 @@ public class MainActivity extends FragmentActivity {
         progressBar = (ContentLoadingProgressBar) findViewById(R.id.loading_progressbar);
 
         isRunning  = true;
+
+        notificationService = new NotificationService(MainActivity.this);
+        notificationService.createNotificationChannel();
 
         //handle bottom navigation bar/////////////////////////////////////////////////
         bottomNavigation = (BottomNavigationView) findViewById(R.id.bottom_navigation);
@@ -67,11 +103,36 @@ public class MainActivity extends FragmentActivity {
                 return true;
             }
         });
+
+
         DatabaseAccess.initDatabaseAccess();
+
+//        notificationListener = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while(isRunning==true)
+//                {
+//                    if(DatabaseAccess.getNotifications().isEmpty() == false)
+//                    {
+//                        System.out.println(DatabaseAccess.getNotifications().remove(0).getTopic());
+//                    }
+//                }
+//            }
+//        });
+
         if(DatabaseAccess.getCurrentUser() != null)
         {
+            Runnable startNotificationService = new Runnable() {
+                @Override
+                public void run() {
+                    Intent notificationServiceIntent = new Intent(MainActivity.this, MyFirebaseNotificationService.class);
+                    startService(notificationServiceIntent);
+//                    notificationListener.start();
+                }
+            };
+
             DatabaseAccess.runForegroundTask(setLoadingProgressBarVisible(4,0,1));
-            DatabaseAccess.load_data();
+            DatabaseAccess.load_data(startNotificationService);
             if(screenType == 0)
             {
                 currentScreen = HomePage.newInstance(HOME_PAGE_INIT_PARAM);
@@ -79,7 +140,6 @@ public class MainActivity extends FragmentActivity {
 
             transaction.replace(R.id.main_frame,currentScreen);
             transaction.commit();
-
         }
     }
 
@@ -98,11 +158,18 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(!isRunning || DatabaseAccess.getCurrentUser() == null)
+        if(isRunning == false || DatabaseAccess.getCurrentUser() == null)
         {
             transaction.detach(currentScreen);
         }
     }
+
+/*    @Override
+    protected void onDestroy()
+    {
+        super.onDestroy();
+        isRunning = false;
+    }*/
 
     //change Fragment (screen)
     private void switchScreenBySelectMenuItem(int idItemSelected)

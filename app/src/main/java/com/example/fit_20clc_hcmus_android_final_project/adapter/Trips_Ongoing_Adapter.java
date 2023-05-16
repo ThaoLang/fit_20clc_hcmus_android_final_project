@@ -88,6 +88,7 @@ public class Trips_Ongoing_Adapter extends RecyclerView.Adapter<Ongoing_view_hol
             public void onClick(View view, int position, boolean isLongClick) {
                 Log.i("Trip_incoming", "Item is clicked");
                 Intent intent = new Intent(_context, DetailedPlan.class);
+                intent.putExtra("MODE", "EXISTED");
                 intent.putExtra(DetailedPlan.DETAILED_PLAN_ID, _data.get(position).getPlanId());
                 DatabaseAccess.runForegroundTask(((MainActivity)_context).startSpecificActivity(intent));
             }

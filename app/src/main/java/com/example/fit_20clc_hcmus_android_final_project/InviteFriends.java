@@ -21,6 +21,7 @@ import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFun
 import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFunctionIntParam;
 import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFunction_Int_Bool_Param;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.InviteFriendAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.CloudNotification;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
@@ -274,13 +275,42 @@ public class InviteFriends extends AppCompatActivity
         sendInviteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if(selected_result.isEmpty())
-//                {
-//                    finish();
-//                    return;
-//                }
+                if(selected_result.isEmpty())
+                {
+                    finish();
+                    return;
+                }
 
-                /*DatabaseAccess.pushCloudNotification();*/
+                Runnable successfulTask = new Runnable() {
+                    @Override
+                    public void run() {
+                        selected_result.clear();
+                        searched_result.clear();
+                        Toast.makeText(getApplicationContext(), "Send invitations successfully!", Toast.LENGTH_LONG).show();
+                    }
+                };
+
+                Runnable failureTask = new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), "Send invitations failed!", Toast.LENGTH_LONG).show();
+                    }
+                };
+
+                CloudNotification notification = new CloudNotification();
+                notification.setTitle("Invitation");
+                notification.setContent(CloudNotification.CONTENT_INVITE_FRIEND);
+                notification.setSender_email(DatabaseAccess.getMainUserInfo().getUserEmail());
+                notification.setTopic(CloudNotification.TOPIC_INVITE_FRIENDS);
+
+                List<String> targets = new ArrayList<>();
+                targets.add(specPlanId);
+
+                notification.setTargets(targets);
+                DatabaseAccess.pushCloudNotification_UserList(notification, selected_result, successfulTask, failureTask);
+
+                //selected_result.clear();
+                onStart();
             }
         });
 

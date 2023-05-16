@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Transaction;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
@@ -96,6 +97,8 @@ public class DatabaseAccess {
     private static boolean isInitialized = false;
     private static boolean isUserInfoReady = false;
 
+    private static List<CloudNotification> notifications;
+
     private static List<User> SearchedUserResultBuffer = new ArrayList<>();
 
 
@@ -104,10 +107,16 @@ public class DatabaseAccess {
         firestore = FirebaseFirestore.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
         plans = new ArrayList<Plan>();
+        notifications = new ArrayList<>();
         isInitialized = true;
     }
 
-    public static boolean load_data()
+    public static List<CloudNotification> getNotifications()
+    {
+        return notifications;
+    }
+
+    public static boolean load_data(Runnable lastTask)
     {
         Thread backgroundLoadDataThread = new Thread(new Runnable() {
             @Override
@@ -139,7 +148,6 @@ public class DatabaseAccess {
                     runForegroundTask(MainActivity.hideProgressBar());
                     return;
                 }
-
 
                 List<String> setOfPlanId = mainUserInfo.getPlans();
                 if(setOfPlanId.isEmpty())
@@ -185,6 +193,12 @@ public class DatabaseAccess {
                 for(int i = 0; i< plans.size(); i++)
                 {
                     System.out.println(i + ": " + plans.get(i).getDeparture_date());
+                }
+
+                if(lastTask != null)
+                {
+                    Thread executeLastTask = new Thread(lastTask);
+                    executeLastTask.start();
                 }
             }
         });
@@ -837,23 +851,78 @@ public class DatabaseAccess {
     }
 
     //invite friends
-    public static void pushCloudNotification(@NotNull CloudNotification notification, @NotNull List<String> list_email_to_alarm, Runnable successfulTask, Runnable failureTask)
+    public static void pushCloudNotification_UserEmailList(@NotNull CloudNotification notification, @NotNull List<String> list_email_to_alarm, Runnable successfulTask, Runnable failureTask)
     {
-//        if(firestore == null)
-//        {
-//            return;
-//        }
-//
-//        String newNotificationId = firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document().getId();
-//
-//        firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document(newNotificationId)
-//                .set(notification)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                    @Override
-//                    public void onSuccess(Void unused) {
-//
-//                    }
-//                });
+        if(firestore == null)
+        {
+            return;
+        }
+
+        String newNotificationId = firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document().getId();
+
+        firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document(newNotificationId)
+                .set(notification)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        for(int i = 0; i< list_email_to_alarm.size(); i++)
+                        {
+                            firestore.collection(ACCESS_ALARM_COLLECTION).document(list_email_to_alarm.get(i)).set(newNotificationId, SetOptions.merge());
+                        }
+                        if(successfulTask != null)
+                        {
+                            runForegroundTask(successfulTask);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("ERROR IN INVITE", e.getMessage());
+                        if(failureTask != null)
+                        {
+                            runForegroundTask(failureTask);
+                        }
+                    }
+                });
+    }
+
+    public static void pushCloudNotification_UserList(@NotNull CloudNotification notification, @NotNull List<User> list_email_to_alarm, Runnable successfulTask, Runnable failureTask)
+    {
+        if(firestore == null)
+        {
+            return;
+        }
+
+        String newNotificationId = firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document().getId();
+        System.out.println("newNotificationId " + newNotificationId);
+        firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document(newNotificationId)
+                .set(notification)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        System.out.println("email_to_alarm size= " + list_email_to_alarm.size());
+                        for(int i = 0; i< list_email_to_alarm.size(); i++)
+                        {
+                            System.out.println("alarm email: " + list_email_to_alarm.get(i).getUserEmail());
+                            firestore.collection(ACCESS_ALARM_COLLECTION).document(list_email_to_alarm.get(i).getUserEmail()).update("changes", FieldValue.arrayUnion(newNotificationId));
+                        }
+                        if(successfulTask != null)
+                        {
+                            runForegroundTask(successfulTask);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("ERROR IN INVITE", e.getMessage());
+                        if(failureTask != null)
+                        {
+                            runForegroundTask(failureTask);
+                        }
+                    }
+                });
     }
 
 /*    public static void pushCloudNotification()
@@ -866,6 +935,7 @@ public class DatabaseAccess {
         String newNotificationId = firestore.collection(ACCESS_NOTIFICATION_COLLECTION).document().getId();
         System.out.println(newNotificationId);
     }*/
+
 }
 
 

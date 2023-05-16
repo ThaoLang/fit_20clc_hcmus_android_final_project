@@ -17,6 +17,7 @@ import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.MainActivity;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.CustomNotificationAdapter;
+import com.example.fit_20clc_hcmus_android_final_project.data_struct.CloudNotification;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Notification;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.FragmentNotificationPlanBinding;
 import com.example.fit_20clc_hcmus_android_final_project.service.NotificationService;
@@ -99,6 +100,26 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                             }
                         }
 
+                        //read invitations
+
+                        for(int i=0; i< DatabaseAccess.getNotifications().size();)
+                        {
+                            if(DatabaseAccess.getNotifications().get(i).getTopic().equals(CloudNotification.TOPIC_INVITE_FRIENDS))
+                            {
+                                CloudNotification cloudNotification = DatabaseAccess.getNotifications().remove(i);
+                                String title = cloudNotification.getTitle();
+                                String content = new StringBuilder().append("from: ").append(cloudNotification.getSender_email()).toString();
+                                String planId = cloudNotification.getTargets().get(0);
+                                Notification notification = new Notification(title, content, planId);
+                                notificationPlanList.add(notification);
+                            }
+                            else
+                            {
+                                i++;
+                            }
+                        }
+
+
                         planAdapter = new CustomNotificationAdapter(context, notificationPlanList);
                         planAdapter.setListener(notificationPage);
                         binding.listItem.setLayoutManager(mLinearLayoutManager);
@@ -108,7 +129,7 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
                         Intent intent = new Intent(context, DetailedPlan.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         intent.putExtra("DETAILED_PLAN_ID", notificationPlanList.get(notificationPlanList.size() - 1).getTripId());
-
+                        intent.putExtra("MODE", "REMOTE");
                         if (notificationPlanList.size()>0) {
                             String latestTitle = notificationPlanList.get(notificationPlanList.size() - 1).getTitle();
                             String latestContent = notificationPlanList.get(notificationPlanList.size() - 1).getContent();
@@ -142,6 +163,14 @@ public class NotificationPlanFragment extends Fragment implements CustomNotifica
     public void swapToChat(String tripId){
         Intent intent = new Intent(context, DetailedPlan.class);
         intent.putExtra("DETAILED_PLAN_ID", tripId);
+        if(DatabaseAccess.getMainUserInfo().getPlans().contains(tripId)==true)
+        {
+            intent.putExtra("MODE", "EXISTED");
+        }
+        else
+        {
+            intent.putExtra("MODE", "REMOTE");
+        }
         main_activity.startActivity(intent);
     }
 }

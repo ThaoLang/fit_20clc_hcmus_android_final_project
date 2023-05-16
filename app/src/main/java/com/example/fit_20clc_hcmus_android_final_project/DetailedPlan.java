@@ -34,6 +34,8 @@ import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Plan;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,6 +43,7 @@ import com.google.android.material.textview.MaterialTextView;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -67,6 +70,8 @@ public class DetailedPlan extends AppCompatActivity
     private String specPlanId;
     private Plan specPlan;
 
+    private String mode;
+
     private boolean isEditable;
 
     private static int selectedDestinationPosition = -1;
@@ -81,6 +86,8 @@ public class DetailedPlan extends AppCompatActivity
 
     private boolean isEditing;
     private int currentDestinationIndex=0;
+
+    private boolean loading = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -271,12 +278,24 @@ public class DetailedPlan extends AppCompatActivity
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (specPlan.getStatus().equals(TripsPage.UPCOMING)){
+                if(mode.equals("REMOTE"))
+                {
+                    //it should be a transaction
+                    addButton.setImageResource(R.drawable.cheer_48px);
+                    DatabaseAccess.getMainUserInfo().addNewPlanId(specPlanId);
+                    DatabaseAccess.updateUserInfo_In_Database(DatabaseAccess.getMainUserInfo(), null, null);
+                    DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_PLANS_COLLECTION).document(specPlanId)
+                            .update("passengers", FieldValue.arrayUnion(DatabaseAccess.getMainUserInfo().getUserEmail()));
+
+                    return;
+
+                }
+                else if (specPlan.getStatus().equals(TripsPage.UPCOMING)){
                     Intent intent = new Intent(DetailedPlan.this, AddDestination.class);
                     Bundle bundle = new Bundle();
                     bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
                     bundle.putString("PLAN_ID", specPlanId);
-                    intent.putExtras(bundle);
+                    intent.putExtra(DetailedPlan.SPEC_DESTINATION, bundle);
                     launcher.launch(intent);
                 }
                 else if (specPlan.getStatus().equals((TripsPage.ONGOING))){
@@ -301,20 +320,53 @@ public class DetailedPlan extends AppCompatActivity
 
         Intent planIntent = getIntent();
         specPlanId = planIntent.getStringExtra(DETAILED_PLAN_ID);
-        specPlan = DatabaseAccess.getClonePlanById(specPlanId);
-        destinationList = specPlan.getListOfLocations();
-        if(specPlan.getSet_of_editors().contains(DatabaseAccess.getMainUserInfo().getUserEmail()) ||
-                specPlan.getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail()))
+        mode = planIntent.getStringExtra("MODE");
+        System.out.println("mode " + mode);
+        if(mode.equals("REMOTE"))
         {
-            isEditable = true;
+            loading = true;
+            DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_PLANS_COLLECTION)
+                    .document(specPlanId).get()
+                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                        @Override
+                        public void onSuccess(DocumentSnapshot documentSnapshot) {
+                            specPlan = documentSnapshot.toObject(Plan.class);
+                            loading = false;
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            specPlan = null;
+                            loading = false;
+                        }
+                    });
+            while(loading == false)
+            {
+                System.out.println("Waiting for loading remote plan");
+            }
+        }
+        else
+        {
+            specPlan = DatabaseAccess.getClonePlanById(specPlanId);
+            destinationList = specPlan.getListOfLocations();
+        }
+        if(specPlan != null)
+        {
+            if(specPlan.getSet_of_editors().contains(DatabaseAccess.getMainUserInfo().getUserEmail()) ||
+                    specPlan.getOwner_email().equals(DatabaseAccess.getMainUserInfo().getUserEmail()))
+            {
+                isEditable = true;
+            }
+
+            if ((specPlan.getStatus().equals(TripsPage.HISTORY)) || (destinationList.size()==0 && specPlan.getStatus().equals(TripsPage.ONGOING))){
+                addButton.setVisibility(View.GONE);
+            }
+            else if (specPlan.getStatus().equals(TripsPage.ONGOING)){
+                addButton.setImageResource(R.drawable.map_icon);
+            }
         }
 
-        if ((specPlan.getStatus().equals(TripsPage.HISTORY)) || (destinationList.size()==0 && specPlan.getStatus().equals(TripsPage.ONGOING))){
-            addButton.setVisibility(View.GONE);
-        }
-        else if (specPlan.getStatus().equals(TripsPage.ONGOING)){
-            addButton.setImageResource(R.drawable.map_icon);
-        }
 //        else{
 //            addButton.setImageResource(R.drawable.map_icon);
 //        }

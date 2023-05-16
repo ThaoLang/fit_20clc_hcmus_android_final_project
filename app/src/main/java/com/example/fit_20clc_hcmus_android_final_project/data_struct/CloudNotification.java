@@ -18,6 +18,8 @@ public class CloudNotification implements Serializable {
     public static final String TOPIC_INVITE_FRIENDS = "NOTIFICATION_INVITE";
     public static final String TOPIC_PLAN_CHANGES = "NOTIFICATION_PLAN_CHANGES";
     public static final char SEPARATOR_CHAR_TOPIC_INVITE_FRIENDS = ':';
+    public static final String CONTENT_INVITE_FRIEND = "This notification is an invitation for joining a trip! Have a look now!";
+
 
 
     private String title;

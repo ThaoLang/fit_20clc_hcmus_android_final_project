@@ -131,6 +131,10 @@ public class InviteFriendAdapter extends RecyclerView.Adapter<InviteFriendViewHo
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
+                                    if(userList.size() == 0)
+                                    {
+                                        return;
+                                    }
                                     Glide.with(context).load(userList.get(holder.getAdapterPosition()).getAvatarUrl()).into(holder.getTraveler_image());
                                 }
                             });
