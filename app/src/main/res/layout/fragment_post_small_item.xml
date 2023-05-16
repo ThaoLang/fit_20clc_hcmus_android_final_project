@@ -60,11 +60,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="20dp"
-                        android:drawableLeft="@drawable/fire_icon"
+
                         android:padding="5dp"
-                        android:textColor="@color/md_theme_light_error"
+
                         android:textStyle="bold"
-                        android:text="Upcoming"/>
+                        />
                 </LinearLayout>
 
             </LinearLayout>

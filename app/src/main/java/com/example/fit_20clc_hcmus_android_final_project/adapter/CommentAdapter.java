@@ -102,7 +102,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
                                     viewHolder.name_account.setText(String.valueOf(document.get("name")));
 
                                     if (String.valueOf(document.get("avatarUrl")) != null){
-                                        final long MAX_BYTE = 1024 * 2 * 1024;
+                                        final long MAX_BYTE = 1024 * 4 * 1024;
                                         StorageReference storageReference = DatabaseAccess.getFirebaseStorage().getReference().child(String.valueOf(document.get("avatarUrl")));
                                         storageReference.getBytes(MAX_BYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                                             @Override

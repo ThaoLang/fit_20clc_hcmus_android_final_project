@@ -168,16 +168,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder>{
         viewHolder.travel_period.setText(String.valueOf(daysDiff)+" days");
         viewHolder.main_image.setImageResource(R.drawable.bali);
         String status_text=plans.get(position).getStatus();
-        viewHolder.status.setText(status_text);
+
 
         if(status_text.equals("Ongoing")){
             viewHolder.status.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.ongoing_icon, context.getTheme()), null, null, null);
             viewHolder.status.setTextColor(context.getColor(R.color.CustomColor10));
+            viewHolder.status.setText("Ongoing");
         }
         else if(status_text.equals("Finished")){
             viewHolder.status.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.done_tick_icon, context.getTheme()), null, null, null);
-            viewHolder.status.setTextColor(R.color.md_theme_light_outline);
+            viewHolder.status.setTextColor(context.getColor(R.color.md_theme_light_outline));
+            viewHolder.status.setText("Finished");
         }
+        else{
+            viewHolder.status.setCompoundDrawablesWithIntrinsicBounds(context.getResources().getDrawable(R.drawable.fire_icon, context.getTheme()), null, null, null);
+            viewHolder.status.setTextColor(context.getColor(R.color.md_theme_light_error));
+            viewHolder.status.setText("Upcoming");
+        }
+
 
 
         viewHolder.setItemClickListener((view, position1, isLongClick) -> {
