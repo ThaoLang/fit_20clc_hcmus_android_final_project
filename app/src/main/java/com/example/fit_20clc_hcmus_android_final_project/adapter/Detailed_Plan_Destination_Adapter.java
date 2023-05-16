@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fit_20clc_hcmus_android_final_project.AddDestination;
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFunction;
 import com.example.fit_20clc_hcmus_android_final_project.DatabaseAccess;
 import com.example.fit_20clc_hcmus_android_final_project.DetailedPlan;
 import com.example.fit_20clc_hcmus_android_final_project.ItemClickListener;
@@ -29,6 +30,12 @@ import com.example.fit_20clc_hcmus_android_final_project.R;
 import com.example.fit_20clc_hcmus_android_final_project.ViewProgressTripMap;
 import com.example.fit_20clc_hcmus_android_final_project.custom_view_holder.Detailed_plan_destination_view_holder;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,8 +43,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Detailed_plan_destination_view_holder> {
     private Context _context;
@@ -51,6 +60,8 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
 
     private final static String PERMISSION_CODE = "X31aLjuNNm4j1d";
     private boolean _isOngoing=false;
+
+    VoidFunction voidFunction;
 
     public Detailed_Plan_Destination_Adapter(Context context, List<Destination> data, ActivityResultLauncher<Intent> inputLauncher) {
         _context = context;
@@ -99,8 +110,27 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
         holder.getCheckin_btn().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Map<String, Object> data = new HashMap<>();
+                data.put("email", DatabaseAccess.getMainUserInfo().getUserEmail());
+                data.put("currentDestination", position+1);
+                CollectionReference roomCol=DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_ROOM_COLLECTION);
+                DocumentReference planDoc=roomCol.document(_planId);
+                CollectionReference passengerCol=planDoc.collection(DatabaseAccess.ACCESS_SUB_PASSENGER_COLLECTION);
+                passengerCol.document(DatabaseAccess.getMainUserInfo().getUserEmail())
+                                .update(data);
+
+                Log.e("POS",String.valueOf(position));
+                if (position+1==_data.size()){
+                    DatabaseAccess.getFirestore().collection(DatabaseAccess.ACCESS_PLANS_COLLECTION)
+                            .document(_planId)
+                            .update("status","Finished");
+                }
 //                holder.getCheckin_btn().setBackgroundColor(Color.parseColor("#4fb355"));
 //                holder.getCheckin_btn().setEnabled(false);
+                if (voidFunction!=null){
+                    voidFunction.apply();
+                    Log.e("VOID FUNC","YA");
+                }
 
             }
         });
@@ -132,5 +162,9 @@ public class Detailed_Plan_Destination_Adapter extends RecyclerView.Adapter<Deta
     @Override
     public int getItemCount() {
         return _data.size();
+    }
+
+    public void setOnStartActivity(VoidFunction func){
+        voidFunction=func;
     }
 }

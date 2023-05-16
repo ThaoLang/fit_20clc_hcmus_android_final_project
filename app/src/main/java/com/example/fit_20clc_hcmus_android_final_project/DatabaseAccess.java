@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -34,6 +35,7 @@ import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -260,6 +262,7 @@ public class DatabaseAccess {
                     final DocumentReference accountDoc = firestore.collection(ACCESS_ACCOUNT_COLLECTION).document(auth.getCurrentUser().getUid());
                     final DocumentReference plansDoc = firestore.collection(ACCESS_PLANS_COLLECTION).document();
                     final DocumentReference commentSetDoc = firestore.collection(ACCESS_COMMENT_SET_COLLECTION).document();
+                    final CollectionReference roomCol = firestore.collection(ACCESS_ROOM_COLLECTION);
                     @Nullable
                     @Override
                     public String apply(@NonNull Transaction transaction) throws FirebaseFirestoreException {
@@ -269,6 +272,37 @@ public class DatabaseAccess {
 
                         transaction.set(plansDoc, newPlan);
                         transaction.update(accountDoc, "plans", FieldValue.arrayUnion(newPlanId));
+
+                        //create room
+                        DocumentReference roomDoc=roomCol.document(newPlanId);
+                        CollectionReference subPassengerCol = roomDoc.collection(DatabaseAccess.ACCESS_SUB_PASSENGER_COLLECTION);
+
+                        List<String> listOfPassenger=newPlan.getPassengers();
+                        listOfPassenger.add(newPlan.getOwner_email());
+
+                        for (String email : listOfPassenger) {
+                            DocumentReference documentRef = subPassengerCol.document(email);
+
+                            // Tạo một Map chứa các thông tin cần lưu trữ
+                            Map<String, Object> data = new HashMap<>();
+                            data.put("email", newPlan.getOwner_email());
+                            data.put("currentDestination", 0);
+
+                            documentRef.set(data)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            //Log.d(TAG, "Document added with ID: " + documentRef.getId());
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            //Log.e(TAG, "Error adding document", e);
+                                        }
+                                    });
+                        }
+
                         return newPlanId;
                     }
                 }).addOnSuccessListener(new OnSuccessListener<String>() {

@@ -276,7 +276,7 @@ public class DetailedPlan extends AppCompatActivity
                     Bundle bundle = new Bundle();
                     bundle.putString(SETTING_MODE, AddDestination.ADD_DESTINATION);
                     bundle.putString("PLAN_ID", specPlanId);
-                    intent.putExtra(DetailedPlan.SPEC_PLAN, bundle);
+                    intent.putExtras(bundle);
                     launcher.launch(intent);
                 }
                 else if (specPlan.getStatus().equals((TripsPage.ONGOING))){
@@ -405,15 +405,28 @@ public class DetailedPlan extends AppCompatActivity
                                 }
 
                                 Log.e("Last POST",String.valueOf(currentDestinationIndex));
-                                for (int i=0;i<specPlan.getListOfLocations().size();i++){
+                                Log.e("HAHA POST",specPlan.getPlanId());
+                                Log.e("HIHI POST",DatabaseAccess.getMainUserInfo().getUserEmail());
+                                for (int i=0;i<destinationList.size();i++){
+                                    destinations.smoothScrollToPosition(i);
                                     View itemView = destinations.getChildAt(i);
+                                    //RecyclerView.ViewHolder viewHolder = destinations.findViewHolderForAdapterPosition(i);
+                                    Log.e("FINAL DONE",String.valueOf(currentDestinationIndex));
+//                                    if (i <currentDestinationIndex && viewHolder.itemView!=null) {
+//                                        viewHolder.itemView.setBackgroundColor(Color.parseColor("#999494"));
+//                                    }
+//                                    else if(i==currentDestinationIndex && viewHolder.itemView!=null) {
+//                                        //itemView.requestFocus();
+//                                        //destinations.smoothScrollToPosition(currentDestinationIndex);
+//                                        viewHolder.itemView.setBackgroundColor(Color.parseColor("#5EAC8B"));
+//                                    }
 
-                                    if (i <currentDestinationIndex) {
-                                        itemView.setBackgroundColor(Color.parseColor("#e3dcdc"));
+                                    if (i <currentDestinationIndex && itemView!=null) {
+                                        itemView.setBackgroundColor(Color.parseColor("#999494"));
                                     }
-                                    else if(i==currentDestinationIndex) {
-                                        itemView.requestFocus();
-                                        destinations.smoothScrollToPosition(currentDestinationIndex);
+                                    else if(i==currentDestinationIndex && itemView!=null) {
+                                        //itemView.requestFocus();
+                                        //destinations.smoothScrollToPosition(currentDestinationIndex);
                                         itemView.setBackgroundColor(Color.parseColor("#5EAC8B"));
                                     }
 

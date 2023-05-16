@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fit_20clc_hcmus_android_final_project.CustomInterface.VoidFunction;
 import com.example.fit_20clc_hcmus_android_final_project.adapter.Detailed_Plan_Destination_Adapter;
 import com.example.fit_20clc_hcmus_android_final_project.data_struct.Destination;
 import com.example.fit_20clc_hcmus_android_final_project.databinding.ViewMapBinding;
@@ -64,6 +65,10 @@ public class ViewProgressTripMap extends AppCompatActivity implements OnMapReady
     private Bitmap lastBitmap=null;
     private int currentDestinationIndex=0;
 
+    VoidFunction OnStart=()->{
+        onStart();
+        Log.e("VOID FUNCTION","HELLO");
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,6 +210,7 @@ public class ViewProgressTripMap extends AppCompatActivity implements OnMapReady
         super.onStart();
         Log.e("LIST DESTINATION IDDD",String.valueOf(listOfDestinations.size()));
         Detailed_Plan_Destination_Adapter adapter = new Detailed_Plan_Destination_Adapter(ViewProgressTripMap.this, listOfDestinations, null, planId,true);
+        adapter.setOnStartActivity(OnStart);
         binding.detailedPlanRecyclerviewDestinations.setAdapter(adapter);
 
         //get current destination
@@ -229,12 +235,22 @@ public class ViewProgressTripMap extends AppCompatActivity implements OnMapReady
                                     View itemView = binding.detailedPlanRecyclerviewDestinations.getChildAt(i);
 
                                     if (i <currentDestinationIndex) {
-                                        itemView.setBackgroundColor(Color.parseColor("#e3dcdc"));
+                                        itemView.setBackgroundColor(Color.parseColor("#999494"));
+                                        itemView.findViewById(R.id.checkin_btn).setBackgroundColor(Color.parseColor("#4fb355"));
+                                        itemView.findViewById(R.id.checkin_btn).setEnabled(false);
                                     }
                                     else if(i==currentDestinationIndex) {
                                         itemView.requestFocus();
                                         binding.detailedPlanRecyclerviewDestinations.smoothScrollToPosition(currentDestinationIndex);
                                         itemView.setBackgroundColor(Color.parseColor("#5EAC8B"));
+                                    }
+                                    else{
+                                        itemView.findViewById(R.id.checkin_btn).setEnabled(false);
+                                    }
+
+                                    if(currentDestinationIndex==listOfDestinations.size()){
+                                        binding.doneTxt.setVisibility(View.VISIBLE);
+                                        binding.doneImg.setVisibility(View.VISIBLE);
                                     }
 
                                 }
