@@ -332,6 +332,7 @@ public class DetailedPlan extends AppCompatActivity
                         public void onSuccess(DocumentSnapshot documentSnapshot) {
                             specPlan = documentSnapshot.toObject(Plan.class);
                             loading = false;
+                            onStart();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -341,10 +342,10 @@ public class DetailedPlan extends AppCompatActivity
                             loading = false;
                         }
                     });
-            while(loading == false)
-            {
-                System.out.println("Waiting for loading remote plan");
-            }
+//            while(loading == true)
+//            {
+//                System.out.println("Waiting for loading remote plan");
+//            }
         }
         else
         {
@@ -411,7 +412,10 @@ public class DetailedPlan extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
+        if(specPlan == null)
+        {
+            return;
+        }
         destinations.setVisibility(View.VISIBLE);
         travelers.setVisibility(View.VISIBLE);
         no_plan.setVisibility(View.INVISIBLE);

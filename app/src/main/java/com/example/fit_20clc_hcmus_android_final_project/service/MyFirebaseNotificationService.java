@@ -61,7 +61,10 @@ public class MyFirebaseNotificationService extends Service {
                             return;
                         }
                         AlarmNotification alarm = value.toObject(AlarmNotification.class); //contains notification id
-
+                        if(alarm == null)
+                        {
+                            return;
+                        }
                         for(int i = 0; i< alarm.getChanges().size();i++)
                         {
                             System.out.println(alarm.getChanges().get(i));
